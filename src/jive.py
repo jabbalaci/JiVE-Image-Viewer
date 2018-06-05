@@ -196,6 +196,8 @@ class Window(QMainWindow):
 
         self.setMouseTracking(True)
 
+        self.setAcceptDrops(True)    # enable drag & drop
+
         self._fit_window_to_image_status = OFF
         self._fit_window_to_image_width = None     # will be set later
         self._fit_window_to_image_height = None    # will be set later
@@ -257,7 +259,7 @@ class Window(QMainWindow):
         if prefix:
             self.setWindowTitle(f"{prefix} - {self.title}")
 
-    def open_local_dir(self, local_folder):
+    def open_local_dir(self, local_folder, redraw=False):
         self.list_of_images = self.read_local_dir(local_folder)
         if len(self.list_of_images) == 0:
             log.warning("no images were found")
@@ -265,8 +267,11 @@ class Window(QMainWindow):
         # else
         self.curr_img_idx = 0
         self.curr_img = self.list_of_images[0].read()
+        #
+        if redraw:
+            self.redraw()
 
-    def open_local_file(self, local_file):
+    def open_local_file(self, local_file, redraw=False):
         self.list_of_images = self.read_local_dir(str(Path(local_file).parent))
         if len(self.list_of_images) == 0:
             log.warning("no images were found")
@@ -277,6 +282,16 @@ class Window(QMainWindow):
                 self.curr_img_idx = i
                 break
         self.curr_img = self.list_of_images[self.curr_img_idx].read()
+        #
+        if redraw:
+            self.redraw()
+
+    def open_local_file_or_dir(self, name):
+        p = Path(name)
+        if p.is_file():
+            self.open_local_file(str(p), redraw=True)
+        if p.is_dir():
+            self.open_local_dir(str(p), redraw=True)
 
     def open_remote_url_file(self, url):
         if Path(url).suffix.lower() not in cfg.SUPPORTED_FORMATS:
@@ -566,6 +581,19 @@ class Window(QMainWindow):
             return
         else:
             log.warning("hmm, it seems to be something new...")
+
+    def dragEnterEvent(self, event):
+        if event.mimeData().hasFormat('text/plain'):
+            event.accept()
+        else:
+            event.ignore()
+
+    def dropEvent(self, event):
+        text = event.mimeData().text().strip()
+        if text.startswith("file://"):
+            text = text[len("file://"):]
+        self.open_local_file_or_dir(text)
+        log.debug("dropEvent: {}".format(event.mimeData().text()))
 
     #########################
     ## BEGIN: top menu bar ##
