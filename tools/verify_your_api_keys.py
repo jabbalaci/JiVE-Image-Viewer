@@ -28,7 +28,7 @@ def check_imgur(url):
     client = ImgurClient(IMGUR_CLIENT_ID, IMGUR_CLIENT_SECRET)
     album_id = get_album_id(url)
     images = client.get_album_images(album_id)
-    
+
     return [img.link for img in images]
 
 

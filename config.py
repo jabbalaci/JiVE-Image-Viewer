@@ -84,5 +84,4 @@ TOP_AND_BOTTOM_BAR_STYLESHEET = "background: lightgray"
 #############################################################################
 
 if __name__ == "__main__":
-    log.info("short fingerprint of this machine: {0}".format(get_short_fingerprint()))
-    # pass
+    pass
