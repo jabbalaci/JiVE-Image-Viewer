@@ -9,6 +9,6 @@ Screenshot
 ----------
 
 <p align="center">
-  <img src="assets/screenshot.png">
+  <img width="60%" src="assets/screenshot.png">
 </p>
 
