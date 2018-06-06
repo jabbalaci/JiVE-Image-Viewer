@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
+import sys
+
 if __name__ == "__main__":
     import os
-    import sys
     src_dir = os.path.join(os.path.dirname(__file__), "src")
     if src_dir not in sys.path:
         sys.path.insert(0, src_dir)
@@ -10,4 +11,4 @@ if __name__ == "__main__":
 
 import jive
 
-jive.main()
+jive.main(sys.argv)

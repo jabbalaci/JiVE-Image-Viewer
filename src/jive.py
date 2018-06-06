@@ -176,8 +176,11 @@ class ImageProperty:
 
 
 class Window(QMainWindow):
-    def __init__(self):
+    def __init__(self, argv):
         super().__init__()
+        self.argv = argv
+
+        # log.debug(f"argv: {argv}")
 
         self.title = "JiVE"
         self.top = 50
@@ -216,6 +219,9 @@ class Window(QMainWindow):
 
         self.reset()    # it must be last thing here
 
+        if len(self.argv) > 1:
+            self.process_arguments(self.argv)
+
         # These are here after reset() just for testing.
         # TO BE REMOVED in the release version.
         # self.open_local_dir(TEST_DIR)
@@ -242,6 +248,20 @@ class Window(QMainWindow):
 
     # def mousePressEvent(self, QMouseEvent):
     #     print(QMouseEvent.pos())
+
+    def process_arguments(self, argv):
+        param = argv[1]
+        self.auto_detect(param)
+
+    def auto_detect(self, text):
+        # log.debug(f"param: {text}")
+
+        # try to open it as a local file / dir.
+        res = self.open_local_file_or_dir(text)
+        if res:
+            return
+        # else, try to open it as a remote URL / subreddit / etc.
+        self.auto_detect_and_open(text, called_from_gui=False)
 
     def mouseReleaseEvent(self, QMouseEvent):
         p = QMouseEvent.pos()
@@ -287,11 +307,19 @@ class Window(QMainWindow):
             self.redraw()
 
     def open_local_file_or_dir(self, name):
+        """
+        Returns True if it was a local file or a local directory.
+        Otherwise, it returns False.
+        """
         p = Path(name)
         if p.is_file():
             self.open_local_file(str(p), redraw=True)
+            return True
         if p.is_dir():
             self.open_local_dir(str(p), redraw=True)
+            return True
+        #
+        return False
 
     def open_remote_url_file(self, url):
         if Path(url).suffix.lower() not in cfg.SUPPORTED_FORMATS:
@@ -552,8 +580,9 @@ class Window(QMainWindow):
         if okPressed and text:
             self.auto_detect_and_open(text)
 
-    def auto_detect_and_open(self, text):
-        self.settings.set_last_open_url_auto_detect(text)
+    def auto_detect_and_open(self, text, called_from_gui=True):
+        if called_from_gui:
+            self.settings.set_last_open_url_auto_detect(text)
         # Is it a remote image's URL?
         if Path(text).suffix.lower() in cfg.SUPPORTED_FORMATS:
             log.info("it seems to be a remote image")
@@ -1205,9 +1234,9 @@ def check_api_keys():
         log.info("imgur API keys were found")
 
 
-def main():
-    App = QApplication(sys.argv)
-    window = Window()
+def main(argv):
+    App = QApplication(argv)
+    window = Window(argv)
     window.show()
     sys.exit(App.exec())
 
@@ -1215,4 +1244,4 @@ def main():
 
 if __name__ == "__main__":
     check_api_keys()
-    main()
+    main(sys.argv)
