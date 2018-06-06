@@ -1,7 +1,7 @@
 NSFW support
 ============
 
-JiVE is a general-purpose, cross-platform image viewer,
+JiVE is a general purpose, cross-platform image viewer,
 but it has some unique built-in NSFW support.
 
 Namely, it can extract images from an arbitrary subreddit
