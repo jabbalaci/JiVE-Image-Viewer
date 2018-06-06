@@ -106,6 +106,13 @@ Hide the mouse cursor (*Ctrl+M*)
 
 With *Ctrl+M* you can hide / show the mouse pointer.
 
+Hide the menu bar (*Alt+M*)
+---------------------------
+
+With *Alt+M* you can hide / show the menu bar. If you switch to
+full screen, the menu bar will be hidden. If you switch from full
+screen to normal screen, the menu bar will be shown.
+
 Zoom (*+*, *-*, *=*)
 --------------------
 
