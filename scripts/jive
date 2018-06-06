@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+# Under Linux, put this script to a folder that
+# is in your PATH. Customize the path of `caller.sh`.
+# Then, using this script, you can launch the application
+# easily. Examples:
+#
+# $ jive        # just launch it
+#
+# $ jive .      # launch and open images in the current directory
+
+~/Dropbox/python/JiVE-Image-Viewer/caller.sh "$@"
