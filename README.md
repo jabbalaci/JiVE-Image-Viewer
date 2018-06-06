@@ -14,6 +14,9 @@ Table of Contents
 * [Launching the application](docs/launching.md)
 * [First steps after installation (API keys)](docs/first_steps.md)
 * [NSFW support](docs/nsfw.md)
+* [How to use the app?](docs/usage.md)
+* [Local settings](docs/settings.md)
+* [Logging](docs/logging.md)
 
 Screenshots
 -----------
