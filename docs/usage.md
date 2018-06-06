@@ -171,6 +171,16 @@ And now the subreddits (further examples):
 * earthporn
 
 If you provide just a word, e.g. *turtles*, JiVE will try to locate the
-subreddit /r/turtles and if it exists, all its images will be extracted
-and shown. Of course, you can provide any subreddit here, even if it's
-not in the menu categories.
+subreddit [/r/turtles](https://www.reddit.com/r/turtles) and if it exists,
+all its images are extracted and shown. Of course, you can provide any subreddit
+here, even if it's not in the menu categories.
+
+As a subreddit is processed, a simple progress bar is shown in the status bar
+(in the left corner).
+
+Reset (*Ctrl+Alt+R*)
+--------------------
+
+With the reset you can go back to the initial state of the app. It can be
+necessary if you modified the `categories.yaml` file and you want to re-read it
+without restarting the app.
