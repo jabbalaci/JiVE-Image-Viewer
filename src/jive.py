@@ -12,7 +12,7 @@ import sys
 from exceptions import ImageError
 from functools import partial
 from pathlib import Path
-
+from helper import pretty_num
 import requests
 from PyQt5 import QtGui
 from PyQt5.QtCore import Qt, QPoint
@@ -312,6 +312,7 @@ class Window(QMainWindow):
         Otherwise, it returns False.
         """
         p = Path(name)
+        # log.debug(p.absolute())
         if p.is_file():
             self.open_local_file(str(p), redraw=True)
             return True
@@ -1197,11 +1198,11 @@ class Window(QMainWindow):
         file_size = helper.file_size_fmt(self.curr_img.file_size) if self.curr_img.file_size > -1 else ""
         zoom = int(self.curr_img.zoom_ratio * 100)
         #
-        self.info_line.setText(green("{0} of {1}".format(self.curr_img_idx + 1, len(self.list_of_images))))
+        self.info_line.setText(green("{0} of {1}".format(pretty_num(self.curr_img_idx + 1), pretty_num(len(self.list_of_images)))))
         #
         self.path_line.setText(green(self.curr_img.get_file_name_or_url()))
         #
-        self.statusbar.curr_pos_label.setText("{0} of {1}".format(self.curr_img_idx + 1, len(self.list_of_images)))
+        self.statusbar.curr_pos_label.setText("{0} of {1}".format(pretty_num(self.curr_img_idx + 1), pretty_num(len(self.list_of_images))))
         self.statusbar.file_name_label.setText("{0}    {1}".format(helper.shorten(self.curr_img.get_file_name_or_url()),
                                                                 file_size))
         self.statusbar.resolution_label.setText(f"{resolution} @ {zoom}%")

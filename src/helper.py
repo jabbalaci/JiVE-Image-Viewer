@@ -22,6 +22,13 @@ def read_image_files(dir_path):
     return res
 
 
+def pretty_num(num):
+    """
+    Prettify a large number, e.g. 1977 -> "1,977".
+    """
+    return "{:,}".format(num)
+
+
 def sizeof_fmt(num):
     """
     Convert memory consumption to human readable format.
