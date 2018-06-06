@@ -178,6 +178,11 @@ here, even if it's not in the menu categories.
 As a subreddit is processed, a simple progress bar is shown in the status bar
 (in the left corner).
 
+Drag & drop
+-----------
+
+You can open a file or folder with drag & drop too.
+
 Reset (*Ctrl+Alt+R*)
 --------------------
 
