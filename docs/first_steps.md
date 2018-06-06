@@ -1,13 +1,13 @@
-API keys
-========
+First steps after installation
+==============================
 
 The application can extract images from Imgur albums / galleries,
 and from Tumblr posts too. These features only work if you have
-the necessary API keys.
+the necessary **API keys**.
 
 You can acquire these keys for free.
 
-Once you have the keys, set them as environment variables.
+Once you have the keys, set them as **environment variables**.
 
 Note that the app. will work without these API keys too, but
 in that case Imgur and Tumblr links won't be processed. So it
@@ -23,6 +23,12 @@ to the end of your `~/.bashrc` file:
 
     IMGUR_CLIENT_ID=...
     IMGUR_CLIENT_SECRET=...
+
+Windows
+-------
+
+The process is similar. Here is a [short video](https://www.youtube.com/watch?v=bEroNNzqlF4)
+that shows you how to set environment variables.
 
 Tip
 ---
