@@ -106,5 +106,4 @@ venv.bak/
 # Jabba's own
 .idea/
 samples/
-cd_venv_dir.sh
 start_win10.bat
