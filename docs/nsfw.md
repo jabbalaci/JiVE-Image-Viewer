@@ -27,7 +27,7 @@ Can I add SFW subreddits too?
 -----------------------------
 
 Sure. Actually, the current list also has some SFW subreddits,
-but currently they are ridiculously under-represented.
+but at the moment they are ridiculously under-represented.
 
 Where can I find more NSFW subreddits?
 --------------------------------------
