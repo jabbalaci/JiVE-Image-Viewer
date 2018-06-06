@@ -150,10 +150,10 @@ When pressing *r*, it can happen that you go over a nice image
 and your brain detects too late how awesome that image was. Don't worry!
 With *Shift+R* you can jump back to the previous image in the random order.
 
-Open the images of a subreddit / imgur album / tumblr post
-----------------------------------------------------------
+Open the images of a subreddit / imgur album / tumblr post (*Ctrl+U*)
+---------------------------------------------------------------------
 
-*Right click* -> *Open URL* -> *Auto detect URL*
+*Right click* -> *Open URL* -> *Auto detect URL* **or** *Ctrl+U*
 
 It can detect different URLs and extract images from them.
 
