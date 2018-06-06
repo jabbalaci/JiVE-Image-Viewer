@@ -12,8 +12,8 @@ popup menu will change in the future.
 
 Now let's see the functionalities of the app.
 
-Quit app (*q*)
---------------
+Quit (*q*)
+----------
 
 With *q* you can quit the application quickly. *Alt+F4* and closing
 the window also work :)
