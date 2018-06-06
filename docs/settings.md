@@ -4,8 +4,8 @@ Local settings
 JiVE creates a local settings file. This file
 is updated every time you close the application.
 
-To figure out the location of this file, execute the
-file `tools/location_of_settings.py`. Here is my output:
+To figure out the location of this file, execute
+`tools/location_of_settings.py`. Here is my output:
 
 Under Linux
 -----------
