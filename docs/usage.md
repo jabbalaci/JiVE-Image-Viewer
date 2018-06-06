@@ -157,13 +157,15 @@ Open the images of a subreddit / imgur album / tumblr post
 
 It can detect different URLs and extract images from them.
 
-Some examples:
+Some examples. Open the *Auto detect URL* dialog and paste these:
+
 * https://i.imgur.com/k489QN8.jpg (direct link on an image)
 * https://imgur.com/gallery/9p0gCyv (imgur gallery)
 * https://imgur.com/a/uAFvn (imgur album)
 * https://different-landscapes.tumblr.com/post/174158537319 (tumblr post)
 
-And now the subreddits (examples):
+And now the subreddits (further examples):
+
 * https://www.reddit.com/r/EarthPorn/
 * /r/EarthPorn
 * earthporn
