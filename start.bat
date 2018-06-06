@@ -1,1 +1,1 @@
-c:\temp\virtualenvs\jive\Scripts\python.exe start.py
+c:\temp\virtualenvs\jive\Scripts\python.exe c:\Dropbox\python\JiVE-Image-Viewer\start.py %1
