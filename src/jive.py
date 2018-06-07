@@ -6,21 +6,20 @@ try:
 except SyntaxError:
     raise ImportError("The application requires Python 3.6+")
 
+import sys
+
 import os
 import random
-import sys
-from exceptions import ImageError
-from functools import partial
-from pathlib import Path
-from helper import pretty_num
 import requests
 from PyQt5 import QtGui
 from PyQt5.QtCore import Qt, QPoint
-from PyQt5.QtGui import QKeySequence, QPixmap, QContextMenuEvent, QMouseEvent, QCursor
+from PyQt5.QtGui import QKeySequence, QPixmap, QCursor
 from PyQt5.QtWidgets import (QAction, QApplication, QDesktopWidget,
                              QFileDialog, QFrame, QInputDialog, QLabel,
                              QLineEdit, QMainWindow, QMenu, QMessageBox,
                              QScrollArea, QShortcut, QVBoxLayout)
+from functools import partial
+from pathlib import Path
 
 import categories
 import config as cfg
@@ -29,8 +28,11 @@ import mylogging as log
 import settings
 import shortcuts as scuts
 import statusbar as sbar
+from exceptions import ImageError
 from extractors import imgur, subreddit, tumblr
 from helper import bold, gray, green, red
+from helper import pretty_num
+from imageinfo import ImageInfo
 from imageview import ImageView
 
 OFF = False
@@ -172,6 +174,12 @@ class ImageProperty:
     def get_aspect_ratio(self):
         return self.original_img.width() / self.original_img.height()
 
+    def get_file_size(self, human_readable=False):
+        if not human_readable:
+            return self.file_size
+        else:
+            return helper.file_size_fmt(self.file_size) if self.file_size > -1 else ""
+
 # end class ImageProperty
 
 
@@ -211,6 +219,8 @@ class Window(QMainWindow):
 
         self.shortcuts = scuts.Shortcuts()
         self.add_shortcuts()
+
+        self.image_info_dialog = None    # will be set later
 
         self.init_ui()
 
@@ -949,6 +959,16 @@ class Window(QMainWindow):
         self.shortcutContextMenu = QShortcut(QKeySequence(key), self)
         self.shortcuts.register_window_shortcut(key, self.shortcutContextMenu, self.show_popup)
 
+        key = "I"
+        self.shortcutImageInfo = QShortcut(QKeySequence(key), self)
+        self.shortcuts.register_window_shortcut(key, self.shortcutImageInfo, self.image_info)
+
+    def image_info(self):
+        if self.curr_img:
+            if self.image_info_dialog:
+                self.image_info_dialog.close()    # allow just 1 instance
+            self.image_info_dialog = ImageInfo(self, self.curr_img)
+
     def show_popup(self):
         """
         When the "Menu" key is pressed, show the context menu right at the mouse pointer.
@@ -1195,16 +1215,18 @@ class Window(QMainWindow):
         self.image_label.resize(pm.width(), pm.height())
         #
         resolution = "{w} x {h}".format(w=self.curr_img.original_img.width(), h=self.curr_img.original_img.height())
-        file_size = helper.file_size_fmt(self.curr_img.file_size) if self.curr_img.file_size > -1 else ""
+        # file_size = helper.file_size_fmt(self.curr_img.file_size) if self.curr_img.file_size > -1 else ""
+        file_size_hr = self.curr_img.get_file_size(human_readable=True)
         zoom = int(self.curr_img.zoom_ratio * 100)
         #
         self.info_line.setText(green("{0} of {1}".format(pretty_num(self.curr_img_idx + 1), pretty_num(len(self.list_of_images)))))
         #
         self.path_line.setText(green(self.curr_img.get_file_name_or_url()))
         #
-        self.statusbar.curr_pos_label.setText("{0} of {1}".format(pretty_num(self.curr_img_idx + 1), pretty_num(len(self.list_of_images))))
+        self.statusbar.curr_pos_label.setText("{0} of {1}".format(pretty_num(self.curr_img_idx + 1),
+                                                                  pretty_num(len(self.list_of_images))))
         self.statusbar.file_name_label.setText("{0}    {1}".format(helper.shorten(self.curr_img.get_file_name_or_url()),
-                                                                file_size))
+                                                                   file_size_hr))
         self.statusbar.resolution_label.setText(f"{resolution} @ {zoom}%")
         # self.statusbar.memory_label.setText(helper.get_memory_usage())
         self.set_title(self.curr_img.get_file_name_only())
@@ -1212,6 +1234,8 @@ class Window(QMainWindow):
             self.statusbar.flash_message(red("problem"))
 
     def closeEvent(self, event):
+        if self.image_info_dialog:
+            self.image_info_dialog.close()
         self.settings.write()
 
 # end class Window(QMainWindow)
