@@ -99,6 +99,8 @@ Full screen (*F11*)
 With *F11* you can toggle between full screen and normal mode.
 In full screen mode the menu bar and the status bar are hidden.
 
+If you hit *Esc* in full screen mode, you can go back to normal mode.
+
 (Note: I prefer the maximized mode.)
 
 Hide the mouse cursor (*Ctrl+M*)
@@ -196,3 +198,21 @@ Reset (*Ctrl+Alt+R*)
 With the reset you can go back to the initial state of the app. It can be
 necessary if you modified the `categories.yaml` file and you want to re-read it
 without restarting the app.
+
+Image info (*i*)
+----------------
+
+With *i* you can get some information about the current image.
+
+<p align="center">
+  <img width="60%" src="../assets/screenshots/image_info.jpg">
+</p>
+
+The image info window is modal, i.e. you need to close it first if you want to
+interact with the main window. The image info can be closed with *i*, *q*, and *Esc*.
+
+Tip: If you want to look at the image info and then you want to close it quickly,
+just press *i* twice.
+
+Next to the path there is a clipboard button. Press it to copy the path
+to the clipboard.

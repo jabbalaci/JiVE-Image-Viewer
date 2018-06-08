@@ -25,13 +25,13 @@ Screenshots
 In action:
 
 <p align="center">
-  <img width="60%" src="assets/screenshot.png">
+  <img width="60%" src="assets/screenshots/screenshot.jpg">
 </p>
 
 Selecting an NSFW subreddit:
 
 <p align="center">
-  <img width="60%" src="assets/nsfw.png">
+  <img width="60%" src="assets/screenshots/nsfw.png">
 </p>
 
 The subreddits are read from a config file (`categories/categories.yaml`), so feel free to edit and extend
