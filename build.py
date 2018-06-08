@@ -63,6 +63,9 @@ def copy_dir(src, dest):
     shutil.copytree(src, dest)
     print(f"└ end: copy {src} -> {dest}")
 
+###########
+## Tasks ##
+###########
 
 @task()
 def clean():
