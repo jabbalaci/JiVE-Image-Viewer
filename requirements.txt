@@ -1,9 +1,15 @@
+altgraph==0.15
 appdirs==1.4.3
 certifi==2018.4.16
 chardet==3.0.4
+future==0.16.0
 idna==2.6
 imgurpython==1.1.7
+macholib==1.9
+pefile==2017.11.5
 psutil==5.4.5
+PyInstaller==3.3.1
+pynt==0.8.1
 PyQt5==5.10.1
 PyYAML==3.12
 requests==2.18.4
