@@ -55,35 +55,34 @@ def get_memory_usage():
     return sizeof_fmt(in_bytes)
 
 
-def green(text):
+def color(col, text, bold=True):
+    if bold:
+        return f"<font color='{col}'><strong>{text}</strong></font>"
+    # else
+    return f"<font color='{col}'>{text}</font>"
+
+
+def green(text, bold=True):
     """
     Hacker green :)
     """
-    return f"<font color='#04ff02'><strong>{text}</strong></font>"
+    return color("#04ff02", text, bold)
 
 
 def red(text, bold=True):
-    if bold:
-        res = f"<font color='red'><strong>{text}</strong></font>"
-    else:
-        res = f"<font color='red'>{text}</font>"
-    return res
+    return color("red", text, bold)
 
 
 def blue(text, bold=True):
-    if bold:
-        res = f"<font color='blue'><strong>{text}</strong></font>"
-    else:
-        res = f"<font color='blue'>{text}</font>"
-    return res
+    return color("blue", text, bold)
+
+
+def lightblue(text, bold=True):
+    return color("#ACB1E6", text, bold)
 
 
 def gray(text, bold=True):
-    if bold:
-        res = f"<font color='gray'><strong>{text}</strong></font>"
-    else:
-        res = f"<font color='gray'>{text}</font>"
-    return res
+    return color("gray", text, bold)
 
 
 def bold(text):

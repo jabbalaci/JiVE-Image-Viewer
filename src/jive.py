@@ -6,10 +6,12 @@ try:
 except SyntaxError:
     raise ImportError("The application requires Python 3.6+")
 
-import sys
-
 import os
 import random
+import sys
+from functools import partial
+from pathlib import Path
+
 import requests
 from PyQt5 import QtGui
 from PyQt5.QtCore import Qt, QPoint
@@ -18,8 +20,6 @@ from PyQt5.QtWidgets import (QAction, QApplication, QDesktopWidget,
                              QFileDialog, QFrame, QInputDialog, QLabel,
                              QLineEdit, QMainWindow, QMenu, QMessageBox,
                              QScrollArea, QShortcut, QVBoxLayout)
-from functools import partial
-from pathlib import Path
 
 import categories
 import config as cfg
@@ -30,7 +30,7 @@ import shortcuts as scuts
 import statusbar as sbar
 from exceptions import ImageError
 from extractors import imgur, subreddit, tumblr
-from helper import bold, gray, green, red
+from helper import bold, gray, green, red, blue, lightblue
 from helper import pretty_num
 from imageinfo import ImageInfo
 from imageview import ImageView
@@ -69,6 +69,9 @@ class ImageProperty:
         self.image_state = None     # will be set in read()
         self.zoomed_img = None      # will be set in read()
         self.file_size = -1         # will be set in read()
+        self.to_save = False
+        self.to_delete = False
+        self.to_wallpaper = False
 
     @classmethod
     def to_pixmap(cls, name):
@@ -180,6 +183,35 @@ class ImageProperty:
         else:
             return helper.file_size_fmt(self.file_size) if self.file_size > -1 else ""
 
+    def toggle_save(self):
+        self.to_save = not self.to_save
+
+    def toggle_delete(self):
+        self.to_delete = not self.to_delete
+
+    def toggle_wallpaper(self):
+        self.to_wallpaper = not self.to_wallpaper
+        
+    def get_flags(self):
+        sb = []
+        if self.to_save:
+            sb.append("save")
+        if self.to_delete:
+            sb.append("delete")
+        if self.to_wallpaper:
+            sb.append("wallpaper")
+        return ", ".join(sb) if sb else "--"
+
+    def get_short_flags(self):
+        sb = []
+        if self.to_save:
+            sb.append(green("S"))
+        if self.to_delete:
+            sb.append(red("D"))
+        if self.to_wallpaper:
+            sb.append(lightblue("W"))
+        return "<br>".join(sb)
+
 # end class ImageProperty
 
 
@@ -273,7 +305,7 @@ class Window(QMainWindow):
         # else, try to open it as a remote URL / subreddit / etc.
         self.auto_detect_and_open(text, called_from_gui=False)
 
-    def mouseReleaseEvent(self, QMouseEvent):
+    def mousePressEvent(self, QMouseEvent):
         p = QMouseEvent.pos()
         x, y = p.x(), p.y()
         # print(x, y)
@@ -431,7 +463,7 @@ class Window(QMainWindow):
         # else
         new_idx = self.curr_img_idx + 1
         if new_idx >= len(self.list_of_images):
-            new_idx = 0
+            new_idx = len(self.list_of_images) - 1
         #
         self.jump_to_image(new_idx)
 
@@ -449,7 +481,7 @@ class Window(QMainWindow):
         # else
         new_idx = self.curr_img_idx - 1
         if new_idx < 0:
-            new_idx = len(self.list_of_images) - 1
+            new_idx = 0
         #
         self.jump_to_image(new_idx)
 
@@ -540,6 +572,16 @@ class Window(QMainWindow):
         self.path_line.setMinimumWidth(cfg.LONG)
         self.path_line.move(20, 30)
         self.path_line.show()
+
+        self.flags_line = QLabel(self.img_view)
+        default_font_name = QtGui.QFont().defaultFamily()
+        new_font = QtGui.QFont(default_font_name, 30)
+        self.flags_line.setFont(new_font)
+        self.flags_line.setMinimumWidth(cfg.LONG)
+        self.flags_line.setMinimumHeight(cfg.LONG)
+        self.flags_line.setAlignment(Qt.AlignTop)
+        self.flags_line.move(20, 60)
+        self.flags_line.show()
 
         self.statusbar = sbar.StatusBar(self)
         self.statusBar().setStyleSheet(cfg.TOP_AND_BOTTOM_BAR_STYLESHEET)
@@ -896,9 +938,10 @@ class Window(QMainWindow):
         self.shortcutFitImageToWindow = QShortcut(QKeySequence(key), self)
         self.shortcuts.register_window_shortcut(key, self.shortcutFitImageToWindow, self.fit_image_to_window)
         #
-        key = "W"
-        self.shortcutFitImageToWindowWidth = QShortcut(QKeySequence(key), self)
-        self.shortcuts.register_window_shortcut(key, self.shortcutFitImageToWindowWidth, self.fit_image_to_window_width)
+        # "W" will rather be used to mark an image to be saved as a wallpaper
+        # key = "W"
+        # self.shortcutFitImageToWindowWidth = QShortcut(QKeySequence(key), self)
+        # self.shortcuts.register_window_shortcut(key, self.shortcutFitImageToWindowWidth, self.fit_image_to_window_width)
 
         key = "Left"
         self.shortcutPrevImage = QShortcut(QKeySequence(key), self)
@@ -1011,6 +1054,48 @@ class Window(QMainWindow):
         key = "I"
         self.shortcutImageInfo = QShortcut(QKeySequence(key), self)
         self.shortcuts.register_window_shortcut(key, self.shortcutImageInfo, self.image_info)
+
+        key = "S"
+        self.shortcutMarkToSave = QShortcut(QKeySequence(key), self)
+        self.shortcuts.register_window_shortcut(key, self.shortcutMarkToSave, self.toggle_img_save)
+
+        key = "D"
+        self.shortcutMarkToDelete = QShortcut(QKeySequence(key), self)
+        self.shortcuts.register_window_shortcut(key, self.shortcutMarkToDelete, self.toggle_img_delete)
+
+        key = "W"
+        self.shortcutMarkToWallpaper = QShortcut(QKeySequence(key), self)
+        self.shortcuts.register_window_shortcut(key, self.shortcutMarkToWallpaper, self.toggle_img_wallpaper)
+
+    def toggle_img_save(self):
+        if self.curr_img.local_file:
+            msg = """
+This is a <strong>local</strong> file.<br>
+<br>
+It makes no sense to mark it to be saved.            
+""".strip()
+            QMessageBox.warning(self, "Warning", msg)
+            return
+        # else
+        self.curr_img.toggle_save()
+        self.redraw()
+
+    def toggle_img_delete(self):
+        if not self.curr_img.local_file:
+            msg = """
+This is a <strong>remote</strong> file with a URL.<br>
+<br>
+You cannot delete it.
+""".strip()
+            QMessageBox.warning(self, "Warning", msg)
+            return
+        # else
+        self.curr_img.toggle_delete()
+        self.redraw()
+
+    def toggle_img_wallpaper(self):
+        self.curr_img.toggle_wallpaper()
+        self.redraw()
 
     def image_info(self):
         if not self.curr_img:
@@ -1289,6 +1374,8 @@ class Window(QMainWindow):
         self.info_line.setText(green("{0} of {1}".format(pretty_num(self.curr_img_idx + 1), pretty_num(len(self.list_of_images)))))
         #
         self.path_line.setText(green(self.curr_img.get_file_name_or_url()))
+        #
+        self.flags_line.setText(green(self.curr_img.get_short_flags()))
         #
         self.statusbar.curr_pos_label.setText("{0} of {1}".format(pretty_num(self.curr_img_idx + 1),
                                                                   pretty_num(len(self.list_of_images))))

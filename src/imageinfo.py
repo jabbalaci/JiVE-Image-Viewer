@@ -63,6 +63,10 @@ class ImageInfo(QDialog):
         text = "{0} ({1} bytes)".format(file_size_hr, helper.pretty_num(self.img.get_file_size()))
         layout.addWidget(QLabel(text), 3, 1)
 
+        layout.addWidget(QLabel(bold("Flags:")), 4, 0)
+        text = self.img.get_flags()
+        layout.addWidget(QLabel(text), 4, 1)
+
         self.group_box.setLayout(layout)
 
     def copy_to_clipboard(self, text):
