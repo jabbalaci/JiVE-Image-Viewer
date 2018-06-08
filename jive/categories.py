@@ -1,9 +1,9 @@
-import config as cfg
 from functools import partial
 
 import yaml
 from PyQt5.QtWidgets import QAction, QMenu
 
+from jive import config as cfg
 from jive import mylogging as log
 
 SORT = True

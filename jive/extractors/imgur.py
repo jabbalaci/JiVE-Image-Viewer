@@ -1,10 +1,10 @@
-import config as cfg
 import re
 import sys
 
 import imgurpython
 from imgurpython import ImgurClient
 
+from jive import config as cfg
 from jive import mylogging as log
 
 try:

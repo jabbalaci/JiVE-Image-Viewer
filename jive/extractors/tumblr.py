@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
-import config as cfg
 import re
 
 import requests
 
+from jive import config as cfg
 from jive import mylogging as log
 
 

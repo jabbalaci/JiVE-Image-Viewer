@@ -1,8 +1,9 @@
-import config as cfg
 import os
 from pathlib import Path
 
 import psutil
+
+from jive import config as cfg
 
 BYTE = 1
 KB = 1024 * BYTE

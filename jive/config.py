@@ -1,14 +1,14 @@
-# import os
-#
-# if __name__ == "__main__":
-#     import sys
-#     src_dir = os.path.join(os.path.dirname(__file__), "src")
-#     if src_dir not in sys.path:
-#         sys.path.insert(0, src_dir)
-# # endif
-
 import os
 import sys
+
+if __name__ == "__main__":
+    # This is a trick. This way I can launch
+    # this file during the development.
+    folder = os.path.join(os.path.dirname(__file__), "..")
+    if folder not in sys.path:
+        sys.path.insert(0, folder)
+# endif
+
 from pathlib import Path
 
 from appdirs import AppDirs
@@ -61,8 +61,8 @@ IMGUR_CLIENT_ID = os.environ.get("IMGUR_CLIENT_ID")
 IMGUR_CLIENT_SECRET = os.environ.get("IMGUR_CLIENT_SECRET")
 ## END: API keys
 
-ICON = str(Path(BASE_DIR, "assets", "icon.png"))
-LOGO = str(Path(BASE_DIR, "assets", "logo.png"))
+ICON = str(Path(ASSETS_DIR, "icon.png"))
+LOGO = str(Path(ASSETS_DIR, "logo.png"))
 
 LONG = 1024    # for labels' widths to avoid text truncation
 

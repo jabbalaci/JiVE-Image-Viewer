@@ -1,7 +1,7 @@
 from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QHBoxLayout, QLabel, QWidget
 
-import config as cfg
+from jive import config as cfg
 
 
 class StatusBar(QWidget):

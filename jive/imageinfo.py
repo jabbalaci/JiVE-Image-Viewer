@@ -1,4 +1,3 @@
-import config as cfg
 from functools import partial
 from pathlib import Path
 
@@ -7,6 +6,7 @@ from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import (QApplication, QDialog, QGridLayout, QGroupBox,
                              QLabel, QPushButton, QShortcut, QVBoxLayout)
 
+from jive import config as cfg
 from jive import helper, summary
 from jive.helper import bold
 

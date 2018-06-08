@@ -10,12 +10,14 @@ import sys
 import os
 
 if __name__ == "__main__":
+    # This is a trick. This way I can launch jive.py (this file) during
+    # the development and I don't need to start ../start.py every time.
     folder = os.path.join(os.path.dirname(__file__), "..")
     if folder not in sys.path:
         sys.path.insert(0, folder)
+    sys.argv[0] = "../start.py"
 # endif
 
-import config as cfg
 import random
 from functools import partial
 from pathlib import Path
@@ -29,7 +31,9 @@ from PyQt5.QtWidgets import (QAction, QApplication, QDesktopWidget,
                              QLineEdit, QMainWindow, QMenu, QMessageBox,
                              QScrollArea, QShortcut, QVBoxLayout)
 
-from jive import categories, helper
+from jive import categories
+from jive import config as cfg
+from jive import helper
 from jive import mylogging as log
 from jive import settings
 from jive import shortcuts as scuts

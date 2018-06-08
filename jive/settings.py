@@ -1,9 +1,9 @@
-import config as cfg
 import json
 import os
 import shutil
 from pathlib import Path
 
+from jive import config as cfg
 from jive import mylogging as log
 
 
