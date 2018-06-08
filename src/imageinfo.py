@@ -8,6 +8,7 @@ from PyQt5.QtWidgets import QDialog, QShortcut, QGroupBox, QGridLayout, QLabel, 
 
 import config as cfg
 import helper
+import summary
 from helper import bold
 
 ICON_SIZE = 16
@@ -25,10 +26,12 @@ class ImageInfo(QDialog):
         self.setWindowIcon(QtGui.QIcon(str(Path(cfg.ASSETS_DIR, "info.png"))))
 
         self.add_shortcuts()
-        self.grid_layout_creation()
+        self.grid_layout_creation_1()
+        self.grid_layout_creation_2()
 
         vbox = QVBoxLayout()
-        vbox.addWidget(self.group_box)
+        vbox.addWidget(self.group_box_1)
+        vbox.addWidget(self.group_box_2)
         self.setLayout(vbox)
 
         self.show()
@@ -36,8 +39,8 @@ class ImageInfo(QDialog):
     # def closeEvent(self, event):
     #     self.parent.setEnabled(True)
 
-    def grid_layout_creation(self):
-        self.group_box = QGroupBox("Info")
+    def grid_layout_creation_1(self):
+        self.group_box_1 = QGroupBox("Image info")
 
         layout = QGridLayout()
         layout.addWidget(QLabel(bold("Local file?")), 0, 0)
@@ -67,7 +70,30 @@ class ImageInfo(QDialog):
         text = self.img.get_flags()
         layout.addWidget(QLabel(text), 4, 1)
 
-        self.group_box.setLayout(layout)
+        self.group_box_1.setLayout(layout)
+
+    def grid_layout_creation_2(self):
+        self.group_box_2 = QGroupBox("Summary")
+
+        length = len(self.parent.list_of_images)
+
+        layout = QGridLayout()
+        layout.addWidget(QLabel(bold("Marked to be saved:")), 0, 0)
+        num = summary.to_save(self.parent.list_of_images)
+        text = f"{num} (out of {length})"
+        layout.addWidget(QLabel(text), 0, 1)
+
+        layout.addWidget(QLabel(bold("Marked to be deleted:")), 1, 0)
+        num = summary.to_delete(self.parent.list_of_images)
+        text = f"{num} (out of {length})"
+        layout.addWidget(QLabel(text), 1, 1)
+
+        layout.addWidget(QLabel(bold("Marked to save as wallpaper:")), 2, 0)
+        num = summary.to_wallpaper(self.parent.list_of_images)
+        text = f"{num} (out of {length})"
+        layout.addWidget(QLabel(text), 2, 1)
+
+        self.group_box_2.setLayout(layout)
 
     def copy_to_clipboard(self, text):
         cb = QApplication.clipboard()

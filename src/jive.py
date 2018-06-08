@@ -30,7 +30,7 @@ import shortcuts as scuts
 import statusbar as sbar
 from exceptions import ImageError
 from extractors import imgur, subreddit, tumblr
-from helper import bold, gray, green, red, blue, lightblue
+from helper import bold, gray, green, red, lightblue
 from helper import pretty_num
 from imageinfo import ImageInfo
 from imageview import ImageView
