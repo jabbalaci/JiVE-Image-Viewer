@@ -1,15 +1,17 @@
+from functools import partial
+from pathlib import Path
+
 from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import QDialog, QShortcut, QGroupBox, QGridLayout, QLabel, QVBoxLayout, QPushButton, QApplication
-from functools import partial
-from pathlib import Path
 
 import config as cfg
 import helper
 from helper import bold
 
 ICON_SIZE = 16
+
 
 class ImageInfo(QDialog):
     def __init__(self, parent, img):

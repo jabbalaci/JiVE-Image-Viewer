@@ -661,7 +661,10 @@ class Window(QMainWindow):
         self.save_image_act = QAction("Save image", self)
         # self.save_image_act.triggered.connect(self.save_image)
         #
-        self.image_info_act = QAction("View image info", self)
+        key = "I"
+        self.image_info_act = QAction("Image &info", self)
+        self.shortcuts.register_menubar_action(key, self.image_info_act, self.image_info)
+        # self.image_info_act = QAction("Image info", self)
         # self.image_info_act.triggered.connect(self.image_info)
         #
         self.slideshow_act = QAction("Slideshow", self)
@@ -680,6 +683,10 @@ class Window(QMainWindow):
         key = "Q"
         self.quit_act = QAction("&Quit", self)
         self.shortcuts.register_menubar_action(key, self.quit_act, self.close)
+        #
+        key = "I"
+        self.image_info_act = QAction("Image info", self)
+        self.shortcuts.register_menubar_action(key, self.image_info_act, self.image_info)
         #
         key = "Alt+M"
         self.hide_menubar_act = QAction("Hide menu bar", self)
@@ -720,6 +727,8 @@ class Window(QMainWindow):
         fileMenu.addAction(self.quit_act)
 
         # viewMenu
+        viewMenu.addAction(self.image_info_act)
+        viewMenu.addSeparator()
         viewMenu.addAction(self.hide_menubar_act)
         viewMenu.addAction(self.show_mouse_pointer_act)
     #
@@ -739,7 +748,7 @@ class Window(QMainWindow):
                          self.open_url_open_imgur_album_act,
                          self.open_url_open_tumblr_post_act]
 
-        # When I right-click, very often the first menu gets selected.
+        # When I right-click, very often the first menu item gets selected.
         # "Nothing" is added to avoid that problem.
         self.menu.addAction(QAction("Nothing", self))
         self.menu.addSeparator()
@@ -964,10 +973,17 @@ class Window(QMainWindow):
         self.shortcuts.register_window_shortcut(key, self.shortcutImageInfo, self.image_info)
 
     def image_info(self):
-        if self.curr_img:
-            if self.image_info_dialog:
-                self.image_info_dialog.close()    # allow just 1 instance
-            self.image_info_dialog = ImageInfo(self, self.curr_img)
+        if not self.curr_img:
+            self.statusbar.flash_message(red("no"))
+            return
+        # else
+        if self.curr_img.image_state == ImageProperty.IMAGE_STATE_PROBLEM:
+            self.statusbar.flash_message(red("no"))
+            return
+        # else
+        if self.image_info_dialog:
+            self.image_info_dialog.close()    # allow just 1 instance; not needed if that window is modal
+        self.image_info_dialog = ImageInfo(self, self.curr_img)
 
     def show_popup(self):
         """
@@ -982,13 +998,20 @@ class Window(QMainWindow):
 
     def toggle_menubar(self):
         if self.menubar.isVisible():
-            self.menubar.hide()
-            self.statusbar.flash_message("Alt+M: show menu bar")
-            self.shortcuts.enable_all_window_shortcuts()
+            self.hide_manubar()
         else:
-            self.menubar.show()
-            self.shortcuts.disable_conflicting_window_shortcuts()
+            self.show_menubar()
+        #
         self.redraw()
+
+    def show_menubar(self):
+        self.menubar.show()
+        self.shortcuts.disable_conflicting_window_shortcuts()
+
+    def hide_manubar(self):
+        self.menubar.hide()
+        self.statusbar.flash_message("Alt+M: show menu bar")
+        self.shortcuts.enable_all_window_shortcuts()
 
     def dialog_go_to_image(self):
         total = len(self.list_of_images)
@@ -1110,11 +1133,11 @@ class Window(QMainWindow):
         if self.isFullScreen():
             self.showNormal()
             self.statusBar().show()
-            self.menubar.show()
+            self.show_menubar()
         else:
             self.showFullScreen()
             self.statusBar().hide()
-            self.menubar.hide()
+            self.hide_manubar()
 
     def toggle_fit_window_to_image(self):
         if self._fit_window_to_image_status == OFF:
