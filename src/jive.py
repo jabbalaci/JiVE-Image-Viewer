@@ -316,6 +316,37 @@ class Window(QMainWindow):
         if redraw:
             self.redraw()
 
+    def find_image_index_by_name(self, name):
+        for i in range(len(self.list_of_images)):
+            if self.list_of_images[i].name == name:
+                return i
+            #
+        #
+        return -1    # not found
+
+    def shuffle_images(self):
+        # if there are no images or if there is only one, shuffle makes no sense
+        length = len(self.list_of_images)
+        if length == 0 or length == 1:
+            return
+        # else
+        name = self.curr_img.name
+        old_name = self.curr_img.name
+        # Make sure that we position on a different image
+        # every time we make a shuffle. Retry 10 times to
+        # avoid an infinite loop.
+        for i in range(10):
+            random.shuffle(self.list_of_images)
+            new_name = self.list_of_images[0].name
+            if new_name != old_name:
+                break
+            #
+        #
+        new_idx = self.find_image_index_by_name(name)
+        self.curr_img_idx = new_idx
+        #
+        self.jump_to_image(0)    # it will free the current image if necessary
+
     def open_local_file_or_dir(self, name):
         """
         Returns True if it was a local file or a local directory.
@@ -695,6 +726,9 @@ class Window(QMainWindow):
         key = "Ctrl+M"
         self.show_mouse_pointer_act = QAction("Show mouse pointer", self, checkable=True, checked=True)
         self.shortcuts.register_menubar_action(key, self.show_mouse_pointer_act, self.toggle_mouse_pointer)
+        #
+        self.shuffle_images_act = QAction("&Shuffle images", self)
+        self.shuffle_images_act.triggered.connect(self.shuffle_images)
 
     def create_menubar(self):
         self.menubar = self.menuBar()
@@ -727,6 +761,8 @@ class Window(QMainWindow):
         fileMenu.addAction(self.quit_act)
 
         # viewMenu
+        viewMenu.addAction(self.shuffle_images_act)
+        viewMenu.addSeparator()
         viewMenu.addAction(self.image_info_act)
         viewMenu.addSeparator()
         viewMenu.addAction(self.hide_menubar_act)

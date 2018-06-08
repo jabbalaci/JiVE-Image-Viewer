@@ -105,7 +105,6 @@ venv.bak/
 
 # Jabba's own
 .idea/
-samples/
-samples2/
+samples*/
 start_win10.bat
 notes/
