@@ -30,7 +30,7 @@ import shortcuts as scuts
 import statusbar as sbar
 from exceptions import ImageError
 from extractors import imgur, subreddit, tumblr
-from helper import bold, gray, green, red, lightblue
+from helper import bold, gray, green, red, lightblue, yellow
 from helper import pretty_num
 from imageinfo import ImageInfo
 from imageview import ImageView
@@ -205,7 +205,7 @@ class ImageProperty:
     def get_short_flags(self):
         sb = []
         if self.to_save:
-            sb.append(green("S"))
+            sb.append(yellow("S"))
         if self.to_delete:
             sb.append(red("D"))
         if self.to_wallpaper:
@@ -287,6 +287,8 @@ class Window(QMainWindow):
         #
         # if the categories.yaml was changed
         self.create_contextmenu()
+        # remove on-screen flags (S, D, W):
+        self.flags_line.setText("")
 
     # def mousePressEvent(self, QMouseEvent):
     #     print(QMouseEvent.pos())
@@ -1068,6 +1070,10 @@ class Window(QMainWindow):
         self.shortcuts.register_window_shortcut(key, self.shortcutMarkToWallpaper, self.toggle_img_wallpaper)
 
     def toggle_img_save(self):
+        if self.curr_img.image_state == ImageProperty.IMAGE_STATE_PROBLEM:
+            self.statusbar.flash_message(red("no"))
+            return
+        # else
         if self.curr_img.local_file:
             msg = """
 This is a <strong>local</strong> file.<br>
@@ -1078,9 +1084,19 @@ It makes no sense to mark it to be saved.
             return
         # else
         self.curr_img.toggle_save()
+        if self.curr_img.to_save:
+            self.statusbar.flash_message("+ save", cfg.MESSAGE_FLASH_TIME_1)
+        else:
+            self.statusbar.flash_message("- save", cfg.MESSAGE_FLASH_TIME_1)
         self.redraw()
+        if self.curr_img.to_save:
+            self.jump_to_next_image()
 
     def toggle_img_delete(self):
+        if self.curr_img.image_state == ImageProperty.IMAGE_STATE_PROBLEM:
+            self.statusbar.flash_message(red("no"))
+            return
+        # else
         if not self.curr_img.local_file:
             msg = """
 This is a <strong>remote</strong> file with a URL.<br>
@@ -1091,11 +1107,27 @@ You cannot delete it.
             return
         # else
         self.curr_img.toggle_delete()
+        if self.curr_img.to_delete:
+            self.statusbar.flash_message("+ delete", cfg.MESSAGE_FLASH_TIME_1)
+        else:
+            self.statusbar.flash_message("- delete", cfg.MESSAGE_FLASH_TIME_1)
         self.redraw()
+        if self.curr_img.to_delete:
+            self.jump_to_next_image()
 
     def toggle_img_wallpaper(self):
+        if self.curr_img.image_state == ImageProperty.IMAGE_STATE_PROBLEM:
+            self.statusbar.flash_message(red("no"))
+            return
+        # else
         self.curr_img.toggle_wallpaper()
+        if self.curr_img.to_wallpaper:
+            self.statusbar.flash_message("+ wallpaper", cfg.MESSAGE_FLASH_TIME_1)
+        else:
+            self.statusbar.flash_message("- wallpaper", cfg.MESSAGE_FLASH_TIME_1)
         self.redraw()
+        if self.curr_img.to_wallpaper:
+            self.jump_to_next_image()
 
     def image_info(self):
         if not self.curr_img:
@@ -1375,7 +1407,8 @@ You cannot delete it.
         #
         self.path_line.setText(green(self.curr_img.get_file_name_or_url()))
         #
-        self.flags_line.setText(green(self.curr_img.get_short_flags()))
+        text = green(self.curr_img.get_short_flags())
+        self.flags_line.setText(text)
         #
         self.statusbar.curr_pos_label.setText("{0} of {1}".format(pretty_num(self.curr_img_idx + 1),
                                                                   pretty_num(len(self.list_of_images))))

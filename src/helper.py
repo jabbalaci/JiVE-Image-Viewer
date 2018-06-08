@@ -77,6 +77,10 @@ def blue(text, bold=True):
     return color("blue", text, bold)
 
 
+def yellow(text, bold=True):
+    return color("yellow", text, bold)
+
+
 def lightblue(text, bold=True):
     return color("#ACB1E6", text, bold)
 
