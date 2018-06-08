@@ -192,6 +192,17 @@ Drag & drop
 
 You can open a file or folder with drag & drop too.
 
+Context (popup) menu
+--------------------
+
+The context (popup) menu can be activated with a right mouse click.
+On most keyboards there is a dedicated button for popup menus. You
+can also bring up the context menu with this button.
+
+<p align="center">
+  <img src="../assets/screenshots/menu_key.jpg">
+</p>
+
 Reset (*Ctrl+Alt+R*)
 --------------------
 
@@ -216,3 +227,8 @@ just press *i* twice.
 
 Next to the path there is a clipboard button. Press it to copy the path
 to the clipboard.
+
+Shuffle images (*View* -> *Shuffle images*)
+-------------------------------------------
+
+It shuffles the order of images and sets you back to the first image.
