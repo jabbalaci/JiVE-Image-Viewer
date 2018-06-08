@@ -836,6 +836,10 @@ class Window(QMainWindow):
         self.shortcutFullscreen = QShortcut(QKeySequence(key), self)
         self.shortcuts.register_window_shortcut(key, self.shortcutFullscreen, self.toggle_fullscreen)
 
+        key = "Esc"
+        self.shortcutFromFullscreenToNormal = QShortcut(QKeySequence(key), self)
+        self.shortcuts.register_window_shortcut(key, self.shortcutFromFullscreenToNormal, self.from_fullscreen_to_normal)
+
         key = "+"
         self.shortcutZoomIn = QShortcut(QKeySequence(key), self)
         self.shortcuts.register_window_shortcut(key, self.shortcutZoomIn, self.zoom_in)
@@ -1138,6 +1142,10 @@ class Window(QMainWindow):
             self.showFullScreen()
             self.statusBar().hide()
             self.hide_manubar()
+
+    def from_fullscreen_to_normal(self):
+        if self.isFullScreen():
+            self.toggle_fullscreen()
 
     def toggle_fit_window_to_image(self):
         if self._fit_window_to_image_status == OFF:
