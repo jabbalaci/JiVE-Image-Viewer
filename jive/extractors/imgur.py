@@ -1,11 +1,11 @@
+import config as cfg
 import re
 import sys
 
 import imgurpython
 from imgurpython import ImgurClient
 
-import config as cfg
-import mylogging as log
+from jive import mylogging as log
 
 try:
     client = ImgurClient(cfg.IMGUR_CLIENT_ID, cfg.IMGUR_CLIENT_SECRET)

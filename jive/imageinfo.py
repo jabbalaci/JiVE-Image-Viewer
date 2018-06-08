@@ -1,15 +1,14 @@
+import config as cfg
 from functools import partial
 from pathlib import Path
 
-from PyQt5 import QtCore
-from PyQt5 import QtGui
+from PyQt5 import QtCore, QtGui
 from PyQt5.QtGui import QKeySequence
-from PyQt5.QtWidgets import QDialog, QShortcut, QGroupBox, QGridLayout, QLabel, QVBoxLayout, QPushButton, QApplication
+from PyQt5.QtWidgets import (QApplication, QDialog, QGridLayout, QGroupBox,
+                             QLabel, QPushButton, QShortcut, QVBoxLayout)
 
-import config as cfg
-import helper
-import summary
-from helper import bold
+from jive import helper, summary
+from jive.helper import bold
 
 ICON_SIZE = 16
 

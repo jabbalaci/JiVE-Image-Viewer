@@ -1,16 +1,20 @@
+# import os
+#
+# if __name__ == "__main__":
+#     import sys
+#     src_dir = os.path.join(os.path.dirname(__file__), "src")
+#     if src_dir not in sys.path:
+#         sys.path.insert(0, src_dir)
+# # endif
+
 import os
-
-if __name__ == "__main__":
-    import sys
-    src_dir = os.path.join(os.path.dirname(__file__), "src")
-    if src_dir not in sys.path:
-        sys.path.insert(0, src_dir)
-# endif
-
+import sys
 from pathlib import Path
-from lib.podium import get_short_fingerprint
-import mylogging as log
+
 from appdirs import AppDirs
+
+from jive import mylogging as log
+from jive.lib.podium import get_short_fingerprint
 
 appname = "JiveImageViewer"
 app_dirs = AppDirs(appname, "")    # app_dirs.user_data_dir is what you need
@@ -26,10 +30,11 @@ if WHAT_IT_IS == DEVELOPMENT:
 if WHAT_IT_IS == RELEASE:
     log.info("RELEASE version")
 
-VERSION = "0.3"
+VERSION = "0.4"
 
 HOME_DIR = os.path.expanduser("~")
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.dirname(os.path.abspath(sys.argv[0]))
 ASSETS_DIR = str(Path(BASE_DIR, "assets"))
 
 SETTINGS_FILE = str(Path(app_dirs.user_data_dir, "settings.json"))

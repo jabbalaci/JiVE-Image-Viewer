@@ -6,34 +6,39 @@ try:
 except SyntaxError:
     raise ImportError("The application requires Python 3.6+")
 
-import os
-import random
 import sys
+import os
+
+if __name__ == "__main__":
+    folder = os.path.join(os.path.dirname(__file__), "..")
+    if folder not in sys.path:
+        sys.path.insert(0, folder)
+# endif
+
+import config as cfg
+import random
 from functools import partial
 from pathlib import Path
 
 import requests
 from PyQt5 import QtGui
-from PyQt5.QtCore import Qt, QPoint
-from PyQt5.QtGui import QKeySequence, QPixmap, QCursor
+from PyQt5.QtCore import QPoint, Qt
+from PyQt5.QtGui import QCursor, QKeySequence, QPixmap
 from PyQt5.QtWidgets import (QAction, QApplication, QDesktopWidget,
                              QFileDialog, QFrame, QInputDialog, QLabel,
                              QLineEdit, QMainWindow, QMenu, QMessageBox,
                              QScrollArea, QShortcut, QVBoxLayout)
 
-import categories
-import config as cfg
-import helper
-import mylogging as log
-import settings
-import shortcuts as scuts
-import statusbar as sbar
-from exceptions import ImageError
-from extractors import imgur, subreddit, tumblr
-from helper import bold, gray, green, red, lightblue, yellow
-from helper import pretty_num
-from imageinfo import ImageInfo
-from imageview import ImageView
+from jive import categories, helper
+from jive import mylogging as log
+from jive import settings
+from jive import shortcuts as scuts
+from jive import statusbar as sbar
+from jive.exceptions import ImageError
+from jive.extractors import imgur, subreddit, tumblr
+from jive.helper import bold, gray, green, lightblue, pretty_num, red, yellow
+from jive.imageinfo import ImageInfo
+from jive.imageview import ImageView
 
 OFF = False
 ON = True
@@ -191,7 +196,7 @@ class ImageProperty:
 
     def toggle_wallpaper(self):
         self.to_wallpaper = not self.to_wallpaper
-        
+
     def get_flags(self):
         sb = []
         if self.to_save:
@@ -1078,7 +1083,7 @@ class Window(QMainWindow):
             msg = """
 This is a <strong>local</strong> file.<br>
 <br>
-It makes no sense to mark it to be saved.            
+It makes no sense to mark it to be saved.
 """.strip()
             QMessageBox.warning(self, "Warning", msg)
             return
@@ -1456,4 +1461,6 @@ def main(argv):
 
 if __name__ == "__main__":
     check_api_keys()
+    log.debug(sys.argv[0])
+    log.debug(sys.executable)
     main(sys.argv)

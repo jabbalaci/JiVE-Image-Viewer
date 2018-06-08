@@ -1,10 +1,10 @@
+import config as cfg
 from functools import partial
 
 import yaml
 from PyQt5.QtWidgets import QAction, QMenu
 
-import config as cfg
-import mylogging as log
+from jive import mylogging as log
 
 SORT = True
 # SORT = False

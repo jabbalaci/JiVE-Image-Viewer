@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
+import config as cfg
 import re
 
 import requests
 
-import config as cfg
-import mylogging as log
+from jive import mylogging as log
 
 
 def extract_parts_from(url):

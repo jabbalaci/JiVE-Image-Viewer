@@ -1,13 +1,13 @@
+import config as cfg
 import re
 from pathlib import Path
 
 import requests
 from PyQt5.QtWidgets import QApplication
 
-import config as cfg
-import mylogging as log
-from extractors import imgur, tumblr
-from helper import blue
+from jive import mylogging as log
+from jive.extractors import imgur, tumblr
+from jive.helper import blue
 
 url_template = "https://www.reddit.com/r/{subreddit}/.json"
 
