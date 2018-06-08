@@ -231,4 +231,4 @@ to the clipboard.
 Shuffle images (*View* -> *Shuffle images*)
 -------------------------------------------
 
-It shuffles the order of images and sets you back to the first image.
+Shuffle (randomize) the order of images. It sets you back to the first image.
