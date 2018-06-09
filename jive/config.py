@@ -101,4 +101,4 @@ prefs.make_directories(PLATFORM_SETTINGS)
 
 if __name__ == "__main__":
     pprint(PLATFORM_SETTINGS)
-    pass
+    # pass

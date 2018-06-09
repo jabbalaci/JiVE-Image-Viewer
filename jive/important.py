@@ -2,22 +2,20 @@
 Information about the important files and folders.
 """
 
-from functools import partial
-from pathlib import Path
+import sys
 
-from PyQt5 import QtCore, QtGui
+from PyQt5 import QtGui
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import (QApplication, QDialog, QGridLayout, QGroupBox,
                              QLabel, QPushButton, QShortcut, QVBoxLayout)
+from functools import partial
+from pathlib import Path
+from pprint import pprint
+from subprocess import Popen
 
 from jive import config as cfg
-from jive import helper, summary
-from jive.helper import bold
-from pprint import pprint
 from jive import mylogging as log
-import os
-from subprocess import Popen
-import sys
+from jive.helper import bold
 
 ICON_SIZE = 16
 
@@ -49,7 +47,7 @@ class ImportantFilesAndFolders(QDialog):
 
         d = cfg.PLATFORM_SETTINGS
 
-        pprint(d)
+        # pprint(d)
 
         layout = QGridLayout()
         row += 1

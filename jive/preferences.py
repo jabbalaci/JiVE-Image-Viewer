@@ -90,9 +90,9 @@ class Preferences:
         Gets a directory list and creates all of them if they don't exist.
         Exit with an error in case of problem.
         """
-        keys = ('root_dir', 'saves_dir', 'wallpapers_dir', 'tmp_dir', 'cache_dir')
+        directory_keys = ('root_dir', 'saves_dir', 'wallpapers_dir', 'tmp_dir', 'cache_dir')
 
-        for key in keys:
+        for key in directory_keys:
             entry = d[key]
             p = Path(entry)
             if not p.is_dir():
