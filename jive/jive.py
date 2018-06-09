@@ -44,6 +44,7 @@ from jive import config as cfg
 from jive import helper
 from jive import mylogging as log
 from jive import settings
+from jive import help_dialogs
 from jive import shortcuts as scuts
 from jive import statusbar as sbar
 from jive.exceptions import ImageError
@@ -766,7 +767,7 @@ class Window(QMainWindow):
         # self.help_act.triggered.connect(self.help)
         #
         self.about_act = QAction("&About", self)
-        self.about_act.triggered.connect(self.open_about)
+        self.about_act.triggered.connect(partial(help_dialogs.open_about, self))
         #
         key = "Ctrl+Alt+R"
         self.reset_act = QAction("&Reset", self)
@@ -1299,9 +1300,6 @@ You cannot delete it.
         self.statusbar.flash_message("reset zoom")
         self.curr_img.zoom_reset()
         self.redraw()
-
-    def open_about(self):
-        QMessageBox.about(self, "About", f"Jabba's Image Viewer {cfg.VERSION}")
 
     def toggle_fullscreen(self):
         if self.isFullScreen():
