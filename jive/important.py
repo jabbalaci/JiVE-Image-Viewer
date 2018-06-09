@@ -7,11 +7,12 @@ import sys
 from PyQt5 import QtGui
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import (QApplication, QDialog, QGridLayout, QGroupBox,
-                             QLabel, QPushButton, QShortcut, QVBoxLayout)
+                             QLabel, QPushButton, QShortcut, QVBoxLayout, QMessageBox)
 from functools import partial
 from pathlib import Path
 from pprint import pprint
 from subprocess import Popen
+from jive.exceptions import MissingTextEditor
 
 from jive import config as cfg
 from jive import mylogging as log
@@ -148,10 +149,20 @@ class ImportantFilesAndFolders(QDialog):
 
     def open_file(self, fname):
         editor = cfg.PLATFORM_SETTINGS.get('editor')
-        if editor:
-            Popen([editor, fname])
-        else:
-            log.warning(f"provide a text editor in {cfg.PREFERENCES_INI}")
+        try:
+            if editor:
+                Popen([editor, fname])
+            else:
+                raise MissingTextEditor
+        except MissingTextEditor:
+            msg = f"You should provide a text editor in {cfg.PREFERENCES_INI}"
+            QMessageBox.warning(self, "Warning", msg)
+        except:
+            msg = f"""The file can't be opened with {editor}.
+            
+Please verify your text editor in {cfg.PREFERENCES_INI}
+""".strip()
+            QMessageBox.warning(self, "Warning", msg)
 
     def add_shortcuts(self):
         self.shortcutCloseQ = QShortcut(QKeySequence("Q"), self)
