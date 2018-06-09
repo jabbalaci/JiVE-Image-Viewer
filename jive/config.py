@@ -15,6 +15,7 @@ import sys
 import os
 from appdirs import AppDirs
 from pathlib import Path
+from pprint import pprint
 
 from jive import mylogging as log
 from jive import preferences
@@ -94,9 +95,10 @@ TOP_AND_BOTTOM_BAR_STYLESHEET = "background: lightgray"
 
 prefs = preferences.Preferences(PREFERENCES_INI, app_dirs.user_data_dir, log)
 PLATFORM_SETTINGS = prefs.get_platform_settings()
+prefs.make_directories(PLATFORM_SETTINGS)
 
 #############################################################################
 
 if __name__ == "__main__":
-    # pprint(PLATFORM_SETTINGS)
+    pprint(PLATFORM_SETTINGS)
     pass

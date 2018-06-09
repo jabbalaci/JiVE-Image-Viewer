@@ -33,11 +33,3 @@ info = mylogger.info
 warning = mylogger.warning
 error = mylogger.error
 critical = mylogger.critical
-
-if __name__ == "__main__":
-    # its usage:
-    for i in range(100):
-        if i % 5 == 0:
-            info("i is {i}".format(i=i))
-        if i % 50 == 0:
-            debug("i is {i}".format(i=i))

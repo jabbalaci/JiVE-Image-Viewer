@@ -41,10 +41,10 @@ from pathlib import Path
 
 from jive import categories
 from jive import config as cfg
+from jive import help_dialogs
 from jive import helper
 from jive import mylogging as log
 from jive import settings
-from jive import help_dialogs
 from jive import shortcuts as scuts
 from jive import statusbar as sbar
 from jive.exceptions import ImageError
@@ -52,6 +52,7 @@ from jive.extractors import imgur, subreddit, tumblr
 from jive.helper import bold, gray, green, lightblue, pretty_num, red, yellow
 from jive.imageinfo import ImageInfo
 from jive.imageview import ImageView
+from jive.important import ImportantFilesAndFolders
 
 OFF = False
 ON = True
@@ -270,7 +271,8 @@ class Window(QMainWindow):
         self.shortcuts = scuts.Shortcuts()
         self.add_shortcuts()
 
-        self.image_info_dialog = None    # will be set later
+        self.image_info_dialog = None                     # will be set later
+        self.important_files_and_folders_dialog = None    # will be set later
 
         self.init_ui()
 
@@ -763,6 +765,9 @@ class Window(QMainWindow):
         self.slideshow_act = QAction("Slideshow", self)
         # self.slideshow_act.triggered.connect(self.slideshow)
         #
+        self.important_files_and_folders_act = QAction("Important &files and folders", self)
+        self.important_files_and_folders_act.triggered.connect(self.important_files_and_folders)
+        #
         self.help_act = QAction("&Help", self)
         self.help_act.triggered.connect(help_dialogs.open_help)
         #
@@ -830,6 +835,7 @@ class Window(QMainWindow):
         viewMenu.addAction(self.shuffle_images_act)
         viewMenu.addSeparator()
         viewMenu.addAction(self.image_info_act)
+        viewMenu.addAction(self.important_files_and_folders_act)
         viewMenu.addSeparator()
         viewMenu.addAction(self.hide_menubar_act)
         viewMenu.addAction(self.show_mouse_pointer_act)
@@ -1171,6 +1177,11 @@ You cannot delete it.
         if self.image_info_dialog:
             self.image_info_dialog.close()    # allow just 1 instance; not needed if that window is modal
         self.image_info_dialog = ImageInfo(self, self.curr_img)
+
+    def important_files_and_folders(self):
+        if self.important_files_and_folders_dialog:
+            self.important_files_and_folders_dialog.close()    # allow just 1 instance; not needed if that window is modal
+        self.important_files_and_folders_dialog = ImportantFilesAndFolders(self)
 
     def show_popup(self):
         """

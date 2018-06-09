@@ -3,6 +3,7 @@ import json
 import os
 import sys
 from pprint import pprint
+from pathlib import Path
 
 
 def remove_quotes(original):
@@ -79,7 +80,27 @@ class Preferences:
                 return self.d["Linux"]
             if text.startswith("win"):
                 return self.d["Windows"]
-            return {}    # extend the code here if you have a Mac
+            return {}                       # TODO : extend the code here if you have a Mac
         except KeyError:
             self.log.error(f"missing section in {self.preferences_ini}: [{text.capitalize()}]")
             return {}
+
+    def make_directories(self, d):
+        """
+        Gets a directory list and creates all of them if they don't exist.
+        Exit with an error in case of problem.
+        """
+        keys = ('root_dir', 'saves_dir', 'wallpapers_dir', 'tmp_dir', 'cache_dir')
+
+        for key in keys:
+            entry = d[key]
+            p = Path(entry)
+            if not p.is_dir():
+                try:
+                    p.mkdir(parents=True)
+                    self.log.info(f"create folder: {entry}")
+                except:
+                    self.log.error(f"couldn't create the folder {entry}")
+                    sys.exit(1)
+            #
+        #
