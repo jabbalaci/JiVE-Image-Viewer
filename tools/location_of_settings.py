@@ -5,14 +5,13 @@ The app. creates a settings.json file.
 This little tool shows you the location of that file.
 """
 
-
 if __name__ == "__main__":
-    import os
-    import sys
+    import os, sys
     folder = os.path.join(os.path.dirname(__file__), "..")
     if folder not in sys.path:
         sys.path.insert(0, folder)
 # endif
+
 
 from jive import config as cfg
 

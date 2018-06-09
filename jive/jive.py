@@ -1,15 +1,19 @@
 #!/usr/bin/env python3
 
-# check compatibility
+"""
+This is the main file.
+"""
+
 try:
+    # check compatibility
     eval('f"{1+1}"')
 except SyntaxError:
     raise ImportError("The application requires Python 3.6+")
 
-import sys
-import os
+##############################################################################
 
 if __name__ == "__main__":
+    import os, sys
     # This is a trick. This way I can launch jive.py (this file) during
     # the development and I don't need to start ../start.py every time.
     folder = os.path.join(os.path.dirname(__file__), "..")
@@ -18,10 +22,12 @@ if __name__ == "__main__":
     sys.argv[0] = "../start.py"
 # endif
 
-import random
-from functools import partial
-from pathlib import Path
+##############################################################################
 
+import sys
+
+import os
+import random
 import requests
 from PyQt5 import QtGui
 from PyQt5.QtCore import QPoint, Qt
@@ -30,6 +36,8 @@ from PyQt5.QtWidgets import (QAction, QApplication, QDesktopWidget,
                              QFileDialog, QFrame, QInputDialog, QLabel,
                              QLineEdit, QMainWindow, QMenu, QMessageBox,
                              QScrollArea, QShortcut, QVBoxLayout)
+from functools import partial
+from pathlib import Path
 
 from jive import categories
 from jive import config as cfg

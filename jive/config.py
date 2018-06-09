@@ -1,7 +1,5 @@
-import os
-import sys
-
 if __name__ == "__main__":
+    import os, sys
     # This is a trick. This way I can launch
     # this file during the development.
     folder = os.path.join(os.path.dirname(__file__), "..")
@@ -10,10 +8,13 @@ if __name__ == "__main__":
     sys.argv[0] = "../start.py"
 # endif
 
-from pathlib import Path
-from pprint import pprint
+#############################################################################
 
+import sys
+
+import os
 from appdirs import AppDirs
+from pathlib import Path
 
 from jive import mylogging as log
 from jive import preferences
