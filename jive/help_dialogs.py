@@ -1,3 +1,4 @@
+import webbrowser
 from PyQt5.QtWidgets import QMessageBox
 
 from jive import config as cfg
@@ -13,3 +14,8 @@ Laszlo Szathmary (Jabba Laci), 2018
 jabba.laci@gmail.com
 """.strip().replace("\n", "<br>")
     QMessageBox.about(parent, "About", text)
+
+
+def open_help():
+    url = "https://github.com/jabbalaci/JiVE-Image-Viewer/blob/master/docs/usage.md"
+    webbrowser.open_new_tab(url)

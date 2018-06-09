@@ -35,7 +35,7 @@ from PyQt5.QtGui import QCursor, QKeySequence, QPixmap
 from PyQt5.QtWidgets import (QAction, QApplication, QDesktopWidget,
                              QFileDialog, QFrame, QInputDialog, QLabel,
                              QLineEdit, QMainWindow, QMenu, QMessageBox,
-                             QScrollArea, QShortcut, QVBoxLayout)
+                             QScrollArea, QShortcut, QVBoxLayout, qApp)
 from functools import partial
 from pathlib import Path
 
@@ -764,10 +764,13 @@ class Window(QMainWindow):
         # self.slideshow_act.triggered.connect(self.slideshow)
         #
         self.help_act = QAction("&Help", self)
-        # self.help_act.triggered.connect(self.help)
+        self.help_act.triggered.connect(help_dialogs.open_help)
         #
         self.about_act = QAction("&About", self)
         self.about_act.triggered.connect(partial(help_dialogs.open_about, self))
+        #
+        self.about_qt_act = QAction("About &Qt", self)
+        self.about_qt_act.triggered.connect(qApp.aboutQt)
         #
         key = "Ctrl+Alt+R"
         self.reset_act = QAction("&Reset", self)
@@ -805,6 +808,7 @@ class Window(QMainWindow):
 
         fileMenu = self.menubar.addMenu("&File")
         viewMenu = self.menubar.addMenu("&View")
+        helpMenu = self.menubar.addMenu("&Help")
 
         # fileMenu
         fileMenu.addAction(self.open_file_act)
@@ -829,6 +833,11 @@ class Window(QMainWindow):
         viewMenu.addSeparator()
         viewMenu.addAction(self.hide_menubar_act)
         viewMenu.addAction(self.show_mouse_pointer_act)
+
+        # helpMenu
+        helpMenu.addAction(self.help_act)
+        helpMenu.addAction(self.about_act)
+        helpMenu.addAction(self.about_qt_act)
     #
     #######################
     ## END: top menu bar ##
@@ -848,7 +857,8 @@ class Window(QMainWindow):
 
         # When I right-click, very often the first menu item gets selected.
         # "Nothing" is added to avoid that problem.
-        self.menu.addAction(QAction("Nothing", self))
+        nothing = "--"
+        self.menu.addAction(QAction(nothing, self))
         self.menu.addSeparator()
         self.menu.addAction(self.open_file_act)
         self.menu.addAction(self.open_dir_act)
@@ -870,9 +880,11 @@ class Window(QMainWindow):
         self.menu.addAction(self.image_info_act)
         self.menu.addAction(self.slideshow_act)
         self.menu.addSeparator()
-        self.menu.addAction(self.help_act)
-        self.menu.addAction(self.about_act)
         self.menu.addAction(self.quit_act)
+        # When I right-click at the bottom of the screen, very often the last menu item gets selected.
+        # "Nothing" is added to avoid an accidental quit.
+        self.menu.addSeparator()
+        self.menu.addAction(QAction(nothing, self))
 
     def show_contextmenu(self, pos):
         self.menu.popup(self.mapToGlobal(pos))
