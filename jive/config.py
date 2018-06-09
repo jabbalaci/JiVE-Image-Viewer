@@ -7,13 +7,16 @@ if __name__ == "__main__":
     folder = os.path.join(os.path.dirname(__file__), "..")
     if folder not in sys.path:
         sys.path.insert(0, folder)
+    sys.argv[0] = "../start.py"
 # endif
 
 from pathlib import Path
+from pprint import pprint
 
 from appdirs import AppDirs
 
 from jive import mylogging as log
+from jive import preferences
 from jive.lib.podium import get_short_fingerprint
 
 appname = "JiveImageViewer"
@@ -39,6 +42,8 @@ ASSETS_DIR = str(Path(BASE_DIR, "assets"))
 
 SETTINGS_FILE = str(Path(app_dirs.user_data_dir, "settings.json"))
 SETTINGS_FILE_BAK = str(Path(app_dirs.user_data_dir, "settings.bak"))
+
+PREFERENCES_INI = str(Path(BASE_DIR, "preferences.ini"))
 
 ## BEGIN: categories.yaml
 _default_categories_file = str(Path(BASE_DIR, "categories", "categories.yaml"))
@@ -86,7 +91,11 @@ SEPARATOR = "-----"
 
 TOP_AND_BOTTOM_BAR_STYLESHEET = "background: lightgray"
 
+prefs = preferences.Preferences(PREFERENCES_INI, app_dirs.user_data_dir, log)
+PLATFORM_SETTINGS = prefs.get_platform_settings()
+
 #############################################################################
 
 if __name__ == "__main__":
+    # pprint(PLATFORM_SETTINGS)
     pass
