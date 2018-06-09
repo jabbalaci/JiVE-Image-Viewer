@@ -10,6 +10,7 @@ from jive import mylogging as log
 class Settings:
     def __init__(self):
         self.d = self.read()
+        self.original = self.d.copy()
         #
         if 'last_file_opened' not in self.d:
             self.d['last_file_opened'] = ""
@@ -38,6 +39,10 @@ class Settings:
             log.info(f"{folder} was created")
 
     def write(self):
+        if self.d == self.original:
+            # log.info(f"{cfg.SETTINGS_FILE} didn't change")
+            return
+        # else
         self._make_dir()
         with open(cfg.SETTINGS_FILE_BAK, "w") as f:
             json.dump(self.d, f, indent=2)
