@@ -1456,6 +1456,8 @@ def check_api_keys():
 
 
 def main(argv):
+    check_api_keys()
+    #
     App = QApplication(argv)
     window = Window(argv)
     window.show()
@@ -1464,7 +1466,6 @@ def main(argv):
 ##############################################################################
 
 if __name__ == "__main__":
-    check_api_keys()
-    log.debug(sys.argv[0])
-    log.debug(sys.executable)
+    # log.debug(sys.argv[0])
+    # log.debug(sys.executable)
     main(sys.argv)
