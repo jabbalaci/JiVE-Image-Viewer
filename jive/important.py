@@ -162,7 +162,7 @@ class ImportantFilesAndFolders(QDialog):
             
 Please verify your text editor in {cfg.PREFERENCES_INI}
 """.strip()
-            QMessageBox.warning(self, "Warning", msg)
+            QMessageBox.critical(self, "Error", msg)
 
     def add_shortcuts(self):
         self.shortcutCloseQ = QShortcut(QKeySequence("Q"), self)
