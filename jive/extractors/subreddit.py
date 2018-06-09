@@ -42,7 +42,9 @@ def read_subreddit(subreddit, statusbar=None):
             percent = round(idx * 100 / total)
             log.info(f"{percent} %")
             if statusbar:
-                statusbar.flash_message(blue(f"{percent} %"))
+                statusbar.progressbar.show()
+                statusbar.progressbar.setValue(percent)
+                # statusbar.flash_message(blue(f"{percent} %"))
                 # without this nothing appeared until 100%:
                 QApplication.processEvents()    # # reason: https://stackoverflow.com/a/29917237/232485
             entry = child["data"]
@@ -98,3 +100,6 @@ def read_subreddit(subreddit, statusbar=None):
     except:
         log.warning(f"problem with {img_url}")
         return []
+    finally:
+        if statusbar:
+            statusbar.progressbar.hide()

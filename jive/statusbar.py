@@ -1,5 +1,5 @@
 from PyQt5.QtCore import QTimer
-from PyQt5.QtWidgets import QHBoxLayout, QLabel, QWidget
+from PyQt5.QtWidgets import QHBoxLayout, QLabel, QWidget, QProgressBar
 
 from jive import config as cfg
 
@@ -20,6 +20,11 @@ class StatusBar(QWidget):
         # self.memory_label = QLabel(self)
         # self.sep5 = QLabel("|", self)
         self.mode_label = QLabel(self)
+        self.sep5 = QLabel("|", self)
+        self.progressbar = QProgressBar(self)
+        self.progressbar.setMaximumWidth(150)
+        self.progressbar.setMaximumHeight(15)
+        self.progressbar.hide()
         #
         layout = QHBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
@@ -29,12 +34,14 @@ class StatusBar(QWidget):
         self.layout().addWidget(self.curr_pos_label)
         self.layout().addWidget(self.sep2)
         self.layout().addWidget(self.resolution_label)
-        self.layout().addWidget(self.sep4)
-        self.layout().addWidget(self.file_name_label)
         self.layout().addWidget(self.sep3)
+        self.layout().addWidget(self.file_name_label)
+        self.layout().addWidget(self.sep4)
         # self.layout().addWidget(self.memory_label)
         # self.layout().addWidget(self.sep5)
         self.layout().addWidget(self.mode_label)
+        self.layout().addWidget(self.sep5)
+        self.layout().addWidget(self.progressbar)
         #
         self.message_timer = None
 
