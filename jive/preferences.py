@@ -31,7 +31,7 @@ class Preferences:
         self.config = configparser.ConfigParser()
         if not os.path.isfile(self.preferences_ini):
             self.log.error(f"{self.preferences_ini} is missing")
-            exit(1)
+            sys.exit(1)
         # else
         self.config.read(preferences_ini)
 
@@ -42,7 +42,7 @@ class Preferences:
         self.platform_settings = self.extract_platform_settings()
         if not self.platform_settings:
             self.log.error(f"platform specific settings were not found in {self.preferences_ini}")
-            exit(1)
+            sys.exit(1)
         # else
         self.platform_settings = self.perform_string_interpolation(self.platform_settings)
 

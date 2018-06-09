@@ -29,6 +29,6 @@ def process(fname):
 if __name__ == "__main__":
     if len(sys.argv) == 1:
         print("Usage: {0} input.yaml".format(sys.argv[0]), file=sys.stderr)
-        exit(1)
+        sys.exit(1)
     # else
     process(sys.argv[1])

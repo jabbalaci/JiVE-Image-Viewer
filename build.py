@@ -31,15 +31,15 @@ def remove_file(fname):
 
 def remove_directory(dname):
     if not os.path.exists(dname):
-        print(f"{dname} doesn't exist")
+        print(f"{pretty(dname, True)} doesn't exist")
         return
     #
-    print(f"┌ start: remove {dname}")
+    print(f"┌ start: remove {pretty(dname)}")
     try:
         shutil.rmtree(dname)
     except:
         print("exception happened")
-    print(f"└ end: remove {dname}")
+    print(f"└ end: remove {pretty(dname)}")
 
 
 def call_external_command(cmd):
@@ -58,10 +58,32 @@ def copytree(src, dst, symlinks=False, ignore=None):
             shutil.copy2(s, d)
 
 
+def pretty(name, force=False):
+    """
+    If name is a directory, then add a trailing slash to it.
+    """
+    if name.endswith("/"):
+        return name    # nothing to do
+    # else
+    if force:
+        return f"{name}/"
+    # else
+    if not os.path.isdir(name):
+        return name    # not a dir. => don't modify it
+    # else
+    return f"{name}/"
+
+
 def copy_dir(src, dest):
-    print(f"┌ start: copy {src} -> {dest}")
+    print(f"┌ start: copy {pretty(src)} -> {pretty(dest)}")
     shutil.copytree(src, dest)
-    print(f"└ end: copy {src} -> {dest}")
+    print(f"└ end: copy {pretty(src)} -> {pretty(dest)}")
+
+
+def copy_file(src, dest):
+    print(f"┌ start: copy {src} -> {pretty(dest)}")
+    shutil.copy(src, dest)
+    print(f"└ end: copy {src} -> {pretty(dest)}")
 
 ###########
 ## Tasks ##
@@ -88,4 +110,5 @@ def exe():
     call_external_command("pyinstaller --onefile start.py")
     copy_dir("assets", "dist/assets")
     copy_dir("categories", "dist/categories")
+    copy_file("preferences.ini", "dist/")
 
