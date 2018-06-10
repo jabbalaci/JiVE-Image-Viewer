@@ -5,7 +5,7 @@ Open a file with an external application.
 import sys
 
 from PyQt5.QtWidgets import (QMessageBox)
-from subprocess import Popen
+from subprocess import Popen, DEVNULL
 
 from jive import config as cfg
 from jive.exceptions import MissingPreferencesEntry
@@ -43,7 +43,7 @@ def open_file_with_gimp(parent, fname):
     gimp = cfg.PLATFORM_SETTINGS.get('gimp')
     try:
         if gimp:
-            Popen([gimp, fname])
+            Popen([gimp, fname], stderr=DEVNULL)
         else:
             raise MissingPreferencesEntry
     except MissingPreferencesEntry:
