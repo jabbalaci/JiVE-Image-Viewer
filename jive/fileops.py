@@ -12,6 +12,7 @@ import shutil
 from pathlib import Path
 
 from jive import config as cfg
+from jive import mylogging as log
 
 
 def generate_new_name(old_name_with_ext, folder):
@@ -67,7 +68,7 @@ def save(img, folder):
         if r.status_code == 200:
             with open(dest, 'wb') as f:
                 f.write(r.content)
-            if os.path.isfile(dest) and os.path.getsize(dest) == img.get_file_size():
+            if os.path.isfile(dest) and os.path.getsize(dest) > 0:
                 return True
     #
     return False

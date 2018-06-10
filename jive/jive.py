@@ -52,7 +52,7 @@ from jive import statusbar as sbar
 from jive.commit import Commit
 from jive.exceptions import ImageError, FileNotSaved
 from jive.extractors import imgur, subreddit, tumblr
-from jive.helper import bold, gray, green, lightblue, pretty_num, red, yellow
+from jive.helper import bold, gray, green, lightblue, pretty_num, red, yellow, blue
 from jive.imageinfo import ImageInfo
 from jive.imageview import ImageView
 from jive.important import ImportantFilesAndFolders
@@ -251,8 +251,10 @@ class ImageProperty:
                 return True
             else:
                 raise FileNotSaved
-        except:
+        except FileNotSaved:
             log.warning(f"couldn't save {self.get_absolute_path_or_url()} to {folder}")
+        except:
+            log.warning(f"unknown exception happened while saving {self.get_absolute_path_or_url()} to {folder}")
         #
         return False
 
@@ -1158,6 +1160,16 @@ class Window(QMainWindow):
         key = "C"
         self.shortcutCommit = QShortcut(QKeySequence(key), self)
         self.shortcuts.register_window_shortcut(key, self.shortcutCommit, self.commit_changes)
+
+        key = "Ctrl+A"
+        self.shortcutMarkAllToSave = QShortcut(QKeySequence(key), self)
+        self.shortcuts.register_window_shortcut(key, self.shortcutMarkAllToSave, self.mark_all_images_to_save)
+
+    def mark_all_images_to_save(self):
+        for img in self.list_of_images:
+            img.to_save = True
+        self.statusbar.flash_message(blue("all marked for save"))
+        self.redraw()
 
     def commit_changes(self):
         if not self.commit.has_something_to_commit():
