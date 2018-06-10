@@ -1,5 +1,5 @@
 class ImageError(Exception):
     pass
 
-class MissingTextEditor(Exception):
+class MissingPreferencesEntry(Exception):
     pass

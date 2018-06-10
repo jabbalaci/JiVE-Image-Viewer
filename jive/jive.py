@@ -38,6 +38,7 @@ from PyQt5.QtWidgets import (QAction, QApplication, QDesktopWidget,
                              QScrollArea, QShortcut, QVBoxLayout, qApp)
 from functools import partial
 from pathlib import Path
+from jive import opener
 
 from jive import categories
 from jive import config as cfg
@@ -1198,7 +1199,12 @@ You cannot delete it.
         self.important_files_and_folders_dialog = ImportantFilesAndFolders(self)
 
     def open_with_gimp(self):
-        print(">>> gimp")
+        if not self.curr_img:
+            self.statusbar.flash_message(red("no image"))
+            return
+        # else
+        name = self.curr_img.get_absolute_path_or_url()
+        opener.open_file_with_gimp(self, name)
 
     def show_popup(self):
         """
