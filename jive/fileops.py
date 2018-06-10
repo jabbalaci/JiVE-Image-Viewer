@@ -38,7 +38,7 @@ def save(img, folder):
     """
     Save the given image to the specified folder.
 
-    :return: True, if saving was successful. False, otherwise.
+    Return True, if saving was successful. False, otherwise.
     """
 
     src = img.get_absolute_path_or_url()
