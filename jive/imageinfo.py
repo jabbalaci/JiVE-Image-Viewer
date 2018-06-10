@@ -1,13 +1,12 @@
-from functools import partial
-from pathlib import Path
-
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import (QApplication, QDialog, QGridLayout, QGroupBox,
                              QLabel, QPushButton, QShortcut, QVBoxLayout)
+from functools import partial
+from pathlib import Path
 
 from jive import config as cfg
-from jive import helper, summary
+from jive import helper
 from jive.helper import bold
 
 ICON_SIZE = 16
@@ -17,6 +16,7 @@ class ImageInfo(QDialog):
     def __init__(self, parent, img):
         super().__init__()
         self.parent = parent
+        self.commit = self.parent.commit
         self.img = img
 
         self.setModal(True)    # not sure if it should be modal or not
@@ -78,17 +78,17 @@ class ImageInfo(QDialog):
 
         layout = QGridLayout()
         layout.addWidget(QLabel(bold("Marked to be saved:")), 0, 0)
-        num = summary.to_save(self.parent.list_of_images)
+        num = self.commit.to_save()
         text = f"{num} (out of {length})"
         layout.addWidget(QLabel(text), 0, 1)
 
         layout.addWidget(QLabel(bold("Marked to be deleted:")), 1, 0)
-        num = summary.to_delete(self.parent.list_of_images)
+        num = self.commit.to_delete()
         text = f"{num} (out of {length})"
         layout.addWidget(QLabel(text), 1, 1)
 
         layout.addWidget(QLabel(bold("Marked to save as wallpaper:")), 2, 0)
-        num = summary.to_wallpaper(self.parent.list_of_images)
+        num = self.commit.to_wallpaper()
         text = f"{num} (out of {length})"
         layout.addWidget(QLabel(text), 2, 1)
 

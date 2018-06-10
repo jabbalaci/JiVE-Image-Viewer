@@ -42,6 +42,7 @@ from jive import opener
 
 from jive import categories
 from jive import config as cfg
+from jive.commit import Commit
 from jive import help_dialogs
 from jive import helper
 from jive import mylogging as log
@@ -274,6 +275,8 @@ class Window(QMainWindow):
 
         self.image_info_dialog = None                     # will be set later
         self.important_files_and_folders_dialog = None    # will be set later
+
+        self.commit = Commit(self)
 
         self.init_ui()
 
@@ -1493,7 +1496,30 @@ You cannot delete it.
     def closeEvent(self, event):
         if self.image_info_dialog:
             self.image_info_dialog.close()
+        #
+        if self.important_files_and_folders_dialog:
+            self.important_files_and_folders_dialog.close()
+        #
         self.settings.write()
+        #
+        if self.commit.has_something_not_yet_committed():
+            msg = """You have some un-committed changes.
+If you quit, you'll lose your changes.
+
+Do you really want to quit?
+
+Tip: hit No and commit your changes.
+""".strip()
+            reply = QMessageBox.question(self,
+                                         'Quit Message',
+                                         msg,
+                                         QMessageBox.Yes | QMessageBox.No,
+                                         QMessageBox.No)
+
+            if reply == QMessageBox.Yes:
+                event.accept()
+            else:
+                event.ignore()
 
 # end class Window(QMainWindow)
 
