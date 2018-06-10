@@ -38,18 +38,19 @@ from PyQt5.QtWidgets import (QAction, QApplication, QDesktopWidget,
                              QScrollArea, QShortcut, QVBoxLayout, qApp)
 from functools import partial
 from pathlib import Path
-from jive import opener
 
 from jive import categories
 from jive import config as cfg
-from jive.commit import Commit
+from jive import fileops
 from jive import help_dialogs
 from jive import helper
 from jive import mylogging as log
+from jive import opener
 from jive import settings
 from jive import shortcuts as scuts
 from jive import statusbar as sbar
-from jive.exceptions import ImageError
+from jive.commit import Commit
+from jive.exceptions import ImageError, FileNotSaved
 from jive.extractors import imgur, subreddit, tumblr
 from jive.helper import bold, gray, green, lightblue, pretty_num, red, yellow
 from jive.imageinfo import ImageInfo
@@ -233,6 +234,28 @@ class ImageProperty:
             sb.append(lightblue("W"))
         return "<br>".join(sb)
 
+    def save_to_filesystem(self, folder, method):
+        """
+        Save the image to the given folder.
+
+        Return True if saving was successful. False, otherwise.
+        """
+        try:
+            res = fileops.save(self, folder)
+            # if save was successful:
+            if res:
+                if method == cfg.WALLPAPER_SAVE:
+                    self.toggle_wallpaper()
+                if method == cfg.NORMAL_SAVE:
+                    self.toggle_save()
+                return True
+            else:
+                raise FileNotSaved
+        except:
+            log.warning(f"couldn't save {self.get_absolute_path_or_url()} to {folder}")
+        #
+        return False
+
 # end class ImageProperty
 
 
@@ -276,9 +299,9 @@ class Window(QMainWindow):
         self.image_info_dialog = None                     # will be set later
         self.important_files_and_folders_dialog = None    # will be set later
 
-        self.commit = Commit(self)
-
         self.init_ui()
+
+        self.commit = Commit(self)    # it must come after the init_ui()
 
         self.toggle_auto_fit()           # set it ON and show the flash message
         self.toggle_show_image_path()    # make it False and hide it
@@ -1132,6 +1155,43 @@ class Window(QMainWindow):
         self.shortcutMarkToWallpaper = QShortcut(QKeySequence(key), self)
         self.shortcuts.register_window_shortcut(key, self.shortcutMarkToWallpaper, self.toggle_img_wallpaper)
 
+        key = "C"
+        self.shortcutCommit = QShortcut(QKeySequence(key), self)
+        self.shortcuts.register_window_shortcut(key, self.shortcutCommit, self.commit_changes)
+
+    def commit_changes(self):
+        if not self.commit.has_something_to_commit():
+            self.statusbar.flash_message(red("nothing to commit"), wait=cfg.MESSAGE_FLASH_TIME_1)
+            return
+
+        # else
+
+        marked_to_wallpaper = self.commit.to_wallpaper()                # How many were marked?
+        marked_to_wallpaper_success = self.commit.save_wallpapers()     # How many were saved successfully?
+        w_ok = (marked_to_wallpaper == marked_to_wallpaper_success)     # OK, if the two values are identical
+
+        marked_to_save = self.commit.to_save()
+        marked_to_save_success = self.commit.save_others()
+        s_ok = (marked_to_save == marked_to_save_success)
+
+        marked_to_delete = self.commit.to_delete()
+        marked_to_delete_success = self.commit.delete_files()
+        d_ok = (marked_to_delete == marked_to_delete_success)
+
+        ok = all([w_ok, s_ok, d_ok])            # OK, if everything was processed successfully
+        popup = QMessageBox.information         # if OK, show an information popup
+        if not ok:                              # otherwise show a warning popup
+            popup = QMessageBox.warning
+
+        self.redraw()    # hide flags on the screen if the flags were removed
+
+        text = f"""
+{marked_to_save_success} (of {marked_to_save}) images were saved
+{marked_to_wallpaper_success} (of {marked_to_wallpaper}) images were saved as wallpapers
+{marked_to_delete_success} (of {marked_to_delete}) images were deleted
+""".strip()
+        popup(self, "Commit summary", text)
+
     def toggle_img_save(self):
         if self.curr_img.image_state == ImageProperty.IMAGE_STATE_PROBLEM:
             self.statusbar.flash_message(red("no"))
@@ -1502,7 +1562,7 @@ You cannot delete it.
         #
         self.settings.write()
         #
-        if self.commit.has_something_not_yet_committed():
+        if self.commit.has_something_to_commit():
             msg = """You have some un-committed changes.
 If you quit, you'll lose your changes.
 

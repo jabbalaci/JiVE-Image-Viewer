@@ -40,7 +40,7 @@ def read_subreddit(subreddit, statusbar=None):
         total = len(d["data"]["children"])
         for idx, child in enumerate(d["data"]["children"], start=1):
             percent = round(idx * 100 / total)
-            log.info(f"{percent} %")
+            log.info(f"{percent}%")
             if statusbar:
                 statusbar.progressbar.show()
                 statusbar.progressbar.setValue(percent)

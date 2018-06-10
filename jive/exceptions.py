@@ -3,3 +3,6 @@ class ImageError(Exception):
 
 class MissingPreferencesEntry(Exception):
     pass
+
+class FileNotSaved(Exception):
+    pass

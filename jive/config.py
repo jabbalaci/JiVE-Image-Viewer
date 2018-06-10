@@ -97,6 +97,9 @@ prefs = preferences.Preferences(PREFERENCES_INI, app_dirs.user_data_dir, log)
 PLATFORM_SETTINGS = prefs.get_platform_settings()
 prefs.make_directories(PLATFORM_SETTINGS)
 
+NORMAL_SAVE = 1
+WALLPAPER_SAVE = 2
+
 #############################################################################
 
 if __name__ == "__main__":
