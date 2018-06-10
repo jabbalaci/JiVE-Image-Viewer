@@ -12,6 +12,7 @@ $ pynt
 import os
 import shutil
 import sys
+from pathlib import Path
 
 from pynt import task
 
@@ -81,6 +82,9 @@ def copy_dir(src, dest):
 
 
 def copy_file(src, dest):
+    p = Path(dest)
+    if not p.exists():
+        p.mkdir(parents=True)
     print(f"┌ start: copy {src} -> {pretty(dest)}")
     shutil.copy(src, dest)
     print(f"└ end: copy {src} -> {pretty(dest)}")
@@ -109,6 +113,8 @@ def exe():
     """create executable with PyInstaller"""
     call_external_command("pyinstaller --onefile start.py")
     copy_dir("assets", "dist/assets")
-    copy_dir("categories", "dist/categories")
+    remove_directory("dist/assets/screenshots")
+    copy_file("categories/categories.yaml", "dist/categories")
+    copy_file("tools/verify_your_api_keys.py", "dist/tools")
     copy_file("preferences.ini", "dist/")
 
