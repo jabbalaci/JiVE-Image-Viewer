@@ -328,15 +328,24 @@ class Window(QMainWindow):
         # else, try to open it as a remote URL / subreddit / etc.
         self.auto_detect_and_open(text, called_from_gui=False)
 
-    def mousePressEvent(self, QMouseEvent):
-        p = QMouseEvent.pos()
+    def mousePressEvent(self, event):
+        """
+        If you left click on the left 25% (by width), go to the previous image.
+        If you left click on the right 25% (by width), go to the next image.
+
+        Only left click is accepted for this kind of browsing.
+        """
+        if event.button() != Qt.LeftButton:
+            return
+        # else
+        p = event.pos()
         x, y = p.x(), p.y()
         # print(x, y)
         width = self.img_view.width()
-        if x < width * (1 / 3):
+        if x < width * (1 / 4):
             self.jump_to_prev_image()
             # print("prev")
-        if x > width * (2 / 3):
+        if x > width * (3 / 4):
             self.jump_to_next_image()
             # print("next")
 
@@ -498,7 +507,7 @@ class Window(QMainWindow):
         self.jump_to_image(new_idx)
 
     def jump_to_prev_image(self):
-        if self.curr_img_idx == 0:
+        if len(self.list_of_images) == 0 or self.curr_img_idx == 0:
             self.statusbar.flash_message(red("no less"), wait=cfg.MESSAGE_FLASH_TIME_1)
             return
         # else
