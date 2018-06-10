@@ -799,6 +799,9 @@ class Window(QMainWindow):
         #
         self.shuffle_images_act = QAction("&Shuffle images", self)
         self.shuffle_images_act.triggered.connect(self.shuffle_images)
+        #
+        self.open_with_gimp_act = QAction("&Gimp", self)
+        self.open_with_gimp_act.triggered.connect(self.open_with_gimp)
 
     def create_menubar(self):
         self.menubar = self.menuBar()
@@ -861,6 +864,8 @@ class Window(QMainWindow):
                          self.open_url_open_imgur_album_act,
                          self.open_url_open_tumblr_post_act]
 
+        open_with_acts = [self.open_with_gimp_act]
+
         # When I right-click, very often the first menu item gets selected.
         # "Nothing" is added to avoid that problem.
         nothing = "--"
@@ -869,7 +874,7 @@ class Window(QMainWindow):
         self.menu.addAction(self.open_file_act)
         self.menu.addAction(self.open_dir_act)
         open_url_menu = QMenu(self.menu)
-        open_url_menu.setTitle("Open &URL")
+        open_url_menu.setTitle("Open &URL...")
         self.menu.addMenu(open_url_menu)
         for entry in open_url_acts:
             if isinstance(entry, str):
@@ -881,7 +886,16 @@ class Window(QMainWindow):
         open_subreddit_categories.setTitle("Select subreddit...")
         self.menu.addMenu(open_subreddit_categories)
         categories.Categories(self, open_subreddit_categories, self.open_subreddit).populate()
+        self.menu.addSeparator()
+        open_with_menu = QMenu(self.menu)
+        open_with_menu.setTitle("Open with...")
+        self.menu.addMenu(open_with_menu)
         self.menu.addAction(self.save_image_act)
+        for entry in open_with_acts:
+            if isinstance(entry, str):
+                open_with_menu.addSeparator()
+            else:
+                open_with_menu.addAction(entry)
         self.menu.addSeparator()
         self.menu.addAction(self.image_info_act)
         self.menu.addAction(self.slideshow_act)
@@ -1182,6 +1196,9 @@ You cannot delete it.
         if self.important_files_and_folders_dialog:
             self.important_files_and_folders_dialog.close()    # allow just 1 instance; not needed if that window is modal
         self.important_files_and_folders_dialog = ImportantFilesAndFolders(self)
+
+    def open_with_gimp(self):
+        print(">>> gimp")
 
     def show_popup(self):
         """

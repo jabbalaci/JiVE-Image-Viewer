@@ -2,20 +2,15 @@
 Information about the important files and folders.
 """
 
-import sys
-
 from PyQt5 import QtGui
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import (QApplication, QDialog, QGridLayout, QGroupBox,
-                             QLabel, QPushButton, QShortcut, QVBoxLayout, QMessageBox)
+                             QLabel, QPushButton, QShortcut, QVBoxLayout)
 from functools import partial
 from pathlib import Path
-from pprint import pprint
-from subprocess import Popen
-from jive.exceptions import MissingTextEditor
 
 from jive import config as cfg
-from jive import mylogging as log
+from jive import opener
 from jive.helper import bold
 
 ICON_SIZE = 16
@@ -56,7 +51,7 @@ class ImportantFilesAndFolders(QDialog):
         fname = cfg.PREFERENCES_INI
         layout.addWidget(QLabel(fname), row, 1)
         btn = QPushButton("Open")
-        btn.clicked.connect(partial(self.open_file, fname))
+        btn.clicked.connect(partial(opener.open_file_with_editor, self, fname))
         layout.addWidget(btn, row, 2)
 
         row += 1
@@ -64,7 +59,7 @@ class ImportantFilesAndFolders(QDialog):
         fname = cfg.CATEGORIES_FILE
         layout.addWidget(QLabel(fname), row, 1)
         btn = QPushButton("Open")
-        btn.clicked.connect(partial(self.open_file, fname))
+        btn.clicked.connect(partial(opener.open_file_with_editor, self, fname))
         layout.addWidget(btn, row, 2)
 
         row += 1
@@ -72,7 +67,7 @@ class ImportantFilesAndFolders(QDialog):
         fname = cfg.SETTINGS_FILE
         layout.addWidget(QLabel(fname), row, 1)
         btn = QPushButton("Open")
-        btn.clicked.connect(partial(self.open_file, fname))
+        btn.clicked.connect(partial(opener.open_file_with_editor, self, fname))
         layout.addWidget(btn, row, 2)
 
         self.group_box_1.setLayout(layout)
@@ -89,7 +84,7 @@ class ImportantFilesAndFolders(QDialog):
         dname = cfg.BASE_DIR
         layout.addWidget(QLabel(dname), row, 1)
         btn = QPushButton("Open")
-        btn.clicked.connect(partial(self.open_folder, dname))
+        btn.clicked.connect(partial(opener.open_folder, dname))
         layout.addWidget(btn, row, 2)
 
         row += 1
@@ -97,7 +92,7 @@ class ImportantFilesAndFolders(QDialog):
         dname = d['root_dir']
         layout.addWidget(QLabel(dname), row, 1)
         btn = QPushButton("Open")
-        btn.clicked.connect(partial(self.open_folder, dname))
+        btn.clicked.connect(partial(opener.open_folder, dname))
         layout.addWidget(btn, row, 2)
 
         row += 1
@@ -105,7 +100,7 @@ class ImportantFilesAndFolders(QDialog):
         dname = d['saves_dir']
         layout.addWidget(QLabel(dname), row, 1)
         self.btn_saves = QPushButton("Open")
-        self.btn_saves.clicked.connect(partial(self.open_folder, dname))
+        self.btn_saves.clicked.connect(partial(opener.open_folder, dname))
         layout.addWidget(self.btn_saves, row, 2)
 
         row += 1
@@ -113,7 +108,7 @@ class ImportantFilesAndFolders(QDialog):
         dname = d['wallpapers_dir']
         layout.addWidget(QLabel(dname), row, 1)
         btn = QPushButton("Open")
-        btn.clicked.connect(partial(self.open_folder, dname))
+        btn.clicked.connect(partial(opener.open_folder, dname))
         layout.addWidget(btn, row, 2)
 
         row += 1
@@ -121,7 +116,7 @@ class ImportantFilesAndFolders(QDialog):
         dname = d['tmp_dir']
         layout.addWidget(QLabel(dname), row, 1)
         btn = QPushButton("Open")
-        btn.clicked.connect(partial(self.open_folder, dname))
+        btn.clicked.connect(partial(opener.open_folder, dname))
         layout.addWidget(btn, row, 2)
 
         row += 1
@@ -129,7 +124,7 @@ class ImportantFilesAndFolders(QDialog):
         dname = d['cache_dir']
         layout.addWidget(QLabel(dname), row, 1)
         btn = QPushButton("Open")
-        btn.clicked.connect(partial(self.open_folder, dname))
+        btn.clicked.connect(partial(opener.open_folder, dname))
         layout.addWidget(btn, row, 2)
 
         self.group_box_2.setLayout(layout)
@@ -137,32 +132,6 @@ class ImportantFilesAndFolders(QDialog):
     def copy_to_clipboard(self, text):
         cb = QApplication.clipboard()
         cb.setText(text)
-
-    def open_folder(self, dname):
-        text = sys.platform
-        if text.startswith("linux"):
-            Popen(["xdg-open", dname])
-        if text.startswith("win"):
-            Popen(["explorer", dname])
-        if text.startswith("darwin"):
-            Popen(["open", dname])      # TODO : somebody try it on Mac!
-
-    def open_file(self, fname):
-        editor = cfg.PLATFORM_SETTINGS.get('editor')
-        try:
-            if editor:
-                Popen([editor, fname])
-            else:
-                raise MissingTextEditor
-        except MissingTextEditor:
-            msg = f"You should provide a text editor in {cfg.PREFERENCES_INI}"
-            QMessageBox.warning(self, "Warning", msg)
-        except:
-            msg = f"""The file can't be opened with {editor}.
-            
-Please verify your text editor in {cfg.PREFERENCES_INI}
-""".strip()
-            QMessageBox.critical(self, "Error", msg)
 
     def add_shortcuts(self):
         self.shortcutCloseQ = QShortcut(QKeySequence("Q"), self)
