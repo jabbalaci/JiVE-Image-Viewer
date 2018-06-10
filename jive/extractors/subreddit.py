@@ -46,7 +46,7 @@ def read_subreddit(subreddit, statusbar=None):
                 statusbar.progressbar.setValue(percent)
                 # statusbar.flash_message(blue(f"{percent} %"))
                 # without this nothing appeared until 100%:
-                QApplication.processEvents()    # # reason: https://stackoverflow.com/a/29917237/232485
+                QApplication.processEvents()    # reason: https://stackoverflow.com/a/29917237/232485
             entry = child["data"]
             domain = entry["domain"]
             link = entry["url"]
