@@ -901,8 +901,6 @@ class Window(QMainWindow):
         fileMenu.addAction(self.quit_act)
 
         # viewMenu
-        viewMenu.addAction(self.shuffle_images_act)
-        viewMenu.addSeparator()
         viewMenu.addAction(self.image_info_act)
         viewMenu.addAction(self.important_files_and_folders_act)
         viewMenu.addSeparator()
@@ -910,6 +908,7 @@ class Window(QMainWindow):
         viewMenu.addAction(self.show_mouse_pointer_act)
 
         # toolsMenu
+        toolsMenu.addAction(self.shuffle_images_act)
         toolsMenu.addAction(self.find_duplicates_act)
 
         # helpMenu
