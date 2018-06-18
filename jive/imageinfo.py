@@ -84,7 +84,8 @@ class ImageInfo(QDialog):
 
         layout.addWidget(QLabel(bold("Marked to be deleted:")), 1, 0)
         num = self.commit.to_delete()
-        text = f"{num} (out of {length})"
+        remain = len(self.parent.list_of_images) - num
+        text = f"{num} (out of {length}) [remain {remain}]"
         layout.addWidget(QLabel(text), 1, 1)
 
         layout.addWidget(QLabel(bold("Marked to save as wallpaper:")), 2, 0)

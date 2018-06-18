@@ -572,6 +572,18 @@ class Window(QMainWindow):
         self.scroll_to_top()
         self.redraw()
 
+    def jump_to_image_and_dont_care_about_the_previous_image(self, idx):
+        self.curr_img_idx = idx
+        #
+        if self.curr_img_idx >= len(self.list_of_images):
+            self.curr_img_idx = len(self.list_of_images) - 1
+        if self.curr_img_idx < 0:
+            self.curr_img_idx = 0
+        #
+        self.curr_img = self.list_of_images[self.curr_img_idx].read()
+        self.scroll_to_top()
+        self.redraw()
+
     def jump_to_random_image(self):
         if len(self.list_of_images) > 1:
             # always choose a different image:
@@ -1178,12 +1190,14 @@ class Window(QMainWindow):
             QMessageBox.information(self, "Info", "There's nothing to commit.")
             return
         # else, if there's something to commit
+        to_del = self.commit.to_delete()
+        remain = len(self.list_of_images) - to_del
         msg = f"""
 Do you want to commit your changes?
 
 Save: {self.commit.to_save()}
 Save as wallpaper: {self.commit.to_wallpaper()}
-Delete: {self.commit.to_delete()}
+Delete: {to_del} (remain {remain})
 """.strip()
 
         reply = QMessageBox.question(self,

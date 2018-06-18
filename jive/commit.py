@@ -6,6 +6,7 @@ d - delete the image
 w - save image to a wallpaper folder
 """
 
+from pathlib import Path
 from time import sleep
 
 from PyQt5.QtWidgets import QApplication
@@ -94,4 +95,53 @@ class Commit:
         return self._save_files(folder, lst, "saving", cfg.NORMAL_SAVE)
 
     def delete_files(self):
-        return 0
+        if self.to_delete() == 0:
+            return 0
+        # else, there's something to delete
+        pos_img = None
+        if not self.parent.curr_img.to_delete:
+            # we don't want to delete the current image
+            pos_img = self.parent.curr_img
+        else:
+            # we want to delete the current image
+            images_to_keep_right = [img for img in self.parent.list_of_images[self.parent.curr_img_idx + 1:] if
+                                    not img.to_delete]
+            if len(images_to_keep_right) > 0:
+                pos_img = images_to_keep_right[0]
+            else:
+                images_to_keep_left = [img for img in self.parent.list_of_images[:self.parent.curr_img_idx] if
+                                       not img.to_delete]
+                if len(images_to_keep_left) > 0:
+                    pos_img = images_to_keep_left[-1]
+        #
+        to_delete = [img for img in self.parent.list_of_images if img.to_delete]
+        result = self.delete_physically(to_delete)
+
+        to_keep = [img for img in self.parent.list_of_images if not img.to_delete]
+        self.parent.list_of_images = to_keep
+        if len(to_keep) > 0:
+            # there are remaining images, thus pos_img points to an image that we want to keep
+            idx = self.parent.list_of_images.index(pos_img)
+            # log.debug(f"index: {idx}")
+            self.parent.jump_to_image_and_dont_care_about_the_previous_image(idx)
+        else:
+            self.parent.reset()
+
+        # how many images were removed successfully
+        return result
+
+    def delete_physically(self, death_list):
+        """
+        Delete the images in the list from the file system.
+
+        Return value: number of images that were removed successfully.
+        """
+        cnt = 0
+        for img in death_list:
+            p = Path(img.get_absolute_path_or_url())
+            log.debug(f"removing {str(p)}")
+            p.unlink()
+            if not p.exists():
+                cnt += 1
+        #
+        return cnt
