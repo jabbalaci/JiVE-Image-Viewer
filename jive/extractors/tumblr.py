@@ -44,7 +44,7 @@ def extract_images_from_a_specific_post(url):
         # print("#", api_call)
         # print()
         try:
-            d = requests.get(api_call).json()
+            d = requests.get(api_call, timeout=cfg.REQUESTS_TIMEOUT).json()
         except:
             log.error(f"problem with the tumblr post {url}")
             return []

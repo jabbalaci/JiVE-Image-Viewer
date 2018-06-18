@@ -52,7 +52,7 @@ def check_tumblr(url):
     res = extract_parts_from(url)
     blog_name, post_id = res
     api_call = f"https://api.tumblr.com/v2/blog/{blog_name}.tumblr.com/posts/photo?id={post_id}&api_key={TUMBLR_API_KEY}"
-    d = requests.get(api_call).json()
+    d = requests.get(api_call, timeout=3).json()
     if "errors" not in d:
         # pprint(d)
         posts = d["response"]["posts"]

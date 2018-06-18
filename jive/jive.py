@@ -106,7 +106,7 @@ class ImageProperty:
             else:
                 if name.startswith(("http://", "https://")):
                     url = name
-                    r = requests.get(url, headers=cfg.headers)
+                    r = requests.get(url, headers=cfg.headers, timeout=cfg.REQUESTS_TIMEOUT)
                     data = r.content
                     pm = QPixmap()
                     pm.loadFromData(data)
@@ -251,6 +251,8 @@ class ImageProperty:
                 return True
             else:
                 raise FileNotSaved
+        except requests.exceptions.Timeout:
+            log.warning(f"timeout exception happened with {self.get_absolute_path_or_url()}")
         except FileNotSaved:
             log.warning(f"couldn't save {self.get_absolute_path_or_url()} to {folder}")
         except:
@@ -1173,7 +1175,8 @@ class Window(QMainWindow):
 
     def commit_changes(self):
         if not self.commit.has_something_to_commit():
-            self.statusbar.flash_message(red("nothing to commit"), wait=cfg.MESSAGE_FLASH_TIME_1)
+            QMessageBox.information(self, "Info", "There's nothing to commit.")
+            # self.statusbar.flash_message(red("nothing to commit"), wait=cfg.MESSAGE_FLASH_TIME_1)
             return
 
         # else

@@ -64,7 +64,7 @@ def save(img, folder):
     else:
         # URL
         url = src
-        r = requests.get(url, headers=cfg.headers)
+        r = requests.get(url, headers=cfg.headers, timeout=cfg.REQUESTS_TIMEOUT)
         if r.status_code == 200:
             with open(dest, 'wb') as f:
                 f.write(r.content)

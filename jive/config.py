@@ -100,6 +100,8 @@ prefs.make_directories(PLATFORM_SETTINGS)
 NORMAL_SAVE = 1
 WALLPAPER_SAVE = 2
 
+REQUESTS_TIMEOUT = 3    # seconds
+
 #############################################################################
 
 if __name__ == "__main__":

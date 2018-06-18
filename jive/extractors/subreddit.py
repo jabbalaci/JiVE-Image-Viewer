@@ -34,7 +34,7 @@ def get_subreddit_name(text):
 def read_subreddit(subreddit, statusbar=None):
     try:
         img_url = url_template.format(subreddit=subreddit)
-        r = requests.get(img_url, headers=cfg.headers)
+        r = requests.get(img_url, headers=cfg.headers, timeout=cfg.REQUESTS_TIMEOUT)
         d = r.json()
         res = []
         total = len(d["data"]["children"])
