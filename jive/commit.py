@@ -136,12 +136,28 @@ class Commit:
 
         Return value: number of images that were removed successfully.
         """
+        total = len(death_list)
         cnt = 0
-        for img in death_list:
+        msg = "deleting"
+
+        for idx, img in enumerate(death_list, start=1):
+            percent = round(idx * 100 / total)
+            log.info(f"{msg} {percent}%")
+            self.message_label.setText(msg)
+            self.progressbar.show()
+            self.progressbar.setValue(percent)
+            QApplication.processEvents()
+
             p = Path(img.get_absolute_path_or_url())
-            log.debug(f"removing {str(p)}")
+            # log.debug(f"removing {str(p)}")
             p.unlink()
             if not p.exists():
                 cnt += 1
+            else:
+                log.warning(f"couldn't remove {str(p)}")
+        #
+        sleep(0.2)  # make the progressbar visible
+        self.message_label.setText("")
+        self.progressbar.hide()
         #
         return cnt
