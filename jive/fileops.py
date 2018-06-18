@@ -45,6 +45,19 @@ def save(img, folder):
     name_only = img.get_file_name_only()
     dest = str(Path(folder, name_only))
 
+    # requests object; later, if it's still None, will be set properly
+    r = None
+    if (not img.local_file) and (img.get_file_size() == -1):
+        url = src
+        r = requests.get(url, headers=cfg.headers, timeout=cfg.REQUESTS_TIMEOUT)
+        try:
+            file_size = int(r.headers['Content-Length'])
+        except:
+            file_size = -1
+        #
+        img.file_size = file_size
+        log.debug(f"file size: {img.get_file_size()}")
+
     # if the save target exists with this name, then there are 2 cases
     if os.path.isfile(dest):
         if os.path.getsize(dest) == img.get_file_size():
@@ -63,8 +76,10 @@ def save(img, folder):
             return True
     else:
         # URL
-        url = src
-        r = requests.get(url, headers=cfg.headers, timeout=cfg.REQUESTS_TIMEOUT)
+        # if it was set before, then don't connect again
+        if r is None:
+            url = src
+            r = requests.get(url, headers=cfg.headers, timeout=cfg.REQUESTS_TIMEOUT)
         if r.status_code == 200:
             with open(dest, 'wb') as f:
                 f.write(r.content)
