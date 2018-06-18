@@ -341,9 +341,6 @@ class Window(QMainWindow):
         # remove on-screen flags (S, D, W):
         self.flags_line.setText("")
 
-    # def mousePressEvent(self, QMouseEvent):
-    #     print(QMouseEvent.pos())
-
     def process_arguments(self, argv):
         param = argv[1]
         self.auto_detect(param)
@@ -378,6 +375,15 @@ class Window(QMainWindow):
         if x > width * (3 / 4):
             self.jump_to_next_image()
             # print("next")
+
+    def wheelEvent(self, event):
+        p = event.angleDelta()
+        x, y = p.x(), p.y()
+        offset = 75
+        if y < 0:
+            self.scroll_down(offset)
+        else:
+            self.scroll_up(offset)
 
     def set_title(self, prefix=""):
         if prefix:
@@ -1372,17 +1378,17 @@ You cannot delete it.
     def scroll_to_top(self):
         self.scroll.verticalScrollBar().setValue(0)
 
-    def scroll_down(self):
+    def scroll_down(self, offset=100):
         val = self.scroll.verticalScrollBar().value()
-        self.scroll.verticalScrollBar().setValue(val + 100)
+        self.scroll.verticalScrollBar().setValue(val + offset)
 
     def scroll_right(self):
         val = self.scroll.horizontalScrollBar().value()
         self.scroll.horizontalScrollBar().setValue(val + 100)
 
-    def scroll_up(self):
+    def scroll_up(self, offset=100):
         val = self.scroll.verticalScrollBar().value()
-        self.scroll.verticalScrollBar().setValue(val - 100)
+        self.scroll.verticalScrollBar().setValue(val - offset)
 
     def scroll_left(self):
         val = self.scroll.horizontalScrollBar().value()
@@ -1433,8 +1439,10 @@ You cannot delete it.
         if self.auto_width:
             self.auto_fit = False    # disable the other
             self.statusbar.mode_label.setText(bold("AUTO WIDTH {0}%".format(cfg.IMG_WIDTH_TO_WINDOW_WIDTH_IN_PERCENT)))
+            self.hide_scrollbars()
         else:
             self.statusbar.mode_label.setText(gray("AUTO WIDTH OFF"))
+            self.show_scrollbars()
         self.redraw()
 
     def zoom_in(self):
