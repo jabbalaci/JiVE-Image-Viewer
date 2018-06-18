@@ -1,6 +1,7 @@
 from jive import mylogging as log
 from jive import helper
 
+
 def _set_file_sizes(list_of_images):
     """
     Ask the file size of each image and register it.
