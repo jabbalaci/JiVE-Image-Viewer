@@ -1176,10 +1176,26 @@ class Window(QMainWindow):
     def commit_changes(self):
         if not self.commit.has_something_to_commit():
             QMessageBox.information(self, "Info", "There's nothing to commit.")
-            # self.statusbar.flash_message(red("nothing to commit"), wait=cfg.MESSAGE_FLASH_TIME_1)
+            return
+        # else, if there's something to commit
+        msg = f"""
+Do you want to commit your changes?
+
+Save: {self.commit.to_save()}
+Save as wallpaper: {self.commit.to_wallpaper()}
+Delete: {self.commit.to_delete()}
+""".strip()
+
+        reply = QMessageBox.question(self,
+                                     'Question',
+                                     msg,
+                                     QMessageBox.Yes | QMessageBox.No,
+                                     QMessageBox.Yes)
+
+        if reply == QMessageBox.No:
             return
 
-        # else
+        # else, if the user wants to commit the changes
 
         marked_to_wallpaper = self.commit.to_wallpaper()                # How many were marked?
         marked_to_wallpaper_success = self.commit.save_wallpapers()     # How many were saved successfully?
