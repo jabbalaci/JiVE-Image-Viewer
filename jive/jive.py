@@ -41,6 +41,7 @@ from pathlib import Path
 
 from jive import categories
 from jive import config as cfg
+from jive import duplicates
 from jive import fileops
 from jive import help_dialogs
 from jive import helper
@@ -213,6 +214,9 @@ class ImageProperty:
 
     def toggle_wallpaper(self):
         self.to_wallpaper = not self.to_wallpaper
+
+    def set_file_size(self):
+        self.file_size = os.path.getsize(self.name)
 
     def get_flags(self):
         sb = []
@@ -860,6 +864,9 @@ class Window(QMainWindow):
         #
         self.open_with_gimp_act = QAction("&Gimp", self)
         self.open_with_gimp_act.triggered.connect(self.open_with_gimp)
+        #
+        self.find_duplicates_act = QAction("Find &duplicates", self)
+        self.find_duplicates_act.triggered.connect(self.find_duplicates)
 
     def create_menubar(self):
         self.menubar = self.menuBar()
@@ -874,6 +881,7 @@ class Window(QMainWindow):
 
         fileMenu = self.menubar.addMenu("&File")
         viewMenu = self.menubar.addMenu("&View")
+        toolsMenu = self.menubar.addMenu("&Tools")
         helpMenu = self.menubar.addMenu("&Help")
 
         # fileMenu
@@ -900,6 +908,9 @@ class Window(QMainWindow):
         viewMenu.addSeparator()
         viewMenu.addAction(self.hide_menubar_act)
         viewMenu.addAction(self.show_mouse_pointer_act)
+
+        # toolsMenu
+        toolsMenu.addAction(self.find_duplicates_act)
 
         # helpMenu
         helpMenu.addAction(self.help_act)
@@ -1328,6 +1339,28 @@ You cannot delete it.
         # else
         name = self.curr_img.get_absolute_path_or_url()
         opener.open_file_with_gimp(self, name)
+
+    def find_duplicates(self):
+        if len(self.list_of_images) == 0:
+            QMessageBox.information(self, "Info", "There are no duplicates.")
+            return
+        # else, there is at least 1 image
+        if not self.curr_img.local_file:
+            QMessageBox.information(self, "Info", "Finding duplicates works with <strong>local</strong> files only!")
+            return
+        # else, we only have local file(s)
+        # find and mark duplicates
+        cnt = duplicates.mark_duplicates(self.list_of_images)
+        if cnt == 0:
+            msg = "There are no duplicates."
+        else:
+            msg = f"""
+{cnt} images were <strong>marked</strong> to be deleted.
+
+If you want to delete them from the 
+file system, then <strong>commit</strong> your changes.        
+""".strip().replace("\n", "<br>")
+        QMessageBox.information(self, "Info", msg)
 
     def show_popup(self):
         """
