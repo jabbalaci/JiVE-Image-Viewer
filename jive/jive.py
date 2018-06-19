@@ -46,6 +46,7 @@ from jive import fileops
 from jive import help_dialogs
 from jive import helper
 from jive import mylogging as log
+from jive import cache
 from jive import opener
 from jive import settings
 from jive import shortcuts as scuts
@@ -97,7 +98,7 @@ class ImageProperty:
         self.to_wallpaper = False
 
     @classmethod
-    def to_pixmap(cls, name):
+    def to_pixmap(cls, name, cache):
         try:
             pm = None
             file_size = -1
@@ -107,11 +108,19 @@ class ImageProperty:
             else:
                 if name.startswith(("http://", "https://")):
                     url = name
-                    r = requests.get(url, headers=cfg.headers, timeout=cfg.REQUESTS_TIMEOUT)
-                    data = r.content
-                    pm = QPixmap()
-                    pm.loadFromData(data)
-                    file_size = int(r.headers['Content-Length'])
+                    if cache.enabled() and url in cache:
+                        log.debug(f"cache news: {url} was found in the cache :)")
+                        fname = cache.get_fname_to_url(url)
+                        pm = QPixmap(fname)
+                        file_size = os.path.getsize(fname)
+                    else:
+                        r = requests.get(url, headers=cfg.headers, timeout=cfg.REQUESTS_TIMEOUT)
+                        data = r.content
+                        pm = QPixmap()
+                        pm.loadFromData(data)
+                        file_size = int(r.headers['Content-Length'])
+                        if cache.enabled():
+                            cache.save(url, data)
             #
             if pm is None or pm.width() == 0:
                 raise ImageError
@@ -125,7 +134,7 @@ class ImageProperty:
         """
         Construct the pixmap for the current image.
         """
-        self.original_img, self.image_state, self.file_size = self.to_pixmap(self.name)
+        self.original_img, self.image_state, self.file_size = self.to_pixmap(self.name, self.parent.cache)
         self.calculate_zoomed_image()
         return self
 
@@ -310,6 +319,8 @@ class Window(QMainWindow):
         self.init_ui()
 
         self.commit = Commit(self)    # it must come after the init_ui()
+
+        self.cache = cache.Cache(cfg.PREFERENCES_OPTIONS, cfg.PLATFORM_SETTINGS["cache_dir"])
 
         self.toggle_auto_fit()           # set it ON and show the flash message
         self.toggle_show_image_path()    # make it False and hide it
@@ -1567,7 +1578,7 @@ file system, then <strong>commit</strong> your changes.
 
     def show_logo(self):
         scale = 0.3
-        pm = ImageProperty.to_pixmap(cfg.LOGO)[0]
+        pm = ImageProperty.to_pixmap(cfg.LOGO, self.cache)[0]
         pm = pm.scaled(self.geometry().width() * scale,
                        self.geometry().height() * scale,
                        Qt.KeepAspectRatio,

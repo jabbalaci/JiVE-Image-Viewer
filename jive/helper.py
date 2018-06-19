@@ -114,6 +114,14 @@ def shorten(text, length=40):
     return f"{text[:half]}...{text[-half:]}"
 
 
+def string_to_md5(content):
+    """
+    Calculate the md5 hash of a string.
+    """
+    content = content.encode("utf8")
+    return hashlib.md5(content).hexdigest()
+
+
 def file_to_md5(filename, block_size=8192):
     """
     Calculate the md5 hash of a file. Memory-friendly solution,

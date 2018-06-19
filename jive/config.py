@@ -96,6 +96,7 @@ TOP_AND_BOTTOM_BAR_STYLESHEET = "background: lightgray"
 prefs = preferences.Preferences(PREFERENCES_INI, app_dirs.user_data_dir, log)
 PLATFORM_SETTINGS = prefs.get_platform_settings()
 prefs.make_directories(PLATFORM_SETTINGS)
+PREFERENCES_OPTIONS = prefs.get_as_dict().get('Options')
 
 NORMAL_SAVE = 1
 WALLPAPER_SAVE = 2

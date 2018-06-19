@@ -50,6 +50,9 @@ class Preferences:
     def get_platform_settings(self):
         return self.platform_settings
 
+    def get_as_dict(self):
+        return self.d
+
     def perform_string_interpolation(self, original):
         d = original.copy()
 
