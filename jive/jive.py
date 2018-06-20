@@ -625,6 +625,7 @@ class Window(QMainWindow):
         #
         if self.preload:
             self.preload_next_image()
+            self.preload_prev_image()
 
         # let's always call it (with and without preload), just to be sure to free memory
         self.free_others()
@@ -643,6 +644,7 @@ class Window(QMainWindow):
         #
         if self.preload:
             self.preload_next_image()
+            self.preload_prev_image()
 
         # let's always call it (with and without preload), just to be sure to free memory
         self.free_others()
@@ -653,6 +655,16 @@ class Window(QMainWindow):
             next_img.read(preload=True)
         except IndexError:
             pass    # we are at the last image, there's no next one
+
+    def preload_prev_image(self):
+        try:
+            minus_1 = self.curr_img_idx - 1
+            if minus_1 < 0:
+                raise IndexError
+            prev_img = self.list_of_images[minus_1]
+            prev_img.read(preload=True)
+        except IndexError:
+            pass    # we are at the beginning, there's no previous one
 
     def free_others(self):
         """
@@ -666,15 +678,19 @@ class Window(QMainWindow):
 
         Idea: you jump to image A, load it, and preload A+1. Then go over the list and free
         the resources of all the other images, except A and A+1.
-        """
-        curr = self.curr_img_idx
-        plus_1 = self.curr_img_idx + 1
-        try:
-            tmp = self.list_of_images[plus_1]
-        except IndexError:
-            plus_1 = self.curr_img_idx
 
-        before = self.list_of_images[:curr]
+        New: we also keep the previous image. That is, we keep 3 images: previous, current, next.
+        With the exception of these three, free all the others.
+        """
+        plus_1 = self.curr_img_idx + 1
+        if plus_1 >= len(self.list_of_images):
+            plus_1 = self.curr_img_idx
+        #
+        minus_1 = self.curr_img_idx - 1
+        if minus_1 < 0:
+            minus_1 = 0
+
+        before = self.list_of_images[:minus_1]
         after = self.list_of_images[plus_1 + 1:]
         others = before + after
         for img in others:
