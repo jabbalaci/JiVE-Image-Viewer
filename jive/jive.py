@@ -24,10 +24,12 @@ if __name__ == "__main__":
 
 ##############################################################################
 
-import sys
-
 import os
 import random
+import sys
+from functools import partial
+from pathlib import Path
+
 import requests
 from PyQt5 import QtGui
 from PyQt5.QtCore import QPoint, Qt
@@ -36,9 +38,8 @@ from PyQt5.QtWidgets import (QAction, QApplication, QDesktopWidget,
                              QFileDialog, QFrame, QInputDialog, QLabel,
                              QLineEdit, QMainWindow, QMenu, QMessageBox,
                              QScrollArea, QShortcut, QVBoxLayout, qApp)
-from functools import partial
-from pathlib import Path
 
+from jive import cache
 from jive import categories
 from jive import config as cfg
 from jive import duplicates
@@ -46,7 +47,6 @@ from jive import fileops
 from jive import help_dialogs
 from jive import helper
 from jive import mylogging as log
-from jive import cache
 from jive import opener
 from jive import settings
 from jive import shortcuts as scuts
@@ -343,7 +343,6 @@ class Window(QMainWindow):
         self.cache = cache.Cache(cfg.PREFERENCES_OPTIONS, cfg.PLATFORM_SETTINGS["cache_dir"])
 
         self.preload = True if cfg.PREFERENCES_OPTIONS.get("preload", "") == "yes" else False
-        print(f"preload: {self.preload}")
 
         self.toggle_auto_fit()           # set it ON and show the flash message
         self.toggle_show_image_path()    # make it False and hide it
@@ -1459,8 +1458,8 @@ You cannot delete it.
             msg = f"""
 {cnt} images were <strong>marked</strong> to be deleted.
 
-If you want to delete them from the 
-file system, then <strong>commit</strong> your changes.        
+If you want to delete them from the
+file system, then <strong>commit</strong> your changes.
 """.strip().replace("\n", "<br>")
         QMessageBox.information(self, "Info", msg)
 

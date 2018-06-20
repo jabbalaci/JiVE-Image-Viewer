@@ -28,12 +28,13 @@ class CacheQueue:
     def read_cache_dir(self):
         for entry in sorted(Path(self.cache_dir).iterdir(), key=lambda f: f.stat().st_mtime):
             elem = CacheElem(entry)
-            self.add_elem(elem)
+            self.add_elem(elem, verbose=False)
 
-    def add_elem(self, elem):
+    def add_elem(self, elem, verbose=True):
         self.q.append(elem)
         self.size += elem.size
-        log.debug(f"cache news: {elem.name} was added")
+        if verbose:
+            log.debug(f"cache news: {elem.name} was added")
 
     def remove_elem(self):
         first = self.q.popleft()
@@ -62,8 +63,10 @@ class CacheQueue:
     #     return self.size
 
     def debug(self):
-        log.debug(f"number of entries: {len(self.q)}")
-        log.debug(f"cache size: {self.size}")
+        num = helper.pretty_num(len(self.q))
+        log.debug(f"number of images in the cache: {num}")
+        size = helper.pretty_num(self.size)
+        log.debug(f"cache size in bytes: {size}")
 
 
 class Cache:
