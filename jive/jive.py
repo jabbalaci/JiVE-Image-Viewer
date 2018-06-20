@@ -1740,6 +1740,10 @@ file system, then <strong>commit</strong> your changes.
         if self.curr_img.image_state == ImageProperty.IMAGE_STATE_PROBLEM:
             self.statusbar.flash_message(red("problem"))
 
+        # It's here because of preload. With this the next / prev. image appears and then the preload happens.
+        # Without this preload happened and then appeared the image.
+        QApplication.processEvents()
+
     def closeEvent(self, event):
         if self.image_info_dialog:
             self.image_info_dialog.close()
