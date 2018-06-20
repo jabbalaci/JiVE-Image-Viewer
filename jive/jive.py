@@ -130,12 +130,31 @@ class ImageProperty:
             log.warning(f"cannot read the image {name}")
             return (QPixmap(str(Path(cfg.ASSETS_DIR, "not_found.png"))), cls.IMAGE_STATE_PROBLEM, -1)
 
-    def read(self):
+    def read(self, force=False, preload=False):
         """
         Construct the pixmap for the current image.
+
+        Preload: read the original image but don't construct yet the zoomed image.
+        Idea: we show the current image and preload the next one. Here the user may
+        resize the window. Then (s)he goes to the next image, which was preloaded. On it,
+        we call read() again, which will construct the zoomed image but it won't read
+        the original image again.
+
+        If the image has already been read, then there's nothing to do (we don't read it again).
+        If `force` is True, then the images are re-read.
         """
-        self.original_img, self.image_state, self.file_size = self.to_pixmap(self.name, self.parent.cache)
-        self.calculate_zoomed_image()
+        if force:
+            self.free()
+
+        if self.original_img is None:
+            self.original_img, self.image_state, self.file_size = self.to_pixmap(self.name, self.parent.cache)
+
+        if preload == False:
+            self.zoomed_img = self.calculate_zoomed_image()
+
+        if preload:
+            log.debug(f"the image {self.name} was preloaded")
+
         return self
 
     def free(self):
@@ -162,6 +181,7 @@ class ImageProperty:
                                                    self.zoom_ratio * self.original_img.height(),
                                                    Qt.KeepAspectRatio,
                                                    Qt.SmoothTransformation)
+        return self.zoomed_img
 
     def set_zoomed_img(self, pm):
         self.zoomed_img = pm
@@ -322,6 +342,9 @@ class Window(QMainWindow):
 
         self.cache = cache.Cache(cfg.PREFERENCES_OPTIONS, cfg.PLATFORM_SETTINGS["cache_dir"])
 
+        self.preload = True if cfg.PREFERENCES_OPTIONS.get("preload", "") == "yes" else False
+        print(f"preload: {self.preload}")
+
         self.toggle_auto_fit()           # set it ON and show the flash message
         self.toggle_show_image_path()    # make it False and hide it
 
@@ -410,8 +433,9 @@ class Window(QMainWindow):
             log.warning("no images were found")
             return
         # else
-        self.curr_img_idx = 0
-        self.curr_img = self.list_of_images[0].read()
+        self.jump_to_image(0)  # this way the 2nd image will be preloaded
+        # self.curr_img_idx = 0
+        # self.curr_img = self.list_of_images[0].read()
         #
         if redraw:
             self.redraw()
@@ -422,11 +446,14 @@ class Window(QMainWindow):
             log.warning("no images were found")
             return
         # else
+        jump_here = 0
         for i in range(len(self.list_of_images)):
             if self.list_of_images[i].name == local_file:
-                self.curr_img_idx = i
+                jump_here = i
                 break
-        self.curr_img = self.list_of_images[self.curr_img_idx].read()
+        self.curr_img_idx = -1
+        self.jump_to_image(jump_here)
+        # self.curr_img = self.list_of_images[self.curr_img_idx].read()
         #
         if redraw:
             self.redraw()
@@ -500,8 +527,9 @@ class Window(QMainWindow):
             return
         # else
         self.list_of_images = [ImageProperty(url, self) for url in urls]
-        self.curr_img_idx = 0
-        self.curr_img = self.list_of_images[0].read()
+        self.jump_to_image(0)    # this way the 2nd image will be preloaded
+        # self.curr_img_idx = 0
+        # self.curr_img = self.list_of_images[0].read()
         #
         if redraw:
             self.redraw()
@@ -536,8 +564,9 @@ class Window(QMainWindow):
             log.warning("that's not a tumblr post")
         self.list_of_images = [ImageProperty(url, self) for url in urls]
         if len(self.list_of_images) > 0:
-            self.curr_img_idx = 0
-            self.curr_img = self.list_of_images[0].read()
+            self.jump_to_image(0)  # this way the 2nd image will be preloaded
+            # self.curr_img_idx = 0
+            # self.curr_img = self.list_of_images[0].read()
 
     def jump_to_next_image(self):
         if self.curr_img_idx == len(self.list_of_images) - 1:
@@ -588,10 +617,17 @@ class Window(QMainWindow):
             self.curr_img_idx = 0
         #
         self.curr_img = self.list_of_images[self.curr_img_idx].read()
-        if old_idx != self.curr_img_idx:
-            self.list_of_images[old_idx].free()  # don't forget to free it!
+        # not needed any more, free_others() will take care of it
+        # if old_idx >= 0 and old_idx != self.curr_img_idx:
+        #     self.list_of_images[old_idx].free()  # don't forget to free it!
         self.scroll_to_top()
         self.redraw()
+        #
+        if self.preload:
+            self.preload_next_image()
+
+        # let's always call it (with and without preload), just to be sure to free memory
+        self.free_others()
 
     def jump_to_image_and_dont_care_about_the_previous_image(self, idx):
         self.curr_img_idx = idx
@@ -604,6 +640,46 @@ class Window(QMainWindow):
         self.curr_img = self.list_of_images[self.curr_img_idx].read()
         self.scroll_to_top()
         self.redraw()
+        #
+        if self.preload:
+            self.preload_next_image()
+
+        # let's always call it (with and without preload), just to be sure to free memory
+        self.free_others()
+
+    def preload_next_image(self):
+        try:
+            next_img = self.list_of_images[self.curr_img_idx + 1]
+            next_img.read(preload=True)
+        except IndexError:
+            pass    # we are at the last image, there's no next one
+
+    def free_others(self):
+        """
+        Without preload, browsing worked like this: you are on an image (A),
+        and you jump to somewhere (new). You load the new image and you free the
+        resources of old image A to avoid filling the memory with large QPixmap objects.
+
+        Preload works like this: you jump somewhere (A). You load the image A and you preload
+        the image that comes after A. If you go forward, it's OK. Say you are at image A and A+1 is preloaded.
+        However, if you go backward, the resources of A+1 are not freed. That's a problem.
+
+        Idea: you jump to image A, load it, and preload A+1. Then go over the list and free
+        the resources of all the other images, except A and A+1.
+        """
+        curr = self.curr_img_idx
+        plus_1 = self.curr_img_idx + 1
+        try:
+            tmp = self.list_of_images[plus_1]
+        except IndexError:
+            plus_1 = self.curr_img_idx
+
+        before = self.list_of_images[:curr]
+        after = self.list_of_images[plus_1 + 1:]
+        others = before + after
+        for img in others:
+            img.free()
+        # log.debug(f"{len(others)} images were freed")
 
     def jump_to_random_image(self):
         if len(self.list_of_images) > 1:

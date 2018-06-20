@@ -22,7 +22,7 @@ from jive import preferences
 from jive.lib.podium import get_short_fingerprint
 
 appname = "JiveImageViewer"
-app_dirs = AppDirs(appname, "")    # app_dirs.user_data_dir is what you need
+app_dirs = AppDirs(appname, "")    # app_dirs.user_data_dir is what we need
 
 DEVELOPMENT = 1
 RELEASE = 2
