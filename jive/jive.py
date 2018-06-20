@@ -254,7 +254,7 @@ class ImageProperty:
         Return True if saving was successful. False, otherwise.
         """
         try:
-            res = fileops.save(self, folder)
+            res = fileops.save(self, folder, self.parent.cache)
             # if save was successful:
             if res:
                 if method == cfg.WALLPAPER_SAVE:

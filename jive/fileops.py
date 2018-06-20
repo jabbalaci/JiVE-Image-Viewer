@@ -34,7 +34,7 @@ def generate_new_name(old_name_with_ext, folder):
             return str(p)
 
 
-def save(img, folder):
+def save(img, folder, cache):
     """
     Save the given image to the specified folder.
 
@@ -45,9 +45,22 @@ def save(img, folder):
     name_only = img.get_file_name_only()
     dest = str(Path(folder, name_only))
 
+    found_in_cache = False
+    if cache.enabled() and (not img.local_file) and src in cache:
+        found_in_cache = True
+        url = src
+        log.debug(f"image save: {url} was found in the cache")
+        fname = cache.get_fname_to_url(url)
+        img.file_size = os.path.getsize(fname)
+
     # requests object; later, if it's still None, will be set properly
     r = None
     if (not img.local_file) and (img.get_file_size() == -1):
+        # Goal: if it's a URL whose file size is unknown => figure out its file size
+        # Why do we need the file size? If there's a destination with the same name,
+        # then we compare the file sizes to tell if they are identical or not.
+        # If the image is in the cache, then in the previous step we set the file size,
+        # so in that case we don't connect to the URL.
         url = src
         r = requests.get(url, headers=cfg.headers, timeout=cfg.REQUESTS_TIMEOUT)
         try:
@@ -76,9 +89,17 @@ def save(img, folder):
             return True
     else:
         # URL
+        url = src
+
+        if found_in_cache:
+            fname = cache.get_fname_to_url(url)
+            shutil.copy(fname, dest)
+            if os.path.isfile(dest) and os.path.getsize(dest) == os.path.getsize(fname):
+                return True
+
+        # if it's not in the cache
         # if it was set before, then don't connect again
         if r is None:
-            url = src
             r = requests.get(url, headers=cfg.headers, timeout=cfg.REQUESTS_TIMEOUT)
         if r.status_code == 200:
             with open(dest, 'wb') as f:
