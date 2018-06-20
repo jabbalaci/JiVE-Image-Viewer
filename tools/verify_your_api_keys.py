@@ -16,6 +16,9 @@ TUMBLR_API_KEY = "3Uj5hvL773MVNlhFJC5gyVftNh4Qxci3hqoPkU3nAzp9bFJ8UB"
 IMGUR_CLIENT_ID = "3cb06ab5dcf3960"
 IMGUR_CLIENT_SECRET = "2215dfcb9e9ab47ddcf088c2703b0cf11ab67b08"
 
+# IMGUR_CLIENT_ID = "199a43028219fa4"
+# IMGUR_CLIENT_SECRET = "80a58bf2e3f1a6045ac11167c463ed8692bccc8d"
+
 imgur_album_url = "https://imgur.com/gallery/9p0gCyv"    # pirates
 tumblr_post_url = "https://different-landscapes.tumblr.com/post/174158537319"    # tree
 

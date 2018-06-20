@@ -7,11 +7,18 @@ from imgurpython import ImgurClient
 from jive import config as cfg
 from jive import mylogging as log
 
-try:
-    client = ImgurClient(cfg.IMGUR_CLIENT_ID, cfg.IMGUR_CLIENT_SECRET)
-except:
-    log.warning("missing or wrong imgur API keys")
-    client = None
+client = None
+
+
+def connection():
+    global client
+
+    try:
+        client = ImgurClient(cfg.IMGUR_CLIENT_ID, cfg.IMGUR_CLIENT_SECRET)
+    except Exception as e:
+        log.warning("missing or wrong imgur API keys")
+        log.warning(f"imgur exception: {str(e)}")
+        client = None
 
 
 def is_album(url):
@@ -24,6 +31,10 @@ def get_album_id(url):
 
 
 def extract_images_from_an_album(url):
+    if client is None:
+        connection()
+
+    # if it's still None
     if client is None:
         log.warning(f"problem with your imgur API keys, cannot process {url}")
         return []
