@@ -51,6 +51,7 @@ from jive import opener
 from jive import settings
 from jive import shortcuts as scuts
 from jive import statusbar as sbar
+from jive.imagewithextra import ImageWithExtraInfo
 from jive.commit import Commit
 from jive.exceptions import ImageError, FileNotSaved
 from jive.extractors import imgur, subreddit, tumblr
@@ -77,6 +78,7 @@ ON = True
 # TEST_REMOTE_URL_FILE = "https://i.imgur.com/k489QN8.jpg"    # femme pirate
 # TEST_TUMBLR_POST = "https://different-landscapes.tumblr.com/post/174158537319"    # tree
 
+
 class ImageProperty:
     """
     Properties of the current (previous / next) image(s).
@@ -84,9 +86,14 @@ class ImageProperty:
     IMAGE_STATE_OK = 1
     IMAGE_STATE_PROBLEM = 2
 
-    def __init__(self, name, parent):
-        self.name = name
-        self.local_file = self._is_local_file(name)
+    def __init__(self, img, parent):
+        if isinstance(img, ImageWithExtraInfo):
+            self.name = img.fpath_or_url
+            self.extra_info = img.extra_info
+        else:
+            self.name = img
+            self.extra_info = {}
+        self.local_file = self._is_local_file(self.name)
         self.parent = parent
         self.zoom_ratio = 1.0
         self.original_img = None    # will be set in read()
@@ -432,6 +439,7 @@ class Window(QMainWindow):
             log.warning("no images were found")
             return
         # else
+        self.curr_img_idx = -1
         self.jump_to_image(0)  # this way the 2nd image will be preloaded
         # self.curr_img_idx = 0
         # self.curr_img = self.list_of_images[0].read()
@@ -513,19 +521,20 @@ class Window(QMainWindow):
         self.curr_img_idx = 0
         self.curr_img = self.list_of_images[0].read()
 
-    def open_subreddit(self, text, redraw=False):
+    def open_subreddit(self, text, after_id=None, redraw=False):
         subreddit_name = subreddit.get_subreddit_name(text)
         if not subreddit_name:
             log.warning("that's not a subreddit")
             return
         # else
-        urls = subreddit.read_subreddit(subreddit_name, self.statusbar)
+        urls = subreddit.read_subreddit(subreddit_name, after_id, statusbar=self.statusbar)
         if len(urls) == 0:
             log.warning("no images could be extracted")
             self.statusbar.flash_message(red("no images found"))
             return
         # else
         self.list_of_images = [ImageProperty(url, self) for url in urls]
+        self.curr_img_idx = -1   # refresh the first image if we are there
         self.jump_to_image(0)    # this way the 2nd image will be preloaded
         # self.curr_img_idx = 0
         # self.curr_img = self.list_of_images[0].read()
@@ -563,6 +572,7 @@ class Window(QMainWindow):
             log.warning("that's not a tumblr post")
         self.list_of_images = [ImageProperty(url, self) for url in urls]
         if len(self.list_of_images) > 0:
+            self.curr_img_idx = -1
             self.jump_to_image(0)  # this way the 2nd image will be preloaded
             # self.curr_img_idx = 0
             # self.curr_img = self.list_of_images[0].read()
@@ -570,7 +580,32 @@ class Window(QMainWindow):
     def jump_to_next_image(self):
         if self.curr_img_idx == len(self.list_of_images) - 1:
             self.statusbar.flash_message(red("no more"), wait=cfg.MESSAGE_FLASH_TIME_1)
-            return
+            img = self.curr_img
+            subreddit_name = img.extra_info.get("subreddit")
+            after_id = img.extra_info.get("after_id")
+            if img and subreddit_name and after_id:
+                reply = QMessageBox.question(self,
+                                             'Question',
+                                             "Load the next page?",
+                                             QMessageBox.Yes | QMessageBox.No,
+                                             QMessageBox.Yes)
+
+                if reply == QMessageBox.No:
+                    return
+                else:
+                    # self.open_subreddit(subreddit, after_id)
+                    urls = subreddit.read_subreddit(subreddit_name, after_id, statusbar=self.statusbar)
+                    if len(urls) == 0:
+                        QMessageBox.information(self,
+                                                "Info",
+                                                "No new images were found.")
+                    else:
+                        lst = [ImageProperty(url, self) for url in urls]
+                        self.list_of_images.extend(lst)
+                        self.jump_to_next_image()
+                    return
+            else:
+                return
         # else
         new_idx = self.curr_img_idx + 1
         if new_idx >= len(self.list_of_images):
@@ -628,6 +663,8 @@ class Window(QMainWindow):
 
         # let's always call it (with and without preload), just to be sure to free memory
         self.free_others()
+
+        # log.debug(self.curr_img.extra_info)
 
     def jump_to_image_and_dont_care_about_the_previous_image(self, idx):
         self.curr_img_idx = idx

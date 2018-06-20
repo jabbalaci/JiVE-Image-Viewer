@@ -7,9 +7,12 @@ from PyQt5.QtWidgets import QApplication
 from jive import config as cfg
 from jive import mylogging as log
 from jive.extractors import imgur, tumblr
+from jive.imagewithextra import ImageWithExtraInfo
 from jive.helper import blue
 
 url_template = "https://www.reddit.com/r/{subreddit}/.json"
+
+url_template_with_after_id = "https://www.reddit.com/r/{subreddit}/.json?after={after_id}"
 
 
 def get_subreddit_name(text):
@@ -31,9 +34,12 @@ def get_subreddit_name(text):
     return None
 
 
-def read_subreddit(subreddit, statusbar=None):
+def read_subreddit(subreddit, after_id=None, statusbar=None):
     try:
-        img_url = url_template.format(subreddit=subreddit)
+        if after_id is None:
+            img_url = url_template.format(subreddit=subreddit)
+        else:
+            img_url = url_template_with_after_id.format(subreddit=subreddit, after_id=after_id)
         r = requests.get(img_url, headers=cfg.headers, timeout=cfg.REQUESTS_TIMEOUT)
         d = r.json()
         res = []
@@ -50,8 +56,14 @@ def read_subreddit(subreddit, statusbar=None):
             entry = child["data"]
             domain = entry["domain"]
             link = entry["url"]
+            after_id = entry["name"]    # use this for a new page that comes after this entry
+            extra = {
+                'subreddit': subreddit,
+                'after_id': after_id,
+                'next_page_url': f'https://www.reddit.com/r/{subreddit}/.json?after={after_id}'
+            }
             if Path(link).suffix.lower() in cfg.SUPPORTED_FORMATS:
-                res.append(link)
+                res.append(ImageWithExtraInfo(link, extra))
                 continue
             #
             if domain.endswith(".tumblr.com"):
@@ -64,7 +76,7 @@ def read_subreddit(subreddit, statusbar=None):
                 # print("# extracted images:", len(images))
                 for img_url in images:
                     if Path(img_url).suffix.lower() in cfg.SUPPORTED_FORMATS:
-                        res.append(img_url)
+                        res.append(ImageWithExtraInfo(img_url, extra))
                     #
                 #
                 continue
@@ -78,7 +90,7 @@ def read_subreddit(subreddit, statusbar=None):
                         images = []
                     for img_url in images:
                         if Path(img_url).suffix.lower() in cfg.SUPPORTED_FORMATS:
-                            res.append(img_url)
+                            res.append(ImageWithExtraInfo(img_url, extra))
                         #
                     #
                 else:
@@ -86,9 +98,9 @@ def read_subreddit(subreddit, statusbar=None):
                     # it may be a single image embedded in an HTML page
                     try:
                         img_url = link + ".jpg"    # it works sometimes
-                        r = requests.head(img_url, headers=cfg.headers)
+                        r = requests.head(img_url, headers=cfg.headers, timeout=cfg.REQUESTS_TIMEOUT)
                         if r.ok:
-                            res.append(img_url)
+                            res.append(ImageWithExtraInfo(img_url, extra))
                     except:
                         log.warning(f"problem with {link} -> {url}")
             # end imgur section
@@ -97,7 +109,8 @@ def read_subreddit(subreddit, statusbar=None):
     except KeyError:
         log.warning(f"cannot extract data from {img_url}")
         return []
-    except:
+    except Exception as e:
+        log.warning(f"exception: {str(e)}")
         log.warning(f"problem with {img_url}")
         return []
     finally:
