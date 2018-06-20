@@ -35,7 +35,7 @@ if WHAT_IT_IS == DEVELOPMENT:
 if WHAT_IT_IS == RELEASE:
     log.info("RELEASE version")
 
-VERSION = "0.4"
+VERSION = "0.5"
 
 HOME_DIR = os.path.expanduser("~")
 # BASE_DIR = os.path.dirname(os.path.abspath(__file__))
