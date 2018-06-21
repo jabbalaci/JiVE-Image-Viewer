@@ -23,8 +23,9 @@ class Categories:
             with open(categories) as f:
                 log.info(f"{categories} was read")
                 return yaml.safe_load(f)
-        except:
+        except Exception as e:
             log.warning("couldn't read {0}".format(categories))
+            log.warning(e)
             return {}
 
     def _my_sorted(self, entries):
