@@ -1,3 +1,11 @@
+# this is the default subreddit list
+#
+# if you want to customize this list, then do the following:
+# 1) copy this file to your user data dir.
+# 2) customize the copy in your user data dir.
+# To figure out where your user data dir. is,
+# run the script `location_of_user_data_dir.py`.
+
 asians:
     - asianhotties
 ass:

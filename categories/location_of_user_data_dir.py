@@ -18,4 +18,4 @@ from jive import config as cfg
 
 
 print()
-print("Your settings file is located here: {0}".format(cfg.SETTINGS_FILE))
+print("Your user data dir. is located here: {0}".format(cfg.app_dirs.user_data_dir))
