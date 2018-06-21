@@ -18,11 +18,13 @@ class Categories:
         # pprint(self.d)
 
     def read(self):
+        categories = cfg.categories_file()
         try:
-            with open(cfg.CATEGORIES_FILE) as f:
+            with open(categories) as f:
+                log.info(f"{categories} was read")
                 return yaml.safe_load(f)
         except:
-            log.warning("couldn't read {0}".format(cfg.CATEGORIES_FILE))
+            log.warning("couldn't read {0}".format(categories))
             return {}
 
     def _my_sorted(self, entries):

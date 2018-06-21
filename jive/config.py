@@ -19,26 +19,13 @@ from pprint import pprint
 
 from jive import mylogging as log
 from jive import preferences
-from jive.lib.podium import get_short_fingerprint
+
+VERSION = "0.5"
 
 appname = "JiveImageViewer"
 app_dirs = AppDirs(appname, "")    # app_dirs.user_data_dir is what we need
 
-DEVELOPMENT = 1
-RELEASE = 2
-
-# WHAT_IT_IS = DEVELOPMENT
-WHAT_IT_IS = RELEASE
-
-if WHAT_IT_IS == DEVELOPMENT:
-    log.info("DEVELOPMENT version")
-if WHAT_IT_IS == RELEASE:
-    log.info("RELEASE version")
-
-VERSION = "0.5"
-
 HOME_DIR = os.path.expanduser("~")
-# BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 BASE_DIR = os.path.dirname(os.path.abspath(sys.argv[0]))
 ASSETS_DIR = str(Path(BASE_DIR, "assets"))
 
@@ -47,18 +34,14 @@ SETTINGS_FILE_BAK = str(Path(app_dirs.user_data_dir, "settings.bak"))
 
 PREFERENCES_INI = str(Path(BASE_DIR, "preferences.ini"))
 
-## BEGIN: categories.yaml
-_default_categories_file = str(Path(BASE_DIR, "categories", "categories.yaml"))
-CATEGORIES_FILE = _default_categories_file
-machine_id = get_short_fingerprint()
-if machine_id in ('91d6c2', 'b782f3'):
-    CATEGORIES_FILE = str(Path(HOME_DIR, "Dropbox", "secret", "jive", "categories_full.yaml"))
-if machine_id in ('dc92a4'):
-    CATEGORIES_FILE = r"E:\secret\jive\categories_full.yaml"
-if WHAT_IT_IS == RELEASE:
-    CATEGORIES_FILE = _default_categories_file
-log.info(f"using {CATEGORIES_FILE}")
-## END: categories.yaml
+categories_file_default = Path(BASE_DIR, "categories", "categories.yaml")
+categories_file_personal = Path(app_dirs.user_data_dir, "categories.yaml")
+
+def categories_file():
+    if categories_file_personal.is_file():
+        return str(categories_file_personal)
+    # else
+    return str(categories_file_default)
 
 ## BEGIN: API keys
 # read `api_keys.md` if you have no API keys

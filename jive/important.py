@@ -56,7 +56,7 @@ class ImportantFilesAndFolders(QDialog):
 
         row += 1
         layout.addWidget(QLabel(bold("categories.yaml:")), row, 0)
-        fname = cfg.CATEGORIES_FILE
+        fname = cfg.categories_file()
         layout.addWidget(QLabel(fname), row, 1)
         btn = QPushButton("Open")
         btn.clicked.connect(partial(opener.open_file_with_editor, self, fname))
