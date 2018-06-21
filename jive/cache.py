@@ -13,7 +13,7 @@ class CacheElem:
         self.name = str(path_obj)
         self.stat = path_obj.stat()
         self.mtime = self.stat.st_mtime
-        self.size = self.stat.st_size
+        self.size = self.stat.st_size    # file size in bytes
 
 
 class CacheQueue:
@@ -33,15 +33,15 @@ class CacheQueue:
     def add_elem(self, elem, verbose=True):
         self.q.append(elem)
         self.size += elem.size
-        if verbose:
-            log.debug(f"cache news: {elem.name} was added")
+        # if verbose:
+        #     log.debug(f"cache news: {elem.name} was added")
 
     def remove_elem(self):
         first = self.q.popleft()
         first.p.unlink()
         if not first.p.exists():
             self.size -= first.size
-            log.debug(f"cache news: {first.name} was deleted")
+            # log.debug(f"cache news: {first.name} was deleted")
         else:
             log.warning(f"cache news: couldn't remove {first.name}")
 
@@ -109,7 +109,7 @@ class Cache:
         #
         self.add_to_queue(fname)
         self.shrink()
-        self.queue.debug()
+        # self.queue.debug()
 
     def add_to_queue(self, fname):
         p = Path(fname)

@@ -49,7 +49,7 @@ def save(img, folder, cache):
     if cache.enabled() and (not img.local_file) and src in cache:
         found_in_cache = True
         url = src
-        log.debug(f"image save: {url} was found in the cache")
+        # log.debug(f"image save: {url} was found in the cache")
         fname = cache.get_fname_to_url(url)
         img.file_size = os.path.getsize(fname)
 

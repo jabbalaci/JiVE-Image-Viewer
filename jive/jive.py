@@ -116,7 +116,7 @@ class ImageProperty:
                 if name.startswith(("http://", "https://")):
                     url = name
                     if cache.enabled() and url in cache:
-                        log.debug(f"cache news: {url} was found in the cache :)")
+                        # log.debug(f"cache news: {url} was found in the cache :)")
                         fname = cache.get_fname_to_url(url)
                         pm = QPixmap(fname)
                         file_size = os.path.getsize(fname)
@@ -159,8 +159,8 @@ class ImageProperty:
         if preload == False:
             self.zoomed_img = self.calculate_zoomed_image()
 
-        if preload:
-            log.debug(f"the image {self.name} was preloaded")
+        # if preload:
+        #     log.debug(f"the image {self.name} was preloaded")
 
         return self
 
