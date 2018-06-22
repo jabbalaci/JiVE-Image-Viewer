@@ -16,7 +16,7 @@ From the sequence URL we restore the complete list of URLs.
 
 import re
 
-import mylogging as log
+from jive import mylogging as log
 
 
 def is_valid_sequence_url(url):
@@ -75,7 +75,7 @@ def get_urls_from_sequence_url(url, statusbar=None):
 
 if __name__ == "__main__":
     url = "http://www.website.com/[001-030].jpg"    # for testing
-    
+
     urls = get_urls_from_sequence_url(url)
     for url in urls:
         print(url)
