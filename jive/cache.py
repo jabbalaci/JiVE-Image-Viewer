@@ -103,6 +103,9 @@ class Cache:
         return str(p)
 
     def save(self, url, binary_data):
+        if len(binary_data) == 0:    # It happened that the status code was forbidden (403), and it
+            return                   # created an empty file in the cache. This is here to prevent that.
+
         fname = self.get_fname_to_url(url)
         with open(fname, 'wb') as f:
             f.write(binary_data)

@@ -1,7 +1,7 @@
 import hashlib
 import os
 from pathlib import Path
-
+from urllib.parse import urlparse
 import psutil
 
 from jive import config as cfg
@@ -138,3 +138,12 @@ def file_to_md5(filename, block_size=8192):
             md5.update(data)
     #
     return md5.hexdigest()
+
+
+def get_referer(url):
+    """
+    If an image is forbidden (status code 403), we can try using a referer.
+    It works sometimes.
+    """
+    p = urlparse(url)
+    return f"{p.scheme}://{p.netloc}"

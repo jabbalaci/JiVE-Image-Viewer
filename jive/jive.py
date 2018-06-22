@@ -54,7 +54,7 @@ from jive import statusbar as sbar
 from jive.imagewithextra import ImageWithExtraInfo
 from jive.commit import Commit
 from jive.exceptions import ImageError, FileNotSaved
-from jive.extractors import imgur, subreddit, tumblr
+from jive.extractors import imgur, subreddit, tumblr, sequence
 from jive.helper import bold, gray, green, lightblue, pretty_num, red, yellow, blue
 from jive.imageinfo import ImageInfo
 from jive.imageview import ImageView
@@ -118,10 +118,18 @@ class ImageProperty:
                     if cache.enabled() and url in cache:
                         # log.debug(f"cache news: {url} was found in the cache :)")
                         fname = cache.get_fname_to_url(url)
+                        # log.debug(f"fname: {fname}")
                         pm = QPixmap(fname)
                         file_size = os.path.getsize(fname)
                     else:
+
                         r = requests.get(url, headers=cfg.headers, timeout=cfg.REQUESTS_TIMEOUT)
+                        if r.status_code == 403:    # forbidden
+                            # log.debug("status code: 403")
+                            referer = helper.get_referer(url)
+                            copy = cfg.headers.copy()
+                            copy.update({'referer': referer})
+                            r = requests.get(url, headers=copy, timeout=cfg.REQUESTS_TIMEOUT)
                         data = r.content
                         pm = QPixmap()
                         pm.loadFromData(data)
@@ -530,6 +538,22 @@ class Window(QMainWindow):
         urls = subreddit.read_subreddit(subreddit_name, after_id, statusbar=self.statusbar)
         if len(urls) == 0:
             log.warning("no images could be extracted")
+            self.statusbar.flash_message(red("no images found"))
+            return
+        # else
+        self.list_of_images = [ImageProperty(url, self) for url in urls]
+        self.curr_img_idx = -1   # refresh the first image if we are there
+        self.jump_to_image(0)    # this way the 2nd image will be preloaded
+        # self.curr_img_idx = 0
+        # self.curr_img = self.list_of_images[0].read()
+        #
+        if redraw:
+            self.redraw()
+
+    def open_sequence_urls(self, seq_url, redraw=False):
+        urls = sequence.get_urls_from_sequence_url(seq_url, statusbar=self.statusbar)
+        if len(urls) == 0:
+            log.warning(f"no images could be extracted from {seq_url}")
             self.statusbar.flash_message(red("no images found"))
             return
         # else
@@ -1006,6 +1030,9 @@ class Window(QMainWindow):
         #
         self.find_duplicates_act = QAction("Find &duplicates", self)
         self.find_duplicates_act.triggered.connect(self.find_duplicates)
+        #
+        self.sequence_urls_act = QAction("Se&quence URLs", self)
+        self.sequence_urls_act.triggered.connect(self.sequence_urls)
 
     def create_menubar(self):
         self.menubar = self.menuBar()
@@ -1049,6 +1076,7 @@ class Window(QMainWindow):
         # toolsMenu
         toolsMenu.addAction(self.shuffle_images_act)
         toolsMenu.addAction(self.find_duplicates_act)
+        toolsMenu.addAction(self.sequence_urls_act)
 
         # helpMenu
         helpMenu.addAction(self.help_act)
@@ -1503,6 +1531,18 @@ If you want to delete them from the
 file system, then <strong>commit</strong> your changes.
 """.strip().replace("\n", "<br>")
         QMessageBox.information(self, "Info", msg)
+
+    def sequence_urls(self):
+        text, okPressed = QInputDialog.getText(self,
+                                               "Sequence URL",
+                                               "Sequence URL:",
+                                               QLineEdit.Normal,
+                                               "")
+        text = text.strip()
+        if okPressed and text:
+            self.open_sequence_urls(text)
+        if not text:
+            self.statusbar.flash_message(red("invalid sequence URL"))
 
     def show_popup(self):
         """
