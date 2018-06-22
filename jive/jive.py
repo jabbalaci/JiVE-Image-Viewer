@@ -1160,6 +1160,10 @@ class Window(QMainWindow):
         key = "Q"
         self.shortcutQuit = QShortcut(QKeySequence(key), self)
         self.shortcuts.register_window_shortcut(key, self.shortcutQuit, self.close)
+        #
+        key = "Ctrl+Q"
+        self.shortcutCtrlQuit = QShortcut(QKeySequence(key), self)
+        self.shortcuts.register_window_shortcut(key, self.shortcutCtrlQuit, self.close)
 
         key = "Ctrl+U"
         self.shortcutAutoDetect = QShortcut(QKeySequence(key), self)
