@@ -9,9 +9,10 @@ macholib==1.9
 pefile==2017.11.5
 psutil==5.4.5
 PyInstaller==3.3.1
-pynt==0.8.1
+pynt==0.8.2
 PyQt5==5.10.1
 PyYAML==3.12
-requests==2.18.4
+requests==2.19.1
+rope==0.10.7
 sip==4.19.8
 urllib3==1.22

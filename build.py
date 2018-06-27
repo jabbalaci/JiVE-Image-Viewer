@@ -102,13 +102,13 @@ def clean():
 
 
 @task()
-def clean_dist():
+def _clean_dist():
     """delete the folders `dist/assets` and `dist/categories`"""
     remove_directory("dist/assets")
     remove_directory("dist/categories")
 
 
-@task(clean_dist)
+@task(_clean_dist)
 def exe():
     """create executable with PyInstaller"""
     call_external_command("pyinstaller --onefile start.py")

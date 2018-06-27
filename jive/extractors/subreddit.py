@@ -36,7 +36,7 @@ def get_subreddit_name(text):
 
 def read_subreddit(subreddit, after_id=None, statusbar=None):
     try:
-        if after_id is None:
+        if not after_id:
             img_url = url_template.format(subreddit=subreddit)
         else:
             img_url = url_template_with_after_id.format(subreddit=subreddit, after_id=after_id)
