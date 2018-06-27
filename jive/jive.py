@@ -602,6 +602,10 @@ class Window(QMainWindow):
             # self.curr_img = self.list_of_images[0].read()
 
     def jump_to_next_image(self):
+        if len(self.list_of_images) == 0:
+            self.statusbar.flash_message(red("no more"), wait=cfg.MESSAGE_FLASH_TIME_1)
+            return
+        # else
         if self.curr_img_idx == len(self.list_of_images) - 1:
             self.statusbar.flash_message(red("no more"), wait=cfg.MESSAGE_FLASH_TIME_1)
             img = self.curr_img
