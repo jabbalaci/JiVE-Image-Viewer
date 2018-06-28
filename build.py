@@ -10,9 +10,11 @@ $ pynt
 """
 
 import os
+import shlex
 import shutil
 import sys
 from pathlib import Path
+from subprocess import PIPE, Popen
 
 from pynt import task
 
@@ -47,6 +49,13 @@ def call_external_command(cmd):
     print(f"┌ start: calling external command '{cmd}'")
     os.system(cmd)
     print(f"└ end: calling external command '{cmd}'")
+
+
+def call_popen_with_env(cmd, env):
+    print(f"┌ start: calling Popen with '{cmd}' in a custom environment")
+    p = Popen(shlex.split(cmd), env=env)
+    p.communicate()
+    print(f"└ end: calling Popen with '{cmd}' in a custom environment")
 
 
 def copytree(src, dst, symlinks=False, ignore=None):
@@ -124,3 +133,13 @@ def exe():
     copy_file("tools/verify_your_api_keys.py", "dist/tools")
     copy_file("preferences.ini", "dist/")
 
+
+@task()
+def tests():
+    """
+    run tests
+    """
+    my_env = os.environ.copy()
+    my_env["PYTHONPATH"] = "."
+    cmd = "pytest -vs tests/"
+    call_popen_with_env(cmd, env=my_env)
