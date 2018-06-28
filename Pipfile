@@ -14,6 +14,7 @@ pyyaml = "*"
 pytest = "*"
 pyinstaller = "*"
 pynt = "*"
+"pypiwin32" = "*"
 
 [requires]
 python_version = "3.6"

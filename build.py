@@ -95,7 +95,9 @@ def copy_file(src, dest):
 
 @task()
 def clean():
-    """clean PyInstaller files and directories"""
+    """
+    clean PyInstaller files and directories
+    """
     remove_file("start.spec")
     remove_directory("build")
     remove_directory("dist")
@@ -103,14 +105,18 @@ def clean():
 
 @task()
 def _clean_dist():
-    """delete the folders `dist/assets` and `dist/categories`"""
+    """
+    delete the folders `dist/assets` and `dist/categories`
+    """
     remove_directory("dist/assets")
     remove_directory("dist/categories")
 
 
 @task(_clean_dist)
 def exe():
-    """create executable with PyInstaller"""
+    """
+    create executable with PyInstaller
+    """
     call_external_command("pyinstaller --onefile --icon=assets/icon.ico start.py")
     copy_dir("assets", "dist/assets")
     remove_directory("dist/assets/screenshots")
