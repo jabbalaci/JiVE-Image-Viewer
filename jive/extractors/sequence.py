@@ -19,13 +19,14 @@ import re
 from jive import mylogging as log
 
 
-def is_valid_sequence_url(url):
-    lst = re.findall("\[(.*?)-(.*?)\]", url)
+def is_valid_sequence_url(url, verbose=True):
+    lst = re.findall("\[(.+?)-(.+?)\]", url)
+    # print(lst)
     if len(lst) == 0:
-        log.warning(f"no sequence was found in {url}")
+        if verbose: log.warning(f"no sequence was found in {url}")
         return False
     if len(lst) > 1:
-        log.warning(f"several sequences were found in {url} , which is not supported")
+        if verbose: log.warning(f"several sequences were found in {url} , which is not supported")
         return False
     # else, if len(lst) == 1
     return True
@@ -37,7 +38,7 @@ def get_urls_from_sequence_url(url, statusbar=None):
     if not is_valid_sequence_url(url):
         return []
 
-    m = re.search("\[(.*?)-(.*?)\]", url)
+    m = re.search("\[(.+?)-(.+?)\]", url)
     if m:
         start = m.group(1)
         end = m.group(2)

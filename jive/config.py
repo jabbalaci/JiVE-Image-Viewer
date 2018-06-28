@@ -26,7 +26,8 @@ appname = "JiveImageViewer"
 app_dirs = AppDirs(appname, "")    # app_dirs.user_data_dir is what we need
 
 HOME_DIR = os.path.expanduser("~")
-BASE_DIR = os.path.dirname(os.path.abspath(sys.argv[0]))
+# BASE_DIR = os.path.dirname(os.path.abspath(sys.argv[0]))
+BASE_DIR = str(Path(os.path.dirname(os.path.abspath(__file__))).parent)
 ASSETS_DIR = str(Path(BASE_DIR, "assets"))
 
 SETTINGS_FILE = str(Path(app_dirs.user_data_dir, "settings.json"))
@@ -91,5 +92,6 @@ REQUESTS_TIMEOUT = 3    # seconds
 #############################################################################
 
 if __name__ == "__main__":
-    pprint(PLATFORM_SETTINGS)
-    # pass
+    # pprint(PLATFORM_SETTINGS)
+    # print(AutoDetect.sequence_url.value)
+    pass

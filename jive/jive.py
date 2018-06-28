@@ -361,7 +361,8 @@ class Window(QMainWindow):
         self.preload = True if cfg.PREFERENCES_OPTIONS.get("preload", "") == "yes" else False
 
         self.use_audio = True if cfg.PREFERENCES_OPTIONS.get("use_audio", "") == "yes" else False
-        self.error_sound = QSound(cfg.ERROR_SOUND, self)
+        if self.use_audio:
+            self.error_sound = QSound(cfg.ERROR_SOUND, self)
 
         self.toggle_auto_fit()           # set it ON and show the flash message
         self.toggle_show_image_path()    # make it False and hide it
