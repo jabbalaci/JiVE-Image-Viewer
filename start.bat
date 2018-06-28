@@ -1,1 +1,1 @@
-pipenv run python c:\Dropbox\python\JiVE-Image-Viewer\start.py %1
+pipenv run python start.py %1
