@@ -111,7 +111,7 @@ def _clean_dist():
 @task(_clean_dist)
 def exe():
     """create executable with PyInstaller"""
-    call_external_command("pyinstaller --onefile start.py")
+    call_external_command("pyinstaller --onefile --icon=assets/icon.ico start.py")
     copy_dir("assets", "dist/assets")
     remove_directory("dist/assets/screenshots")
     copy_file("categories/categories.yaml", "dist/categories")
