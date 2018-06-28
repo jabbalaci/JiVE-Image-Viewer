@@ -1,1 +1,1 @@
-cd "/home/jabba/.virtualenvs/JiVE-Image-Viewer-69086b7e"
+cd "/home/jabba/.virtualenvs/JiVE-Image-Viewer-yTduj_s-"

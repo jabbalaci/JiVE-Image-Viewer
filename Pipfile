@@ -1,0 +1,19 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+imgurpython = "*"
+"pyqt5" = "*"
+psutil = "*"
+appdirs = "*"
+pyyaml = "*"
+
+[dev-packages]
+pytest = "*"
+pyinstaller = "*"
+pynt = "*"
+
+[requires]
+python_version = "3.6"
