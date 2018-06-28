@@ -1,1 +1,1 @@
-c:\temp\virtualenvs\jive\Scripts\activate.bat
+pipenv shell
