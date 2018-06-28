@@ -34,6 +34,7 @@ import requests
 from PyQt5 import QtGui
 from PyQt5.QtCore import QPoint, Qt
 from PyQt5.QtGui import QCursor, QKeySequence, QPixmap
+from PyQt5.QtMultimedia import QSound
 from PyQt5.QtWidgets import (QAction, QApplication, QDesktopWidget,
                              QFileDialog, QFrame, QInputDialog, QLabel,
                              QLineEdit, QMainWindow, QMenu, QMessageBox,
@@ -51,13 +52,13 @@ from jive import opener
 from jive import settings
 from jive import shortcuts as scuts
 from jive import statusbar as sbar
-from jive.imagewithextra import ImageWithExtraInfo
 from jive.commit import Commit
 from jive.exceptions import ImageError, FileNotSaved
 from jive.extractors import imgur, subreddit, tumblr, sequence
 from jive.helper import bold, gray, green, lightblue, pretty_num, red, yellow, blue
 from jive.imageinfo import ImageInfo
 from jive.imageview import ImageView
+from jive.imagewithextra import ImageWithExtraInfo
 from jive.important import ImportantFilesAndFolders
 
 OFF = False
@@ -359,6 +360,9 @@ class Window(QMainWindow):
 
         self.preload = True if cfg.PREFERENCES_OPTIONS.get("preload", "") == "yes" else False
 
+        self.use_audio = True if cfg.PREFERENCES_OPTIONS.get("use_audio", "") == "yes" else False
+        self.error_sound = QSound(cfg.ERROR_SOUND, self)
+
         self.toggle_auto_fit()           # set it ON and show the flash message
         self.toggle_show_image_path()    # make it False and hide it
 
@@ -601,9 +605,14 @@ class Window(QMainWindow):
             # self.curr_img_idx = 0
             # self.curr_img = self.list_of_images[0].read()
 
+    def play_error_sound(self):
+        if self.use_audio:
+            self.error_sound.play()
+
     def jump_to_next_image(self):
         if len(self.list_of_images) == 0:
             self.statusbar.flash_message(red("no more"), wait=cfg.MESSAGE_FLASH_TIME_1)
+            self.play_error_sound()
             return
         # else
         if self.curr_img_idx == len(self.list_of_images) - 1:
@@ -651,6 +660,7 @@ class Window(QMainWindow):
     def jump_to_prev_image(self):
         if len(self.list_of_images) == 0 or self.curr_img_idx == 0:
             self.statusbar.flash_message(red("no less"), wait=cfg.MESSAGE_FLASH_TIME_1)
+            self.play_error_sound()
             return
         # else
         new_idx = self.curr_img_idx - 1

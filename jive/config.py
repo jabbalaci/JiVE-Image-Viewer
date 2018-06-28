@@ -34,6 +34,8 @@ SETTINGS_FILE_BAK = str(Path(app_dirs.user_data_dir, "settings.bak"))
 
 PREFERENCES_INI = str(Path(BASE_DIR, "preferences.ini"))
 
+ERROR_SOUND = str(Path(ASSETS_DIR, "error.wav"))
+
 categories_file_default = Path(BASE_DIR, "categories", "categories.yaml")
 categories_file_personal = Path(app_dirs.user_data_dir, "categories.yaml")
 
