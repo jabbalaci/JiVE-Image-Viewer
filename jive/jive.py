@@ -48,6 +48,7 @@ from jive import fileops
 from jive import help_dialogs
 from jive import helper
 from jive import mylogging as log
+from jive import autodetect
 from jive import opener
 from jive import settings
 from jive import shortcuts as scuts
@@ -888,33 +889,47 @@ class Window(QMainWindow):
         self.move(qr.topLeft())
 
     def menu_open_subreddit(self):
-        text, okPressed = QInputDialog.getText(self, "Open subreddit", "Subreddit's name or its URL:", QLineEdit.Normal, "")
+        text, okPressed = QInputDialog.getText(self,
+                                               "Open subreddit",
+                                               "Subreddit's name or its URL:" + " " * 50,
+                                               QLineEdit.Normal,
+                                               "")
         text = text.strip()
         if okPressed and text:
-            self.open_subreddit(text, redraw=True)
-            # self.redraw()
+            what = autodetect.detect(text)
+            kind = what[0] if what else None
+            if kind in (autodetect.AutoDetectEnum.subreddit_url,
+                        autodetect.AutoDetectEnum.subreddit_name,
+                        autodetect.AutoDetectEnum.subreddit_r_name):
+                self.open_subreddit(text, redraw=True)
+            else:
+                log.warning("that's not a subreddit")
+                self.statusbar.flash_message(red("not a subreddit"))
+                self.play_error_sound()
 
     def menu_open_imgur_album(self):
         text, okPressed = QInputDialog.getText(self,
                                                "Open Imgur album",
-                                               "Complete URL:",
+                                               "Complete URL:" + " " * 80,
                                                QLineEdit.Normal,
                                                "")
         text = text.strip()
         if okPressed and text:
-            self.open_imgur_album(text)
-            self.redraw()
-
-    def menu_open_tumblr_post(self):
-        text, okPressed = QInputDialog.getText(self,
-                                               "Open Tumblr post",
-                                               "Complete URL:" + " " * 100,
-                                               QLineEdit.Normal,
-                                               "")
-        text = text.strip()
-        if okPressed and text:
-            self.open_tumblr_post(text)
-            self.redraw()
+            what = autodetect.detect(text)
+            kind = what[0] if what else None
+            if kind:
+                if kind == autodetect.AutoDetectEnum.imgur_album:
+                    self.open_imgur_album(text)
+                    self.redraw()
+                if kind == autodetect.AutoDetectEnum.imgur_html_page_with_embedded_image:
+                    img = what[1]
+                    log.info("it seems to be an imgur HTML page with an embedded image")
+                    self.open_remote_url_file(img)
+                    self.redraw()
+            else:
+                log.warning("that's not an imgur album / gallery / HTML")
+                self.statusbar.flash_message(red("not an imgur link"))
+                self.play_error_sound()
 
     def menu_open_url_auto_detect(self):
         text, okPressed = QInputDialog.getText(self,
@@ -929,33 +944,75 @@ class Window(QMainWindow):
     def auto_detect_and_open(self, text, called_from_gui=True):
         if called_from_gui:
             self.settings.set_last_open_url_auto_detect(text)
-        # Is it a remote image's URL?
-        if Path(text).suffix.lower() in cfg.SUPPORTED_FORMATS:
+
+        what = autodetect.detect(text)
+        if what is None:
+            log.warning("hmm, it seems to be something new...")
+            return
+
+        # else, if it was detected
+        kind = what[0]    # since "type" is a keyword
+        if kind == autodetect.AutoDetectEnum.image_url:
             log.info("it seems to be a remote image")
             self.open_remote_url_file(text)
             self.redraw()
             return
-        # Is it a subreddit?
-        res = subreddit.get_subreddit_name(text)
-        if res:
+        if kind in (autodetect.AutoDetectEnum.subreddit_url,
+                    autodetect.AutoDetectEnum.subreddit_name,
+                    autodetect.AutoDetectEnum.subreddit_r_name):
             log.info("it seems to be a subreddit")
             self.open_subreddit(text, redraw=True)
-            # self.redraw()
             return
-        # else, is it an imgur album?
-        if imgur.is_album(text):
+        if kind == autodetect.AutoDetectEnum.imgur_album:
             log.info("it seems to be an Imgur album")
             self.open_imgur_album(text)
             self.redraw()
             return
-        # else, is it a tumblr post?
-        if tumblr.is_post(text):
+        if kind == autodetect.AutoDetectEnum.tumblr_post:
             log.info("it seems to be a Tumblr post")
             self.open_tumblr_post(text)
             self.redraw()
             return
-        else:
-            log.warning("hmm, it seems to be something new...")
+        if kind == autodetect.AutoDetectEnum.sequence_url:
+            log.info("it seems to be a sequence URL")
+            self.open_sequence_urls(text)
+            return
+        if kind == autodetect.AutoDetectEnum.imgur_html_page_with_embedded_image:
+            img = what[1]
+            log.info("it seems to be an imgur HTML page with an embedded image")
+            self.open_remote_url_file(img)
+            self.redraw()
+            return
+
+        log.info("it was detected but it was not treated...")
+
+        # Is it a remote image's URL?
+        # if Path(text).suffix.lower() in cfg.SUPPORTED_FORMATS:
+        #     log.info("it seems to be a remote image")
+        #     self.open_remote_url_file(text)
+        #     self.redraw()
+        #     return
+        # Is it a subreddit?
+        # res = subreddit.get_subreddit_name(text)
+        # if res:
+        #     log.info("it seems to be a subreddit")
+        #     self.open_subreddit(text, redraw=True)
+        #     self.redraw()
+        #     return
+        # else, is it an imgur album?
+        # if imgur.is_album(text):
+        #     log.info("it seems to be an Imgur album")
+        #     self.open_imgur_album(text)
+        #     self.redraw()
+        #     return
+        # else, is it a tumblr post?
+        # if tumblr.is_post(text):
+        #     log.info("it seems to be a Tumblr post")
+        #     self.open_tumblr_post(text)
+        #     self.redraw()
+        #     return
+        # else:
+        #     log.warning("hmm, it seems to be something new...")
 
     def dragEnterEvent(self, event):
         if event.mimeData().hasFormat('text/plain'):
@@ -988,10 +1045,8 @@ class Window(QMainWindow):
         #
         self.open_url_open_subreddit_act = QAction("Open sub&reddit", self)
         self.open_url_open_subreddit_act.triggered.connect(self.menu_open_subreddit)
-        self.open_url_open_imgur_album_act = QAction("Open &Imgur album", self)
+        self.open_url_open_imgur_album_act = QAction("Open &Imgur album / gallery / HTML", self)
         self.open_url_open_imgur_album_act.triggered.connect(self.menu_open_imgur_album)
-        self.open_url_open_tumblr_post_act = QAction("Open &Tumblr post", self)
-        self.open_url_open_tumblr_post_act.triggered.connect(self.menu_open_tumblr_post)
         #
         self.save_image_act = QAction("Save image", self)
         # self.save_image_act.triggered.connect(self.save_image)
@@ -1046,8 +1101,14 @@ class Window(QMainWindow):
         self.find_duplicates_act = QAction("Find &duplicates", self)
         self.find_duplicates_act.triggered.connect(self.find_duplicates)
         #
-        self.sequence_urls_act = QAction("Se&quence URLs", self)
+        self.sequence_urls_act = QAction("Open se&quence URL", self)
         self.sequence_urls_act.triggered.connect(self.sequence_urls)
+        #
+        self.image_url_act = QAction("Open image URL", self)
+        self.image_url_act.triggered.connect(self.image_url)
+        #
+        self.open_url_open_tumblr_post_act = QAction("Open &Tumblr post", self)
+        self.open_url_open_tumblr_post_act.triggered.connect(self.menu_open_tumblr_post)
 
     def create_menubar(self):
         self.menubar = self.menuBar()
@@ -1056,9 +1117,11 @@ class Window(QMainWindow):
 
         open_url_acts = [self.open_url_auto_detect_act,
                          cfg.SEPARATOR,
+                         self.image_url_act,
                          self.open_url_open_subreddit_act,
                          self.open_url_open_imgur_album_act,
-                         self.open_url_open_tumblr_post_act]
+                         self.open_url_open_tumblr_post_act,
+                         self.sequence_urls_act]
 
         fileMenu = self.menubar.addMenu("&File")
         viewMenu = self.menubar.addMenu("&View")
@@ -1110,9 +1173,11 @@ class Window(QMainWindow):
 
         open_url_acts = [self.open_url_auto_detect_act,
                          cfg.SEPARATOR,
+                         self.image_url_act,
                          self.open_url_open_subreddit_act,
                          self.open_url_open_imgur_album_act,
-                         self.open_url_open_tumblr_post_act]
+                         self.open_url_open_tumblr_post_act,
+                         self.sequence_urls_act]
 
         open_with_acts = [self.open_with_gimp_act]
 
@@ -1550,14 +1615,55 @@ file system, then <strong>commit</strong> your changes.
     def sequence_urls(self):
         text, okPressed = QInputDialog.getText(self,
                                                "Sequence URL",
-                                               "Sequence URL:",
+                                               "Sequence URL:" + " " * 80,
                                                QLineEdit.Normal,
                                                "")
         text = text.strip()
         if okPressed and text:
-            self.open_sequence_urls(text)
-        if not text:
-            self.statusbar.flash_message(red("invalid sequence URL"))
+            what = autodetect.detect(text)
+            kind = what[0] if what else None
+            if kind == autodetect.AutoDetectEnum.sequence_url:
+                self.open_sequence_urls(text)
+            else:
+                log.warning("that's not a sequence URL")
+                self.statusbar.flash_message(red("not a sequence"))
+                self.play_error_sound()
+
+    def image_url(self):
+        text, okPressed = QInputDialog.getText(self,
+                                               "Image URL",
+                                               "Image URL:" + " " * 80,
+                                               QLineEdit.Normal,
+                                               "")
+        text = text.strip()
+        if okPressed and text:
+            what = autodetect.detect(text)
+            kind = what[0] if what else None
+            if kind == autodetect.AutoDetectEnum.image_url:
+                self.open_remote_url_file(text)
+                self.redraw()
+            else:
+                log.warning("that's not an image URL")
+                self.statusbar.flash_message(red("not an image URL"))
+                self.play_error_sound()
+
+    def menu_open_tumblr_post(self):
+        text, okPressed = QInputDialog.getText(self,
+                                               "Open Tumblr post",
+                                               "Complete URL:" + " " * 80,
+                                               QLineEdit.Normal,
+                                               "")
+        text = text.strip()
+        if okPressed and text:
+            what = autodetect.detect(text)
+            kind = what[0] if what else None
+            if kind == autodetect.AutoDetectEnum.tumblr_post:
+                self.open_tumblr_post(text)
+                self.redraw()
+            else:
+                log.warning("that's not a tumblr post")
+                self.statusbar.flash_message(red("not a tumblr post"))
+                self.play_error_sound()
 
     def show_popup(self):
         """
