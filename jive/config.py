@@ -20,7 +20,7 @@ from pprint import pprint
 from jive import mylogging as log
 from jive import preferences
 
-VERSION = "0.5"
+VERSION = "0.6"
 
 appname = "JiveImageViewer"
 app_dirs = AppDirs(appname, "")    # app_dirs.user_data_dir is what we need

@@ -491,6 +491,7 @@ class Window(QMainWindow):
         # if there are no images or if there is only one, shuffle makes no sense
         length = len(self.list_of_images)
         if length == 0 or length == 1:
+            self.statusbar.flash_message(blue("done"))
             return
         # else
         name = self.curr_img.name
@@ -508,6 +509,7 @@ class Window(QMainWindow):
         new_idx = self.find_image_index_by_name(name)
         self.curr_img_idx = new_idx
         #
+        self.statusbar.flash_message(blue("done"))
         self.jump_to_image(0)    # it will free the current image if necessary
 
     def open_local_file_or_dir(self, name):
@@ -1154,7 +1156,6 @@ class Window(QMainWindow):
         # toolsMenu
         toolsMenu.addAction(self.shuffle_images_act)
         toolsMenu.addAction(self.find_duplicates_act)
-        toolsMenu.addAction(self.sequence_urls_act)
 
         # helpMenu
         helpMenu.addAction(self.help_act)
@@ -1567,6 +1568,7 @@ You cannot delete it.
     def image_info(self):
         if not self.curr_img:
             self.statusbar.flash_message(red("no"))
+            self.play_error_sound()
             return
         # else
         if self.curr_img.image_state == ImageProperty.IMAGE_STATE_PROBLEM:
