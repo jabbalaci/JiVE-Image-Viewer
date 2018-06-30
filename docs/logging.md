@@ -11,9 +11,12 @@ the settings file, location of the categories file, etc.
 Example
 -------
 ```
-$ ./start.py
-INFO  2018-06-06 18:48:26 config.<module>() [27]: RELEASE version
-INFO  2018-06-06 18:48:26 config.<module>() [48]: using /media/DATA/Dropbox/python/JiVE-Image-Viewer/categories/categories.yaml
-INFO  2018-06-06 18:48:26 settings.read() [29]: /home/jabba/.local/share/JiveImageViewer/settings.json was read
-INFO  2018-06-06 18:48:28 settings.write() [46]: /home/jabba/.local/share/JiveImageViewer/settings.json was written
+$ jive
+INFO  2018-06-30 19:44:31 jive.check_api_keys() [1989]: tumblr API key was found
+INFO  2018-06-30 19:44:31 jive.check_api_keys() [1997]: imgur API keys were found
+INFO  2018-06-30 19:44:31 settings.read() [30]: /home/jabba/.local/share/JiveImageViewer/settings.json was read
+INFO  2018-06-30 19:44:31 categories.read() [24]: /home/jabba/.local/share/JiveImageViewer/categories.yaml was read
+DEBUG 2018-06-30 19:44:31 cache.debug() [67]: number of images in the cache: 232
+DEBUG 2018-06-30 19:44:31 cache.debug() [69]: cache size in bytes: 99,681,981
+INFO  2018-06-30 19:44:31 categories.read() [24]: /home/jabba/.local/share/JiveImageViewer/categories.yaml was read
 ```

@@ -17,7 +17,7 @@ Table of Contents
 * [NSFW support](docs/nsfw.md)
 * [How to use the app?](docs/usage.md)
 * [Command-line arguments](docs/command_line.md)
-* [Local settings](docs/settings.md)
+* [[dev] Local settings](docs/settings.md)
 * [Logging](docs/logging.md)
 * [FAQ](docs/faq.md)
 

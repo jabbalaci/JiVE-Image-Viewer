@@ -1,31 +1,21 @@
-Local settings
-==============
+[dev] Local settings
+====================
+
+(*If a section is prefixed with "[dev]" (like this section),*
+*its intended audience is developers who want to contribute*
+*to the project.*
+
+*If you just want to use JiVE, you can skip the [dev] sections.*)
 
 JiVE creates a local settings file. This file
 is updated every time you close the application.
 
-To figure out the location of this file, execute
-`tools/location_of_settings.py`. Here is my output:
+You can find out the location of this file if you go
+to *View* -> *Important files and folders*. Check out
+the location of `settings.json`.
 
-Under Linux
------------
-```
-$ ./location_of_settings.py
-...
-Your settings file is located here: /home/jabba/.local/share/JiveImageViewer/settings.json
-```
-
-Under Windows 10
-----------------
-
-Start `cmd` in the project directory.
-```
-$ activate.bat
-(jive)$ cd tools
-(jive)$ python location_of_settings.py
-...
-Your settings file is located here: C:\Users\Jabba Laci\AppData\Local\JiveImageViewer\settings.json
-```
+Normally you don't need to do anything with this file. JiVE
+will read it upon start and write to it upon close.
 
 Content of the settings file
 ----------------------------

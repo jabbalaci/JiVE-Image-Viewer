@@ -3,7 +3,7 @@ Command-line arguments
 
 Currently, only one command-line argument can be passed to JiVE,
 which can be a local file, a local folder, or a URL (a subreddit's URL,
-an Imgur album's URL, a Tumblr post's URL), or a subreddit's name.
+an Imgur album's URL, a Tumblr post's URL, etc.), or a subreddit's name.
 JiVE will try to auto-detect this parameter.
 
 Examples
@@ -50,3 +50,10 @@ open a subreddit
 $ jive https://www.reddit.com/r/EarthPorn/
 $ jive earthporn
 ```
+
+open a sequence URL (Warning! NSFW example!)
+```
+$ jive "https://content9.erosberry.com/digitaldesire.com/6003/[00-03].jpg"
+```
+
+Notice that the argument is between quotes because of the square brackets.

@@ -169,16 +169,16 @@ When you keep pressing *r*, it can happen that you go over a nice image
 and your brain detects too late how awesome that image was. Don't worry!
 With *Shift+R* you can jump back to the previous image in the random order.
 
-Open the images of a subreddit / imgur album / tumblr post (*Ctrl+U*)
----------------------------------------------------------------------
+Open the images of a subreddit / imgur album / tumblr post / etc. (*Ctrl+U*)
+----------------------------------------------------------------------------
 
-*Right click* -> *Open URL* -> *Auto detect URL* **or** *Ctrl+U*
+*Right click* -> *Open URL...* -> *Auto detect URL* **or** *Ctrl+U*
 
 It can detect different URLs and extract images from them.
 
 Some examples. Open the *Auto detect URL* dialog and paste these:
 
-* https://i.imgur.com/k489QN8.jpg (direct link on an image)
+* https://i.imgur.com/k489QN8.jpg (direct link to an image)
 * https://imgur.com/gallery/9p0gCyv (imgur gallery)
 * https://imgur.com/a/uAFvn (imgur album)
 * https://different-landscapes.tumblr.com/post/174158537319 (tumblr post)
@@ -196,6 +196,13 @@ here, even if it's not in the menu categories. Note that the format "r/something
 is not supported; use "/r/something" instead or just simply write "something".
 
 As a subreddit is processed, a progress bar is shown in the status bar.
+
+Sequence URL is also supported:
+
+* https://content9.erosberry.com/digitaldesire.com/6003/[00-03].jpg (Warning! NSFW content!)
+
+The sequence in square brackets will be expanded. This compressed representation
+of galleries is borrowed from fuskator.com (Warning! NSFW site!).
 
 Drag & drop
 -----------
