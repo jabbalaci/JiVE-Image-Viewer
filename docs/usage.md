@@ -12,20 +12,19 @@ popup menu will change in the future.
 
 Now let's see the functionalities of the app.
 
-Quit (*q*)
-----------
+Quit (*q*, *Ctrl+Q*)
+--------------------
 
-With *q* you can quit the application quickly. *Alt+F4* and closing
-the window also work :)
+With *q* you can quit the application quickly. *Ctrl+Q* is another
+shortcut for quitting. *Alt+F4* and closing the window also work :)
 
 Open file (*Ctrl+O*)
 --------------------
 
 Open a local file.
 
-It's also available in the menu bar and
-in the popup menu. (From now, if a functionality is present
-in a menu, I won't mention it.)
+It's also available in the menu bar and in the popup menu.
+(From now on, if a functionality is present in a menu, I won't mention it.)
 
 When you open a file, JiVE will also collect all the images in the
 same directory (non-recursively). Thus, with the arrow keys, you'll
@@ -56,9 +55,20 @@ some error, you get a big red cross.
 It's useful if you have a lot of images in the list and you want to move
 forward / backward faster.
 
-You can also use your mouse. If you click on the left third of the image (by width),
-you'll jump to the previous one. If you click on the right third of the image (by width),
-you'll jump to the next one. The center third of the window is a neutral area.
+You can also use your mouse. If you left click on the left 25% of the image (by width),
+you'll jump to the previous one. If you click on the right 25% of the image (by width),
+you'll jump to the next one. The center 50% of the window is a neutral area.
+
+Audio feedback
+--------------
+
+If there's a warning / error, you'll hear a short audio sound. You can switch
+it off in the `preferences.ini` file. Personally, I find it useful since
+error messages in the bottom left corner are sometimes hard to notice.
+
+For adjusting the volume of the sound effect, I suggest the following
+method: open JiVE and press the left arrow. Since there's no previous image,
+you'll hear the error sound. Adjust the volume to your liking.
 
 Auto Fit mode (*Ctrl+F*)
 ------------------------
@@ -155,7 +165,7 @@ With *r* (without Shift) you can jump to a random position.
 When random jumping, go back to the previous image (*Shift+R*)
 --------------------------------------------------------------
 
-When pressing *r*, it can happen that you go over a nice image
+When you keep pressing *r*, it can happen that you go over a nice image
 and your brain detects too late how awesome that image was. Don't worry!
 With *Shift+R* you can jump back to the previous image in the random order.
 
@@ -182,10 +192,10 @@ And now the subreddits (further examples):
 If you provide just a word, e.g. *turtles*, JiVE will try to locate the
 subreddit [/r/turtles](https://www.reddit.com/r/turtles) and if it exists,
 all its images are extracted and shown. Of course, you can provide any subreddit
-here, even if it's not in the menu categories.
+here, even if it's not in the menu categories. Note that the format "r/something"
+is not supported; use "/r/something" instead or just simply write "something".
 
-As a subreddit is processed, a simple progress bar is shown in the status bar
-(in the left corner).
+As a subreddit is processed, a progress bar is shown in the status bar.
 
 Drag & drop
 -----------
@@ -228,7 +238,7 @@ just press *i* twice.
 Next to the path there is a clipboard button. Press it to copy the path
 to the clipboard.
 
-Shuffle images (*View* -> *Shuffle images*)
+Shuffle images (*Tools* -> *Shuffle images*)
 -------------------------------------------
 
 Shuffle (randomize) the order of images. It sets you back to the first image.

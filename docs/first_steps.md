@@ -11,7 +11,7 @@ Once you have the keys, set them as **environment variables**.
 
 Note that the app. will work without these API keys too, but
 in that case Imgur and Tumblr links won't be processed. So it
-is highly suggested that you get these keys.
+is highly recommended that you get these keys.
 
 Linux
 -----

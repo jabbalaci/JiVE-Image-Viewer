@@ -19,6 +19,7 @@ Table of Contents
 * [Command-line arguments](docs/command_line.md)
 * [Local settings](docs/settings.md)
 * [Logging](docs/logging.md)
+* [FAQ](docs/faq.md)
 
 Screenshots
 -----------
