@@ -17,6 +17,7 @@ Table of Contents
 * [NSFW support](docs/nsfw.md)
 * [How to use the app?](docs/usage.md)
 * [Marking images (save, wallpaper, delete)](docs/marking.md)
+* [Find duplicates](docs/duplicates.md)
 * [Browsing a subreddit](docs/browsing_subreddit.md)
 * [Sequence URL](docs/sequence_url.md)
 * [Preferences](docs/preferences.md)
