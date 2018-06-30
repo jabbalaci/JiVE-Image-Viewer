@@ -139,6 +139,7 @@ def tests():
     """
     run tests
     """
+    remove_directory("tests/__pycache__")
     my_env = os.environ.copy()
     my_env["PYTHONPATH"] = "."
     cmd = "pytest -vs tests/"
