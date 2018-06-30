@@ -16,8 +16,13 @@ Table of Contents
 * [First steps after installation (API keys)](docs/first_steps.md)
 * [NSFW support](docs/nsfw.md)
 * [How to use the app?](docs/usage.md)
+* [Marking images (save, wallpaper, delete)](docs/marking.md)
+* [Browsing a subreddit](docs/browsing_subreddit.md)
+* [Sequence URL](docs/sequence_url.md)
+* [Preferences](docs/preferences.md)
 * [Command-line arguments](docs/command_line.md)
 * [[dev] Local settings](docs/settings.md)
+* [[dev] caching](docs/cache.md)
 * [Logging](docs/logging.md)
 * [FAQ](docs/faq.md)
 
