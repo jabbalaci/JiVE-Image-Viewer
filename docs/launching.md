@@ -1,23 +1,20 @@
 Launching the application
 =========================
 
-During the installation we created a virtual environment
-for the project. However, for launching the application,
+During the installation pipenv automatically created a virtual
+environment for the project. However, for launching the application,
 you don't need to activate it manually every time.
 
 Linux
 -----
 
 Enter the project directory and launch `caller.sh`. It'll
-activate the virt. env. for you and it also launches the
-application.
+launch the application in its virt. env.
 
 Windows
 -------
 
-Enter the project directory and launch `start.bat`. Depending
-on where you put the virt. env. and where you put the project
-directory, you may have to edit `start.bat`.
+Enter the project directory and launch `start.bat`.
 
 Launching the application from anywhere
 =======================================
@@ -29,7 +26,7 @@ from a different folder? How can you call JiVE from anywhere?
 Linux
 -----
 
-In the folder `scripts`, you can find a launcher script called `jive`.
+In the folder `launchers`, you can find a launcher script called `jive`.
 Copy it to a folder that is in your PATH.
 
 Tip: in my HOME folder I have a subdirectory called `bin` that is in my PATH.
@@ -51,16 +48,27 @@ $ jive
 Windows
 -------
 
-Under Windows just call `start.bat`. For instance, if you are in the
-parent of the project directory, call `start.bat` like this:
+In the folder `launchers`, you can find a launcher script called `jive.bat`.
+Copy it to a folder that is in your PATH.
+
+The content of `jive.bat` is just a few lines:
 ```
-c:\python>JiVE-Image-Viewer\start.bat
+cd C:\Dropbox\python\JiVE-Image-Viewer
+
+pipenv run python start.py %1
+```
+
+Customize the path of the project folder in the first line.
+
+Then, launching JiVE is trivial:
+```
+$ jive.bat
 ```
 
 Tips
 ----
 
-If you get the annoying "Open File - Security Warning" on `start.bat`, here is
+If you get the annoying "Open File - Security Warning" on `.bat` files, here is
 how to disable it:
 
 https://appuals.com/how-to-disable-open-file-security-warning-in-windows-7/

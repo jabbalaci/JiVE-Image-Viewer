@@ -1,8 +1,9 @@
 JiVE (Jabba's Image Viewer)
 ===========================
 
-A general purpose, cross-platform image viewer with some built-in NSFW support, written in Python 3 using PyQt5.
-A unique feature of JiVE is that it allows you to browse online images just as if they were local images.
+A general purpose, cross-platform image viewer with some built-in NSFW support, written in Python 3.6 using PyQt5.
+A unique feature of JiVE is that it allows you to browse online images just as if they were local images. JiVE
+is tested under Linux and Windows.
 
 This is a work in progress... but it's already usable.
 
