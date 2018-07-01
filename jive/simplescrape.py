@@ -27,8 +27,14 @@ class SimpleScrape(QDialog, showTabs.Ui_Dialog):
         self.add_shortcuts()
 
     def keyPressEvent(self, evt):
-        if evt.key() == Qt.Key_Return:
-            return
+        """
+        If you are on Tab 0, pressing Enter won't be equivalent
+        to pressing the OK button.
+        """
+        if self.tabs.currentIndex() == 0:
+            if evt.key() == Qt.Key_Return:
+                return
+        # else
         super().keyPressEvent(evt)
 
     def clear_url(self):
