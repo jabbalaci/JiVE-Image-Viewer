@@ -1,8 +1,8 @@
 import hashlib
 import os
+import psutil
 from pathlib import Path
 from urllib.parse import urlparse
-import psutil
 
 from jive import config as cfg
 
@@ -147,3 +147,47 @@ def get_referer(url):
     """
     p = urlparse(url)
     return f"{p.scheme}://{p.netloc}"
+
+
+def remove_duplicates(lst):
+    """
+    Remove duplicates from a list AND keep the order of the elements.
+    """
+    res = []
+    bag = set()
+    for e in lst:
+        if e not in bag:
+            res.append(e)
+            bag.add(e)
+        #
+    #
+    return res
+
+
+def lev_dist(s,t):
+    """
+    The Levenshtein distance (or edit distance) between two strings
+    is the minimal number of "edit operations" required to change
+    one string into the other. The two strings can have different
+    lengths. There are three kinds of "edit operations": deletion,
+    insertion, or alteration of a character in either string.
+
+    Example: the Levenshtein distance of "ag-tcc" and "cgctca" is 3.
+    source: http://en.wikibooks.org/wiki/Algorithm_implementation/Strings/Levenshtein_distance#Python
+    """
+    s = ' ' + s
+    t = ' ' + t
+    d = {}
+    S = len(s)
+    T = len(t)
+    for i in range(S):
+        d[i, 0] = i
+    for j in range (T):
+        d[0, j] = j
+    for j in range(1,T):
+        for i in range(1,S):
+            if s[i] == t[j]:
+                d[i, j] = d[i-1, j-1]
+            else:
+                d[i, j] = min(d[i-1, j] + 1, d[i, j-1] + 1, d[i-1, j-1] + 1)
+    return d[S-1, T-1]

@@ -9,6 +9,8 @@ imgurpython = "*"
 psutil = "*"
 appdirs = "*"
 pyyaml = "*"
+"bs4" = "*"
+lxml = "*"
 
 [dev-packages]
 pytest = "*"

@@ -51,6 +51,7 @@ from jive import mylogging as log
 from jive import autodetect
 from jive import opener
 from jive import settings
+from jive.simplescrape import SimpleScrape
 from jive import shortcuts as scuts
 from jive import statusbar as sbar
 from jive.commit import Commit
@@ -135,7 +136,10 @@ class ImageProperty:
                         data = r.content
                         pm = QPixmap()
                         pm.loadFromData(data)
-                        file_size = int(r.headers['Content-Length'])
+                        try:
+                            file_size = int(r.headers['Content-Length'])
+                        except KeyError:
+                            pass    # file_size remains -1
                         if cache.enabled():
                             cache.save(url, data)
             #
@@ -555,6 +559,18 @@ class Window(QMainWindow):
         # self.curr_img_idx = 0
         # self.curr_img = self.list_of_images[0].read()
         #
+        if redraw:
+            self.redraw()
+
+    def open_urls(self, urls, redraw=False):
+        if len(urls) == 0:
+            log.warning("no images could be extracted")
+            self.statusbar.flash_message(red("no images found"))
+            return
+        # else
+        self.list_of_images = [ImageProperty(url, self) for url in urls]
+        self.curr_img_idx = -1   # refresh the first image if we are there
+        self.jump_to_image(0)    # this way the 2nd image will be preloaded
         if redraw:
             self.redraw()
 
@@ -1111,6 +1127,9 @@ class Window(QMainWindow):
         #
         self.open_url_open_tumblr_post_act = QAction("Open &Tumblr post", self)
         self.open_url_open_tumblr_post_act.triggered.connect(self.menu_open_tumblr_post)
+        #
+        self.extract_images_from_webpage_act = QAction("E&xtract images from a webpage", self)
+        self.extract_images_from_webpage_act.triggered.connect(self.extract_images_from_webpage)
 
     def create_menubar(self):
         self.menubar = self.menuBar()
@@ -1156,6 +1175,7 @@ class Window(QMainWindow):
         # toolsMenu
         toolsMenu.addAction(self.shuffle_images_act)
         toolsMenu.addAction(self.find_duplicates_act)
+        toolsMenu.addAction(self.extract_images_from_webpage_act)
 
         # helpMenu
         helpMenu.addAction(self.help_act)
@@ -1648,6 +1668,11 @@ file system, then <strong>commit</strong> your changes.
                 log.warning("that's not an image URL")
                 self.statusbar.flash_message(red("not an image URL"))
                 self.play_error_sound()
+
+    def extract_images_from_webpage(self):
+        self.simple_scrape = SimpleScrape(log)
+        self.simple_scrape.show()
+        self.simple_scrape.urlList.connect(self.open_urls)
 
     def menu_open_tumblr_post(self):
         text, okPressed = QInputDialog.getText(self,
