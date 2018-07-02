@@ -386,6 +386,8 @@ class Window(QMainWindow):
         # self.open_tumblr_post(TEST_TUMBLR_POST)
 
     def reset(self, msg=None):
+        self.setWindowTitle(self.title)
+
         self.list_of_images = []
         self.curr_img_idx = -1
         self.curr_img = None
