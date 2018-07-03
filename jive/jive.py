@@ -288,6 +288,26 @@ class ImageProperty:
             sb.append(lightblue("W"))
         return "<br>".join(sb)
 
+    def is_it_in_a_subreddit(self):
+        """
+        If this image is in a subreddit, return True.
+        Else, return False.
+        """
+        return "subreddit" in self.extra_info
+
+    def is_it_really_the_last(self):
+        """
+        Return True if this image is really the last and there is no way to load more images.
+        For instance: we open a folder.
+
+        At the moment there is only one possibility to load more images: when we open a subreddit.
+        So, if we are in a subreddit, False is returned.
+        """
+        if self.is_it_in_a_subreddit():
+            return False
+
+        return True
+
     def save_to_filesystem(self, folder, method):
         """
         Save the image to the given folder.
@@ -637,6 +657,8 @@ class Window(QMainWindow):
         # else
         if self.curr_img_idx == len(self.list_of_images) - 1:
             self.statusbar.flash_message(red("no more"), wait=cfg.MESSAGE_FLASH_TIME_1)
+            if self.curr_img.is_it_really_the_last():
+                self.play_error_sound()
             img = self.curr_img
             subreddit_name = img.extra_info.get("subreddit")
             after_id = img.extra_info.get("after_id")
@@ -1128,8 +1150,9 @@ class Window(QMainWindow):
         self.open_url_open_tumblr_post_act = QAction("Open &Tumblr post", self)
         self.open_url_open_tumblr_post_act.triggered.connect(self.menu_open_tumblr_post)
         #
+        key = "Ctrl+Shift+U"
         self.extract_images_from_webpage_act = QAction("E&xtract images from a webpage", self)
-        self.extract_images_from_webpage_act.triggered.connect(self.extract_images_from_webpage)
+        self.shortcuts.register_menubar_action(key, self.extract_images_from_webpage_act, self.extract_images_from_webpage)
 
     def create_menubar(self):
         self.menubar = self.menuBar()
