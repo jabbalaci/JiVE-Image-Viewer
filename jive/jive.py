@@ -550,19 +550,20 @@ class Window(QMainWindow):
             return
         # else
         urls = subreddit.read_subreddit(subreddit_name, after_id, statusbar=self.statusbar)
-        if len(urls) == 0:
-            log.warning("no images could be extracted")
-            self.statusbar.flash_message(red("no images found"))
-            return
-        # else
-        self.list_of_images = [ImageProperty(url, self) for url in urls]
-        self.curr_img_idx = -1   # refresh the first image if we are there
-        self.jump_to_image(0)    # this way the 2nd image will be preloaded
-        # self.curr_img_idx = 0
-        # self.curr_img = self.list_of_images[0].read()
-        #
-        if redraw:
-            self.redraw()
+        self.open_urls(urls)
+        # if len(urls) == 0:
+        #     log.warning("no images could be extracted")
+        #     self.statusbar.flash_message(red("no images found"))
+        #     return
+        # # else
+        # self.list_of_images = [ImageProperty(url, self) for url in urls]
+        # self.curr_img_idx = -1   # refresh the first image if we are there
+        # self.jump_to_image(0)    # this way the 2nd image will be preloaded
+        # # self.curr_img_idx = 0
+        # # self.curr_img = self.list_of_images[0].read()
+        # #
+        # if redraw:
+        #     self.redraw()
 
     def open_urls(self, urls, redraw=False):
         if len(urls) == 0:
@@ -578,19 +579,20 @@ class Window(QMainWindow):
 
     def open_sequence_urls(self, seq_url, redraw=False):
         urls = sequence.get_urls_from_sequence_url(seq_url, statusbar=self.statusbar)
-        if len(urls) == 0:
-            log.warning(f"no images could be extracted from {seq_url}")
-            self.statusbar.flash_message(red("no images found"))
-            return
-        # else
-        self.list_of_images = [ImageProperty(url, self) for url in urls]
-        self.curr_img_idx = -1   # refresh the first image if we are there
-        self.jump_to_image(0)    # this way the 2nd image will be preloaded
-        # self.curr_img_idx = 0
-        # self.curr_img = self.list_of_images[0].read()
-        #
-        if redraw:
-            self.redraw()
+        self.open_urls(urls)
+        # if len(urls) == 0:
+        #     log.warning(f"no images could be extracted from {seq_url}")
+        #     self.statusbar.flash_message(red("no images found"))
+        #     return
+        # # else
+        # self.list_of_images = [ImageProperty(url, self) for url in urls]
+        # self.curr_img_idx = -1   # refresh the first image if we are there
+        # self.jump_to_image(0)    # this way the 2nd image will be preloaded
+        # # self.curr_img_idx = 0
+        # # self.curr_img = self.list_of_images[0].read()
+        # #
+        # if redraw:
+        #     self.redraw()
 
     def open_imgur_album(self, text):
         urls = []
@@ -609,23 +611,19 @@ class Window(QMainWindow):
             self.curr_img = self.list_of_images[0].read()
 
     def open_tumblr_post(self, text):
-        urls = []
-        if tumblr.is_post(text):
-            url = text
-            images = tumblr.extract_images_from_a_specific_post(url)
-            for img_url in images:
-                if Path(img_url).suffix.lower() in cfg.SUPPORTED_FORMATS:
-                    urls.append(img_url)
-                #
-            #
-        else:
+        url = text
+        if not tumblr.is_post(url):
             log.warning("that's not a tumblr post")
-        self.list_of_images = [ImageProperty(url, self) for url in urls]
-        if len(self.list_of_images) > 0:
-            self.curr_img_idx = -1
-            self.jump_to_image(0)  # this way the 2nd image will be preloaded
-            # self.curr_img_idx = 0
-            # self.curr_img = self.list_of_images[0].read()
+            return
+
+        urls = tumblr.extract_images_from_a_specific_post(url)
+        self.open_urls(urls)
+        # self.list_of_images = [ImageProperty(url, self) for url in urls]
+        # if len(self.list_of_images) > 0:
+        #     self.curr_img_idx = -1
+        #     self.jump_to_image(0)  # this way the 2nd image will be preloaded
+        #     # self.curr_img_idx = 0
+        #     # self.curr_img = self.list_of_images[0].read()
 
     def play_error_sound(self):
         if self.use_audio:
@@ -1069,7 +1067,7 @@ class Window(QMainWindow):
         self.open_url_open_imgur_album_act.triggered.connect(self.menu_open_imgur_album)
         #
         self.save_image_act = QAction("Save image", self)
-        # self.save_image_act.triggered.connect(self.save_image)
+        self.save_image_act.triggered.connect(self.save_image)
         #
         key = "I"
         self.image_info_act = QAction("Image &info", self)
@@ -1078,7 +1076,7 @@ class Window(QMainWindow):
         # self.image_info_act.triggered.connect(self.image_info)
         #
         self.slideshow_act = QAction("Slideshow", self)
-        # self.slideshow_act.triggered.connect(self.slideshow)
+        self.slideshow_act.triggered.connect(self.slideshow)
         #
         self.important_files_and_folders_act = QAction("Important &files and folders", self)
         self.important_files_and_folders_act.triggered.connect(self.important_files_and_folders)
@@ -1605,6 +1603,15 @@ You cannot delete it.
         if self.important_files_and_folders_dialog:
             self.important_files_and_folders_dialog.close()    # allow just 1 instance; not needed if that window is modal
         self.important_files_and_folders_dialog = ImportantFilesAndFolders(self)
+
+    def slideshow(self):
+        self.not_yet_implemented()
+
+    def save_image(self):
+        self.not_yet_implemented()
+
+    def not_yet_implemented(self):
+        self.statusbar.flash_message(red("not yet implemented"))
 
     def open_with_gimp(self):
         if not self.curr_img:

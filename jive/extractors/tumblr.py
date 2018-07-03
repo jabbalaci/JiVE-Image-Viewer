@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 import re
-
 import requests
+from pathlib import Path
 
 from jive import config as cfg
 from jive import mylogging as log
@@ -55,7 +55,9 @@ def extract_images_from_a_specific_post(url):
             for post in posts:
                 photos = post["photos"]
                 for photo in photos:
-                    urls.append(photo["original_size"]["url"])
+                    img_url = photo["original_size"]["url"]
+                    if Path(img_url).suffix.lower() in cfg.SUPPORTED_FORMATS:
+                        urls.append(img_url)
                 #
             #
         else:
