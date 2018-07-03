@@ -31,7 +31,7 @@ from functools import partial
 from pathlib import Path
 
 import requests
-from PyQt5 import QtGui
+from PyQt5 import QtGui, QtCore
 from PyQt5.QtCore import QPoint, Qt
 from PyQt5.QtGui import QCursor, QKeySequence, QPixmap
 from PyQt5.QtMultimedia import QSound
@@ -438,6 +438,11 @@ class Window(QMainWindow):
             return
         # else, try to open it as a remote URL / subreddit / etc.
         self.auto_detect_and_open(text, called_from_gui=False)
+
+    # def mouseMoveEvent(self, event):    # doesn't work :( I wanted to monitor the cursor position
+    #     p = event.pos()
+    #     x, y = p.x(), p.y()
+    #     print(f"x: {x}, y: {y}")
 
     def mousePressEvent(self, event):
         """
