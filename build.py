@@ -98,6 +98,15 @@ def copy_file(src, dest):
     shutil.copy(src, dest)
     print(f"└ end: copy {src} -> {pretty(dest)}")
 
+
+def compile(in_file, out_file):
+    uic = "pyuic5"    # for Linux
+    cmd = f"{uic} {in_file} -o {out_file}"
+    print(f"┌ start: compile {in_file} -> {out_file}")
+    os.system(cmd)
+    print(f"└ end: compile {in_file} -> {out_file}")
+    
+
 ###########
 ## Tasks ##
 ###########
@@ -144,3 +153,11 @@ def tests():
     my_env["PYTHONPATH"] = "."
     cmd = "pytest -vs tests/"
     call_popen_with_env(cmd, env=my_env)
+
+
+@task()
+def compile_ui():
+    """
+    compile .ui files to .py files
+    """
+    compile(in_file="jive/tabs.ui", out_file="jive/showTabs.py")
