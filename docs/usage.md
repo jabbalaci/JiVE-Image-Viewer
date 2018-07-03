@@ -204,6 +204,13 @@ Sequence URL is also supported:
 The sequence in square brackets will be expanded. This compressed representation
 of galleries is borrowed from fuskator.com (Warning! NSFW site!).
 
+Open the images of an arbitrary webpage (*Ctrl+Shift+U*)
+--------------------------------------------------------
+
+You can also find it under the *Tools* menu. With this you can extract images
+from an arbitrary webpage. Here we use simple web scraping. It'll be presented
+in detail in a dedicated section.
+
 Drag & drop
 -----------
 

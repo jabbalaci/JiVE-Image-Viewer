@@ -16,6 +16,7 @@ Table of Contents
 * [First steps after installation (API keys)](docs/first_steps.md)
 * [NSFW support](docs/nsfw.md)
 * [How to use the app?](docs/usage.md)
+* [Open the images of an arbitrary webpage](docs/webpage.md)
 * [Marking images (save, wallpaper, delete)](docs/marking.md)
 * [Find duplicates](docs/duplicates.md)
 * [Browsing a subreddit](docs/browsing_subreddit.md)
