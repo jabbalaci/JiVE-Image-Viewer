@@ -105,6 +105,31 @@ def compile(in_file, out_file):
     print(f"┌ start: compile {in_file} -> {out_file}")
     os.system(cmd)
     print(f"└ end: compile {in_file} -> {out_file}")
+
+
+def verify_config_file(exe_or_tests):
+    with open("jive/config.py") as f:
+        lines = [line for line in f.read().splitlines() if line.strip() and not line.strip().startswith('#')]
+
+    base_dir_line = ""
+    for line in lines:
+        if line.startswith("BASE_DIR"):
+            base_dir_line = line
+            break
+    
+    if exe_or_tests == "exe":
+        ok = "sys.argv[0]" in base_dir_line
+        if not ok:
+            print("error: check BASE_DIR in config.py; it's not set for EXE creation", file=sys.stderr)
+            return False
+
+    if exe_or_tests == "tests":
+        ok = "__file__" in base_dir_line
+        if not ok:
+            print("error: check BASE_DIR in config.py; it's not set for tests", file=sys.stderr)
+            return False
+
+    return True
     
 
 ###########
@@ -135,12 +160,13 @@ def exe():
     """
     create executable with PyInstaller
     """
-    call_external_command("pyinstaller --onefile --icon=assets/icon.ico start.py")
-    copy_dir("assets", "dist/assets")
-    remove_directory("dist/assets/screenshots")
-    copy_file("categories/categories.yaml", "dist/categories")
-    copy_file("tools/verify_your_api_keys.py", "dist/tools")
-    copy_file("preferences.ini", "dist/")
+    if verify_config_file("exe"):
+        call_external_command("pyinstaller --onefile --icon=assets/icon.ico start.py")
+        copy_dir("assets", "dist/assets")
+        remove_directory("dist/assets/screenshots")
+        copy_file("categories/categories.yaml", "dist/categories")
+        copy_file("tools/verify_your_api_keys.py", "dist/tools")
+        copy_file("preferences.ini", "dist/")
 
 
 @task()
@@ -148,11 +174,12 @@ def tests():
     """
     run tests
     """
-    remove_directory("tests/__pycache__")
-    my_env = os.environ.copy()
-    my_env["PYTHONPATH"] = "."
-    cmd = "pytest -vs tests/"
-    call_popen_with_env(cmd, env=my_env)
+    if verify_config_file("tests"):
+        remove_directory("tests/__pycache__")
+        my_env = os.environ.copy()
+        my_env["PYTHONPATH"] = "."
+        cmd = "pytest -vs tests/"
+        call_popen_with_env(cmd, env=my_env)
 
 
 @task()
