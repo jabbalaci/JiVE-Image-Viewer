@@ -43,5 +43,5 @@ class Categories:
             self.root_menu.addMenu(menu)
             for subreddit in self._my_sorted(subreddit_list):
                 act = QAction(subreddit, self.parent)
-                act.triggered.connect(partial(self.open_subreddit_fn, subreddit, redraw=True))
+                act.triggered.connect(partial(self.open_subreddit_fn, subreddit))
                 menu.addAction(act)

@@ -25,7 +25,6 @@ if __name__ == "__main__":
 ##############################################################################
 
 import sys
-import time
 
 import os
 import random
@@ -572,29 +571,16 @@ class Window(QMainWindow):
         self.curr_img_idx = 0
         self.curr_img = self.list_of_images[0].read()
 
-    def open_subreddit(self, text, after_id=None, redraw=False):
+    def open_subreddit(self, text, after_id=None):
         subreddit_name = subreddit.get_subreddit_name(text)
         if not subreddit_name:
             log.warning("that's not a subreddit")
             return
         # else
-        urls = subreddit.read_subreddit(subreddit_name, after_id, statusbar=self.statusbar)
+        urls = subreddit.read_subreddit(subreddit_name, after_id, statusbar=self.statusbar, parent=self)
         self.open_urls(urls)
-        # if len(urls) == 0:
-        #     log.warning("no images could be extracted")
-        #     self.statusbar.flash_message(red("no images found"))
-        #     return
-        # # else
-        # self.list_of_images = [ImageProperty(url, self) for url in urls]
-        # self.curr_img_idx = -1   # refresh the first image if we are there
-        # self.jump_to_image(0)    # this way the 2nd image will be preloaded
-        # # self.curr_img_idx = 0
-        # # self.curr_img = self.list_of_images[0].read()
-        # #
-        # if redraw:
-        #     self.redraw()
 
-    def open_urls(self, urls, redraw=False):
+    def open_urls(self, urls):
         if len(urls) == 0:
             log.warning("no images could be extracted")
             self.statusbar.flash_message(red("no images found"))
@@ -603,25 +589,10 @@ class Window(QMainWindow):
         self.list_of_images = [ImageProperty(url, self) for url in urls]
         self.curr_img_idx = -1   # refresh the first image if we are there
         self.jump_to_image(0)    # this way the 2nd image will be preloaded
-        if redraw:
-            self.redraw()
 
     def open_sequence_urls(self, seq_url, redraw=False):
         urls = sequence.get_urls_from_sequence_url(seq_url, statusbar=self.statusbar)
         self.open_urls(urls)
-        # if len(urls) == 0:
-        #     log.warning(f"no images could be extracted from {seq_url}")
-        #     self.statusbar.flash_message(red("no images found"))
-        #     return
-        # # else
-        # self.list_of_images = [ImageProperty(url, self) for url in urls]
-        # self.curr_img_idx = -1   # refresh the first image if we are there
-        # self.jump_to_image(0)    # this way the 2nd image will be preloaded
-        # # self.curr_img_idx = 0
-        # # self.curr_img = self.list_of_images[0].read()
-        # #
-        # if redraw:
-        #     self.redraw()
 
     def open_imgur_album(self, text):
         urls = []
@@ -647,12 +618,6 @@ class Window(QMainWindow):
 
         urls = tumblr.extract_images_from_a_specific_post(url)
         self.open_urls(urls)
-        # self.list_of_images = [ImageProperty(url, self) for url in urls]
-        # if len(self.list_of_images) > 0:
-        #     self.curr_img_idx = -1
-        #     self.jump_to_image(0)  # this way the 2nd image will be preloaded
-        #     # self.curr_img_idx = 0
-        #     # self.curr_img = self.list_of_images[0].read()
 
     def play_error_sound(self):
         if self.use_audio:
@@ -686,7 +651,7 @@ class Window(QMainWindow):
                         return
                     else:
                         # self.open_subreddit(subreddit, after_id)
-                        urls = subreddit.read_subreddit(subreddit_name, after_id, statusbar=self.statusbar)
+                        urls = subreddit.read_subreddit(subreddit_name, after_id, statusbar=self.statusbar, parent=self)
 
                 if len(urls) == 0:
                     QMessageBox.information(self,
@@ -965,7 +930,7 @@ class Window(QMainWindow):
             if kind in (autodetect.AutoDetectEnum.subreddit_url,
                         autodetect.AutoDetectEnum.subreddit_name,
                         autodetect.AutoDetectEnum.subreddit_r_name):
-                self.open_subreddit(text, redraw=True)
+                self.open_subreddit(text)
             else:
                 log.warning("that's not a subreddit")
                 self.statusbar.flash_message(red("not a subreddit"))
@@ -1025,7 +990,7 @@ class Window(QMainWindow):
                     autodetect.AutoDetectEnum.subreddit_name,
                     autodetect.AutoDetectEnum.subreddit_r_name):
             log.info("it seems to be a subreddit")
-            self.open_subreddit(text, redraw=True)
+            self.open_subreddit(text)
             return
         if kind == autodetect.AutoDetectEnum.imgur_album:
             log.info("it seems to be an Imgur album")
@@ -1048,35 +1013,7 @@ class Window(QMainWindow):
             self.redraw()
             return
 
-        log.info("it was detected but it was not treated...")
-
-        # Is it a remote image's URL?
-        # if Path(text).suffix.lower() in cfg.SUPPORTED_FORMATS:
-        #     log.info("it seems to be a remote image")
-        #     self.open_remote_url_file(text)
-        #     self.redraw()
-        #     return
-        # Is it a subreddit?
-        # res = subreddit.get_subreddit_name(text)
-        # if res:
-        #     log.info("it seems to be a subreddit")
-        #     self.open_subreddit(text, redraw=True)
-        #     self.redraw()
-        #     return
-        # else, is it an imgur album?
-        # if imgur.is_album(text):
-        #     log.info("it seems to be an Imgur album")
-        #     self.open_imgur_album(text)
-        #     self.redraw()
-        #     return
-        # else, is it a tumblr post?
-        # if tumblr.is_post(text):
-        #     log.info("it seems to be a Tumblr post")
-        #     self.open_tumblr_post(text)
-        #     self.redraw()
-        #     return
-        # else:
-        #     log.warning("hmm, it seems to be something new...")
+        log.info("it was detected but it was not handled...")
 
     def dragEnterEvent(self, event):
         if event.mimeData().hasFormat('text/plain'):
