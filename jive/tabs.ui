@@ -45,7 +45,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>1</number>
    </property>
    <widget class="QWidget" name="tab_0">
     <attribute name="title">
@@ -254,7 +254,7 @@
        <x>10</x>
        <y>40</y>
        <width>581</width>
-       <height>291</height>
+       <height>281</height>
       </rect>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
@@ -287,8 +287,8 @@
      <property name="geometry">
       <rect>
        <x>11</x>
-       <y>338</y>
-       <width>571</width>
+       <y>330</y>
+       <width>301</width>
        <height>18</height>
       </rect>
      </property>
@@ -309,6 +309,19 @@
       <string>Count: 0</string>
      </property>
     </widget>
+    <widget class="QPushButton" name="tab1CopyButton">
+     <property name="geometry">
+      <rect>
+       <x>530</x>
+       <y>325</y>
+       <width>61</width>
+       <height>30</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Copy</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QWidget" name="tab_2">
     <attribute name="title">
@@ -320,7 +333,7 @@
        <x>10</x>
        <y>40</y>
        <width>581</width>
-       <height>291</height>
+       <height>281</height>
       </rect>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -353,8 +366,8 @@
      <property name="geometry">
       <rect>
        <x>11</x>
-       <y>338</y>
-       <width>571</width>
+       <y>330</y>
+       <width>301</width>
        <height>18</height>
       </rect>
      </property>
@@ -375,6 +388,19 @@
       <string>Count: 0</string>
      </property>
     </widget>
+    <widget class="QPushButton" name="tab2CopyButton">
+     <property name="geometry">
+      <rect>
+       <x>530</x>
+       <y>325</y>
+       <width>61</width>
+       <height>30</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Copy</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QWidget" name="tab_3">
     <attribute name="title">
@@ -386,7 +412,7 @@
        <x>10</x>
        <y>40</y>
        <width>581</width>
-       <height>291</height>
+       <height>281</height>
       </rect>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -419,8 +445,8 @@
      <property name="geometry">
       <rect>
        <x>11</x>
-       <y>338</y>
-       <width>571</width>
+       <y>330</y>
+       <width>311</width>
        <height>18</height>
       </rect>
      </property>
@@ -441,6 +467,19 @@
       <string>Count: 0</string>
      </property>
     </widget>
+    <widget class="QPushButton" name="tab3CopyButton">
+     <property name="geometry">
+      <rect>
+       <x>530</x>
+       <y>325</y>
+       <width>61</width>
+       <height>30</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Copy</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QWidget" name="tab_4">
     <attribute name="title">
@@ -452,7 +491,7 @@
        <x>10</x>
        <y>40</y>
        <width>581</width>
-       <height>291</height>
+       <height>281</height>
       </rect>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -485,8 +524,8 @@
      <property name="geometry">
       <rect>
        <x>11</x>
-       <y>338</y>
-       <width>571</width>
+       <y>330</y>
+       <width>291</width>
        <height>18</height>
       </rect>
      </property>
@@ -505,6 +544,19 @@
      </property>
      <property name="text">
       <string>Count: 0</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="tab4CopyButton">
+     <property name="geometry">
+      <rect>
+       <x>530</x>
+       <y>325</y>
+       <width>61</width>
+       <height>30</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Copy</string>
      </property>
     </widget>
    </widget>

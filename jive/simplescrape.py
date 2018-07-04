@@ -2,8 +2,9 @@ from PyQt5 import QtGui
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import pyqtSignal as Signal
 from PyQt5.QtGui import QKeySequence
+from PyQt5.QtWidgets import (QApplication, QShortcut)
 from PyQt5.QtWidgets import QDialog
-from PyQt5.QtWidgets import QShortcut
+from functools import partial
 
 from jive import showTabs
 from jive.webpage import webpage
@@ -24,7 +25,21 @@ class SimpleScrape(QDialog, showTabs.Ui_Dialog):
         self.accepted.connect(self.ok_was_clicked)
         self.urlLineEdit.returnPressed.connect(self.extract_images)
 
+        self.tab1CopyButton.clicked.connect(partial(self.copy_content_to_clipboard, 1))
+        self.tab2CopyButton.clicked.connect(partial(self.copy_content_to_clipboard, 2))
+        self.tab3CopyButton.clicked.connect(partial(self.copy_content_to_clipboard, 3))
+        self.tab4CopyButton.clicked.connect(partial(self.copy_content_to_clipboard, 4))
+
         self.add_shortcuts()
+
+    def copy_content_to_clipboard(self, idx):
+        text_edit = getattr(self, f"tab{idx}TextEdit")
+        text = text_edit.toPlainText().strip() + "\n"
+        cb = QApplication.clipboard()
+        cb.setText(text)
+        msg = f"the content of Tab {idx} was copied to the clipboard"
+        self.mini_log(msg)
+        self.log.info(msg)
 
     def keyPressEvent(self, evt):
         """
@@ -56,18 +71,38 @@ class SimpleScrape(QDialog, showTabs.Ui_Dialog):
         except AttributeError as e:
             self.log.warning(e)
 
-    def fill_tab(self, lst, text_edit, count_label):
-        template = "Count: {0}"
+    def clear_tab(self, idx):
+        text_edit = getattr(self, f"tab{idx}TextEdit")  # text edit object of the current tab
         text_edit.clear()
         text_edit.setPlaceholderText("empty")
-        count_label.setText(template.format(0))
+        self.update_counter(idx)
+
+    def clear_tabs(self):
+        for idx in range(1, 4+1):
+            self.clear_tab(idx)
+
+    def update_counter(self, idx):
+        template = "Count: {0}"
+        label = getattr(self, f"tab{idx}CountLabel")  # count label object of the current tab
+        text_edit = getattr(self, f"tab{idx}TextEdit")  # text edit object of the current tab
+        entries = text_edit.toPlainText().splitlines()
+        label.setText(template.format(len(entries)))
+
+    def update_counters(self):
+        for idx in range(1, 4+1):
+            self.update_counter(idx)
+
+    def fill_tab(self, idx, lst):
+        text_edit = getattr(self, f"tab{idx}TextEdit")
+        self.clear_tab(idx)
 
         for line in lst:
             text_edit.appendPlainText(line)
-        count_label.setText(template.format(len(lst)))
 
         for i in range(len(lst)):
             text_edit.moveCursor(QtGui.QTextCursor.Up, QtGui.QTextCursor.MoveAnchor)    # go back to top
+
+        self.update_counter(idx)
 
     def extract_images(self):
         url = self.urlLineEdit.text().strip()
@@ -77,16 +112,16 @@ class SimpleScrape(QDialog, showTabs.Ui_Dialog):
         #
         try:
             res = webpage.get_four_variations(url, get_links, get_images, distance)
-            self.fill_tab(res[1], self.tab1TextEdit, self.tab1CountLabel)
-            self.fill_tab(res[2], self.tab2TextEdit, self.tab2CountLabel)
-            self.fill_tab(res[3], self.tab3TextEdit, self.tab3CountLabel)
-            self.fill_tab(res[4], self.tab4TextEdit, self.tab4CountLabel)
-            msg = "Done. Check the result in the other tabs!"
-            self.mini_log(msg)
+            self.fill_tab(1, res[1])
+            self.fill_tab(2, res[2])
+            self.fill_tab(3, res[3])
+            self.fill_tab(4, res[4])
+            self.mini_log("Done. Check the result in the other tabs!")
         except:
             msg = "couldn't extract images from the given webpage"
             self.log.warning(msg)
             self.mini_log(msg)
+            self.clear_tabs()
 
     def mini_log(self, text):
         self.miniLogTextEdit.appendPlainText(text)
