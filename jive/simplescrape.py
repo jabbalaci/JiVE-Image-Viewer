@@ -74,7 +74,6 @@ class SimpleScrape(QDialog, showTabs.Ui_Dialog):
     def clear_tab(self, idx):
         text_edit = getattr(self, f"tab{idx}TextEdit")  # text edit object of the current tab
         text_edit.clear()
-        text_edit.setPlaceholderText("empty")
         self.update_counter(idx)
 
     def clear_tabs(self):
