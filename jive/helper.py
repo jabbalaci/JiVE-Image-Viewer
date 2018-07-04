@@ -213,3 +213,16 @@ def fold_urls(lst):
     """
     res = NodeSet.fromlist(lst)    # it's a ClusterShell.NodeSet.NodeSet object
     return str(res)
+
+
+def unfold_sequence_url(text):
+    """
+    The opposite of folding. From a sequence URL restore all the URLs (unpack, unfold).
+
+    Input: "node[1-3]"
+    Output: ["node1", "node2", "node3"]
+    """
+    # Create a new nodeset from string
+    nodeset = NodeSet(text)
+    res = [str(node) for node in nodeset]
+    return res
