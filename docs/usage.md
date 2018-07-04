@@ -256,3 +256,9 @@ Shuffle images (*Tools* -> *Shuffle images*)
 -------------------------------------------
 
 Shuffle (randomize) the order of images. It sets you back to the first image.
+
+Save current image as... (under *File* or *Ctrl+S*)
+---------------------------------------------------
+
+You can save the current image with *Ctrl+S*. You need to specify the
+destination folder and file name.

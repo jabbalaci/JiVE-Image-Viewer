@@ -18,13 +18,15 @@ Table of Contents
 * [How to use the app?](docs/usage.md)
 * [Open the images of an arbitrary webpage](docs/webpage.md)
 * [Marking images (save, wallpaper, delete)](docs/marking.md)
-* [Find duplicates](docs/duplicates.md)
 * [Browsing a subreddit](docs/browsing_subreddit.md)
 * [Sequence URL](docs/sequence_url.md)
 * [Preferences](docs/preferences.md)
 * [Command-line arguments](docs/command_line.md)
-* [[dev] Local settings](docs/settings.md)
-* [[dev] caching](docs/cache.md)
+* Tools
+  + [Find duplicates](docs/duplicates.md)
+* Development
+  + [[dev] Local settings](docs/settings.md)
+  + [[dev] caching](docs/cache.md)
 * [Logging](docs/logging.md)
 * [FAQ](docs/faq.md)
 
