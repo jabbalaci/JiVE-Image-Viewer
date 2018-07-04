@@ -16,11 +16,14 @@ class Settings:
             self.d['last_file_opened'] = ""
         if 'last_dir_opened' not in self.d:
             self.d['last_dir_opened'] = ""
+        if 'last_dir_save_as' not in self.d:
+            self.d['last_dir_save_as'] = ""
         if 'last_open_url_auto_detect' not in self.d:
             self.d['last_open_url_auto_detect'] = ""
         #
         self.last_file_opened = self.d['last_file_opened']
         self.last_dir_opened = self.d['last_dir_opened']
+        self.last_dir_save_as = self.d['last_dir_save_as']
         self.last_open_url_auto_detect = self.d['last_open_url_auto_detect']
 
     def read(self):
@@ -55,13 +58,19 @@ class Settings:
 
     def get_last_dir_opened(self):
         return self.d['last_dir_opened']
+    #
+    def set_last_dir_save_as(self, folder):
+        self.d['last_dir_save_as'] = folder
 
+    def get_last_dir_save_as(self):
+        return self.d['last_dir_save_as']
+    #
     def set_last_file_opened(self, fname):
         self.d['last_file_opened'] = fname
 
     def get_last_file_opened(self):
         return self.d['last_file_opened']
-
+    #
     def set_last_open_url_auto_detect(self, text):
         self.d['last_open_url_auto_detect'] = text
 

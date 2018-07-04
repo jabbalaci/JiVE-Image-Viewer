@@ -335,6 +335,28 @@ class ImageProperty:
         #
         return False
 
+    def save_as(self, dest):
+        """
+        Save the image to dest (where dest is the absolute path of the destination).
+
+        Return True if saving was successful. False, otherwise.
+        """
+        try:
+            res = fileops.save_as(self, self.parent.cache, dest)
+            # if save was successful:
+            if res:
+                return True
+            else:
+                raise FileNotSaved
+        except requests.exceptions.Timeout:
+            log.warning(f"timeout exception happened with {self.get_absolute_path_or_url()}")
+        except FileNotSaved:
+            log.warning(f"couldn't save {self.get_absolute_path_or_url()} as {dest}")
+        except:
+            log.warning(f"unknown exception happened while saving {self.get_absolute_path_or_url()} as {dest}")
+        #
+        return False
+
 # end class ImageProperty
 
 
@@ -1050,8 +1072,9 @@ class Window(QMainWindow):
         self.open_url_open_imgur_album_act = QAction("Open &Imgur album / gallery / HTML", self)
         self.open_url_open_imgur_album_act.triggered.connect(self.menu_open_imgur_album)
         #
-        self.save_image_act = QAction("Save image", self)
-        self.save_image_act.triggered.connect(self.save_image)
+        key = "Ctrl+S"
+        self.save_image_act = QAction("Save current image as...", self)
+        self.shortcuts.register_menubar_action(key, self.save_image_act, self.save_image)
         #
         key = "I"
         self.image_info_act = QAction("Image &info", self)
@@ -1149,7 +1172,8 @@ class Window(QMainWindow):
             else:
                 open_url_menu.addAction(entry)
         fileMenu.addAction(self.open_custom_url_list_act)
-        #
+        fileMenu.addSeparator()
+        fileMenu.addAction(self.save_image_act)
         fileMenu.addSeparator()
         fileMenu.addAction(self.reset_act)
         fileMenu.addAction(self.quit_act)
@@ -1597,7 +1621,30 @@ You cannot delete it.
         self.not_yet_implemented()
 
     def save_image(self):
-        self.not_yet_implemented()
+        if not self.curr_img or self.curr_img.image_state == ImageProperty.IMAGE_STATE_PROBLEM:
+            self.statusbar.flash_message(red("no"))
+            self.play_error_sound()
+            return
+        # else
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        filter = "Images (*.bmp *.jpg *.jpe *.jpeg *.png *.pbm *.pgm *.ppm *.xbm *.xpm)"
+        offer_fname = str(Path(self.settings.get_last_dir_save_as(), self.curr_img.get_file_name_only()))
+        print(offer_fname)
+        file_obj = QFileDialog.getSaveFileName(self,
+                                               caption="Save current image",
+                                               directory=offer_fname,
+                                               filter=filter,
+                                               options=options)
+        fname = file_obj[0]
+        if fname:
+            res = self.curr_img.save_as(fname)
+            if res:
+                log.info(f"the file was saved as {fname}")
+                self.statusbar.flash_message(blue("saved"))
+                self.settings.set_last_dir_save_as(str(Path(fname).parent))
+            else:
+                log.info(f"the file was NOT saved")
 
     def not_yet_implemented(self):
         self.statusbar.flash_message(red("not yet implemented"))
