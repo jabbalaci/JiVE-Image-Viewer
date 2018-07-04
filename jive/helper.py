@@ -22,6 +22,12 @@ def read_image_files(dir_path):
     #
     return res
 
+def filter_images(lst):
+    """
+    Input: list of URLs.
+    Output: elements in the list that are image URLs.
+    """
+    return [url for url in lst if Path(url).suffix.lower() in cfg.SUPPORTED_FORMATS]
 
 def pretty_num(num):
     """

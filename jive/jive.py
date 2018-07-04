@@ -62,6 +62,7 @@ from jive.imageview import ImageView
 from jive.imagewithextra import ImageWithExtraInfo
 from jive.important import ImportantFilesAndFolders
 from jive.simplescrape import SimpleScrape
+from jive.customurls import CustomUrls
 
 OFF = False
 ON = True
@@ -1114,6 +1115,9 @@ class Window(QMainWindow):
         key = "Ctrl+Shift+U"
         self.extract_images_from_webpage_act = QAction("E&xtract images from a webpage", self)
         self.shortcuts.register_menubar_action(key, self.extract_images_from_webpage_act, self.extract_images_from_webpage)
+        #
+        self.open_custom_url_list_act = QAction("Open &custom image URLs", self)
+        self.open_custom_url_list_act.triggered.connect(self.open_custom_url_list)
 
     def create_menubar(self):
         self.menubar = self.menuBar()
@@ -1144,6 +1148,7 @@ class Window(QMainWindow):
                 open_url_menu.addSeparator()
             else:
                 open_url_menu.addAction(entry)
+        fileMenu.addAction(self.open_custom_url_list_act)
         #
         fileMenu.addSeparator()
         fileMenu.addAction(self.reset_act)
@@ -1666,6 +1671,11 @@ file system, then <strong>commit</strong> your changes.
         self.simple_scrape = SimpleScrape(log)
         self.simple_scrape.show()
         self.simple_scrape.urlList.connect(self.open_urls)
+
+    def open_custom_url_list(self):
+        self.custom_url_list = CustomUrls(log)
+        self.custom_url_list.show()
+        self.custom_url_list.urlList.connect(self.open_urls)
 
     def menu_open_tumblr_post(self):
         text, okPressed = QInputDialog.getText(self,

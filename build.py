@@ -116,7 +116,7 @@ def verify_config_file(exe_or_tests):
         if line.startswith("BASE_DIR"):
             base_dir_line = line
             break
-    
+
     if exe_or_tests == "exe":
         ok = "sys.argv[0]" in base_dir_line
         if not ok:
@@ -130,7 +130,7 @@ def verify_config_file(exe_or_tests):
             return False
 
     return True
-    
+
 
 ###########
 ## Tasks ##
@@ -188,3 +188,4 @@ def compile_ui():
     compile .ui files to .py files
     """
     compile(in_file="jive/tabs.ui", out_file="jive/showTabs.py")
+    compile(in_file="jive/urllist.ui", out_file="jive/showUrlList.py")
