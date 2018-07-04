@@ -28,7 +28,7 @@ class CustomUrls(QDialog, showUrlList.Ui_Dialog):
     def ok_was_clicked(self):
         lst = self.textEdit.toPlainText().strip().splitlines()
         lst = self.clean(lst)
-        lst = helper.filter_images(lst)
+        lst = helper.filter_image_urls(lst)
         # print(lst)
         self.urlList.emit(lst)
 

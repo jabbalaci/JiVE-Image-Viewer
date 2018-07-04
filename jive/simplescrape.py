@@ -86,7 +86,13 @@ class SimpleScrape(QDialog, showTabs.Ui_Dialog):
         label = getattr(self, f"tab{idx}CountLabel")  # count label object of the current tab
         text_edit = getattr(self, f"tab{idx}TextEdit")  # text edit object of the current tab
         entries = text_edit.toPlainText().splitlines()
-        label.setText(template.format(len(entries)))
+        value = len(entries)
+        label.setText(template.format(value))
+        tab = getattr(self, f"tab_{idx}")
+        if value > 0:
+            self.tabs.setTabText(self.tabs.indexOf(tab), f"Tab {idx} ({value})")
+        else:
+            self.tabs.setTabText(self.tabs.indexOf(tab), f"Tab {idx}")
 
     def update_counters(self):
         for idx in range(1, 4+1):

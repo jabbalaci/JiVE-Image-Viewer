@@ -22,7 +22,7 @@ def read_image_files(dir_path):
     #
     return res
 
-def filter_images(lst):
+def filter_image_urls(lst):
     """
     Input: list of URLs.
     Output: elements in the list that are image URLs.
