@@ -34,8 +34,10 @@ def get_subreddit_name(text):
     return None
 
 
-def read_subreddit(subreddit, after_id=None, statusbar=None):
+def read_subreddit(subreddit, after_id=None, statusbar=None, parent=None):
     try:
+        if parent:
+            parent.loading_line.show()
         if not after_id:
             img_url = url_template.format(subreddit=subreddit)
         else:
@@ -116,3 +118,5 @@ def read_subreddit(subreddit, after_id=None, statusbar=None):
     finally:
         if statusbar:
             statusbar.progressbar.hide()
+        if parent:
+            parent.loading_line.hide()

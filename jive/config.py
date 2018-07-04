@@ -56,6 +56,7 @@ IMGUR_CLIENT_SECRET = os.environ.get("IMGUR_CLIENT_SECRET")
 
 ICON = str(Path(ASSETS_DIR, "icon.png"))
 LOGO = str(Path(ASSETS_DIR, "logo.png"))
+LOADING = str(Path(ASSETS_DIR, "loading.png"))
 
 LONG = 1024    # for labels' widths to avoid text truncation
 

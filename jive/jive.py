@@ -24,14 +24,13 @@ if __name__ == "__main__":
 
 ##############################################################################
 
+import sys
+import time
+
 import os
 import random
-import sys
-from functools import partial
-from pathlib import Path
-
 import requests
-from PyQt5 import QtGui, QtCore
+from PyQt5 import QtGui
 from PyQt5.QtCore import QPoint, Qt
 from PyQt5.QtGui import QCursor, QKeySequence, QPixmap
 from PyQt5.QtMultimedia import QSound
@@ -39,7 +38,10 @@ from PyQt5.QtWidgets import (QAction, QApplication, QDesktopWidget,
                              QFileDialog, QFrame, QInputDialog, QLabel,
                              QLineEdit, QMainWindow, QMenu, QMessageBox,
                              QScrollArea, QShortcut, QVBoxLayout, qApp)
+from functools import partial
+from pathlib import Path
 
+from jive import autodetect
 from jive import cache
 from jive import categories
 from jive import config as cfg
@@ -48,10 +50,8 @@ from jive import fileops
 from jive import help_dialogs
 from jive import helper
 from jive import mylogging as log
-from jive import autodetect
 from jive import opener
 from jive import settings
-from jive.simplescrape import SimpleScrape
 from jive import shortcuts as scuts
 from jive import statusbar as sbar
 from jive.commit import Commit
@@ -62,6 +62,7 @@ from jive.imageinfo import ImageInfo
 from jive.imageview import ImageView
 from jive.imagewithextra import ImageWithExtraInfo
 from jive.important import ImportantFilesAndFolders
+from jive.simplescrape import SimpleScrape
 
 OFF = False
 ON = True
@@ -389,6 +390,9 @@ class Window(QMainWindow):
         if self.use_audio:
             self.error_sound = QSound(cfg.ERROR_SOUND, self)
 
+        self.auto_load_next_subreddit_page = \
+            True if cfg.PREFERENCES_OPTIONS.get("auto_load_next_subreddit_page", "") == "yes" else False
+
         self.toggle_auto_fit()           # set it ON and show the flash message
         self.toggle_show_image_path()    # make it False and hide it
 
@@ -668,26 +672,31 @@ class Window(QMainWindow):
             subreddit_name = img.extra_info.get("subreddit")
             after_id = img.extra_info.get("after_id")
             if img and subreddit_name and after_id:
-                reply = QMessageBox.question(self,
-                                             'Question',
-                                             "Load the next page?",
-                                             QMessageBox.Yes | QMessageBox.No,
-                                             QMessageBox.Yes)
-
-                if reply == QMessageBox.No:
-                    return
+                urls = []
+                if self.auto_load_next_subreddit_page:
+                    urls = subreddit.read_subreddit(subreddit_name, after_id, statusbar=self.statusbar, parent=self)
                 else:
-                    # self.open_subreddit(subreddit, after_id)
-                    urls = subreddit.read_subreddit(subreddit_name, after_id, statusbar=self.statusbar)
-                    if len(urls) == 0:
-                        QMessageBox.information(self,
-                                                "Info",
-                                                "No new images were found.")
+                    reply = QMessageBox.question(self,
+                                                 'Question',
+                                                 "Load the next page?",
+                                                 QMessageBox.Yes | QMessageBox.No,
+                                                 QMessageBox.Yes)
+
+                    if reply == QMessageBox.No:
+                        return
                     else:
-                        lst = [ImageProperty(url, self) for url in urls]
-                        self.list_of_images.extend(lst)
-                        self.jump_to_next_image()
-                    return
+                        # self.open_subreddit(subreddit, after_id)
+                        urls = subreddit.read_subreddit(subreddit_name, after_id, statusbar=self.statusbar)
+
+                if len(urls) == 0:
+                    QMessageBox.information(self,
+                                            "Info",
+                                            "No new images were found.")
+                else:
+                    lst = [ImageProperty(url, self) for url in urls]
+                    self.list_of_images.extend(lst)
+                    self.jump_to_next_image()
+                return
             else:
                 return
         # else
@@ -880,6 +889,16 @@ class Window(QMainWindow):
         self.path_line.setMinimumWidth(cfg.LONG)
         self.path_line.move(20, 30)
         self.path_line.show()
+
+        self.loading_line = QLabel(self.img_view)
+        self.loading_line.setText(green("Loading...", bold=True))
+        default_font_name = QtGui.QFont().defaultFamily()
+        new_font = QtGui.QFont(default_font_name, 15)
+        self.loading_line.setFont(new_font)
+        self.loading_line.setMinimumWidth(cfg.LONG)
+        self.loading_line.setMinimumHeight(cfg.LONG)
+        self.loading_line.setAlignment(Qt.AlignTop)
+        self.loading_line.hide()
 
         self.flags_line = QLabel(self.img_view)
         default_font_name = QtGui.QFont().defaultFamily()
@@ -2005,6 +2024,9 @@ file system, then <strong>commit</strong> your changes.
         self.set_title(self.curr_img.get_file_name_only())
         if self.curr_img.image_state == ImageProperty.IMAGE_STATE_PROBLEM:
             self.statusbar.flash_message(red("problem"))
+
+        p = self.img_view.geometry().topRight()
+        self.loading_line.move(QPoint(p.x() - 150, p.y() + 10))
 
         # It's here because of preload. With this the next / prev. image appears and then the preload happens.
         # Without this preload happened and then appeared the image.
