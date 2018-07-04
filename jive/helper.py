@@ -1,6 +1,7 @@
 import hashlib
 import os
 import psutil
+from ClusterShell.NodeSet import NodeSet
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -197,3 +198,18 @@ def lev_dist(s,t):
             else:
                 d[i, j] = min(d[i-1, j] + 1, d[i, j-1] + 1, d[i-1, j-1] + 1)
     return d[S-1, T-1]
+
+
+def fold_urls(lst):
+    """
+    The opposite of extracting (unfolding) a sequence URL. Now the input is a list of URLs
+    that we want to compress (fold) to a sequence URL.
+
+    If we forget about URLs, it's some string manipulation. Example:
+    Input: ["node1", "node2", "node3"]
+    Output: "node[1-3]"
+
+    Tip from here: https://old.reddit.com/r/Python/comments/8w2737/pack_and_unpack_a_sequence_url/
+    """
+    res = NodeSet.fromlist(lst)    # it's a ClusterShell.NodeSet.NodeSet object
+    return str(res)
