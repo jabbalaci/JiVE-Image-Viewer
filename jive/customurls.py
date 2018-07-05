@@ -18,17 +18,9 @@ class CustomUrls(QDialog, showUrlList.Ui_Dialog):
 
         self.add_shortcuts()
 
-    def clean(self, lines):
-        """
-        Remove empty lines and commented lines.
-        """
-        res = [line for line in lines if line.strip() and not line.strip().startswith('#')]
-        return res
-
     def ok_was_clicked(self):
         lst = self.textEdit.toPlainText().strip().splitlines()
-        lst = self.clean(lst)
-        lst = helper.filter_image_urls(lst)
+        lst = helper.get_image_urls_only(lst)
         # print(lst)
         self.urlList.emit(lst)
 

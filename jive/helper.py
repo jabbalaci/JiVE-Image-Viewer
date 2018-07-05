@@ -23,12 +23,6 @@ def read_image_files(dir_path):
     #
     return res
 
-def filter_image_urls(lst):
-    """
-    Input: list of URLs.
-    Output: elements in the list that are image URLs.
-    """
-    return [url for url in lst if Path(url).suffix.lower() in cfg.SUPPORTED_FORMATS]
 
 def pretty_num(num):
     """
@@ -198,6 +192,29 @@ def lev_dist(s,t):
             else:
                 d[i, j] = min(d[i-1, j] + 1, d[i, j-1] + 1, d[i-1, j-1] + 1)
     return d[S-1, T-1]
+
+
+def clean(lines):
+    """
+    Remove empty lines and commented lines.
+    """
+    res = [line for line in lines if line.strip() and not line.strip().startswith('#')]
+    return res
+
+
+def filter_image_urls(lst):
+    """
+    Input: list of URLs.
+    Output: elements in the list that are image URLs.
+    """
+    return [url for url in lst if Path(url).suffix.lower() in cfg.SUPPORTED_FORMATS]
+
+
+def get_image_urls_only(lst):
+    lst = clean(lst)
+    lst = filter_image_urls(lst)
+    #
+    return lst
 
 
 def fold_urls(lst):

@@ -8,6 +8,7 @@ from functools import partial
 
 from jive import showTabs
 from jive.webpage import webpage
+from jive import helper
 
 
 class SimpleScrape(QDialog, showTabs.Ui_Dialog):
@@ -25,12 +26,17 @@ class SimpleScrape(QDialog, showTabs.Ui_Dialog):
         self.accepted.connect(self.ok_was_clicked)
         self.urlLineEdit.returnPressed.connect(self.extract_images)
 
+        self.tabs.currentChanged.connect(self.onChange)  # changed!
+
         self.tab1CopyButton.clicked.connect(partial(self.copy_content_to_clipboard, 1))
         self.tab2CopyButton.clicked.connect(partial(self.copy_content_to_clipboard, 2))
         self.tab3CopyButton.clicked.connect(partial(self.copy_content_to_clipboard, 3))
         self.tab4CopyButton.clicked.connect(partial(self.copy_content_to_clipboard, 4))
 
         self.add_shortcuts()
+
+    def onChange(self):
+        self.update_counters()
 
     def copy_content_to_clipboard(self, idx):
         text_edit = getattr(self, f"tab{idx}TextEdit")
@@ -65,9 +71,10 @@ class SimpleScrape(QDialog, showTabs.Ui_Dialog):
         attrname = f"tab{idx}TextEdit"
         try:
             text_edit = getattr(self, attrname)    # text edit object of the current tab
-            lst = text_edit.toPlainText().splitlines()
-            # print(lst)
-            self.urlList.emit(lst)
+            lines = text_edit.toPlainText().splitlines()
+            image_urls = helper.get_image_urls_only(lines)
+            # print(image_urls)
+            self.urlList.emit(image_urls)
         except AttributeError as e:
             self.log.warning(e)
 
@@ -84,12 +91,12 @@ class SimpleScrape(QDialog, showTabs.Ui_Dialog):
         template = "Count: {0}"
         label = getattr(self, f"tab{idx}CountLabel")  # count label object of the current tab
         text_edit = getattr(self, f"tab{idx}TextEdit")  # text edit object of the current tab
-        entries = text_edit.toPlainText().splitlines()
-        value = len(entries)
-        label.setText(template.format(value))
+        lines = text_edit.toPlainText().splitlines()
+        number_of_images = len(helper.get_image_urls_only(lines))
+        label.setText(template.format(number_of_images))
         tab = getattr(self, f"tab_{idx}")
-        if value > 0:
-            self.tabs.setTabText(self.tabs.indexOf(tab), f"Tab {idx} ({value})")
+        if number_of_images > 0:
+            self.tabs.setTabText(self.tabs.indexOf(tab), f"Tab {idx} ({number_of_images})")
         else:
             self.tabs.setTabText(self.tabs.indexOf(tab), f"Tab {idx}")
 
@@ -127,6 +134,7 @@ class SimpleScrape(QDialog, showTabs.Ui_Dialog):
             self.log.warning(msg)
             self.mini_log(msg)
             self.clear_tabs()
+            raise
 
     def mini_log(self, text):
         self.miniLogTextEdit.appendPlainText(text)

@@ -45,7 +45,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>4</number>
    </property>
    <widget class="QWidget" name="tab_0">
     <attribute name="title">
@@ -261,7 +261,7 @@
       <item>
        <widget class="QPlainTextEdit" name="tab1TextEdit">
         <property name="readOnly">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
         <property name="placeholderText">
          <string>empty</string>
@@ -340,7 +340,7 @@
       <item>
        <widget class="QPlainTextEdit" name="tab2TextEdit">
         <property name="readOnly">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
         <property name="placeholderText">
          <string>empty</string>
@@ -419,7 +419,7 @@
       <item>
        <widget class="QPlainTextEdit" name="tab3TextEdit">
         <property name="readOnly">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
         <property name="placeholderText">
          <string>empty</string>
@@ -498,7 +498,7 @@
       <item>
        <widget class="QPlainTextEdit" name="tab4TextEdit">
         <property name="readOnly">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
         <property name="placeholderText">
          <string>empty</string>

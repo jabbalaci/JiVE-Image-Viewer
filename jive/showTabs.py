@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'jive/tabs.ui'
 #
-# Created by: PyQt5 UI code generator 5.10.1
+# Created by: PyQt5 UI code generator 5.11.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -89,7 +89,7 @@ class Ui_Dialog(object):
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setObjectName("verticalLayout")
         self.tab1TextEdit = QtWidgets.QPlainTextEdit(self.verticalLayoutWidget)
-        self.tab1TextEdit.setReadOnly(True)
+        self.tab1TextEdit.setReadOnly(False)
         self.tab1TextEdit.setObjectName("tab1TextEdit")
         self.verticalLayout.addWidget(self.tab1TextEdit)
         self.tab1Label = QtWidgets.QLabel(self.tab_1)
@@ -114,7 +114,7 @@ class Ui_Dialog(object):
         self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.tab2TextEdit = QtWidgets.QPlainTextEdit(self.verticalLayoutWidget_2)
-        self.tab2TextEdit.setReadOnly(True)
+        self.tab2TextEdit.setReadOnly(False)
         self.tab2TextEdit.setObjectName("tab2TextEdit")
         self.verticalLayout_2.addWidget(self.tab2TextEdit)
         self.tab2Label = QtWidgets.QLabel(self.tab_2)
@@ -139,7 +139,7 @@ class Ui_Dialog(object):
         self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.tab3TextEdit = QtWidgets.QPlainTextEdit(self.verticalLayoutWidget_3)
-        self.tab3TextEdit.setReadOnly(True)
+        self.tab3TextEdit.setReadOnly(False)
         self.tab3TextEdit.setObjectName("tab3TextEdit")
         self.verticalLayout_3.addWidget(self.tab3TextEdit)
         self.tab3Label = QtWidgets.QLabel(self.tab_3)
@@ -164,7 +164,7 @@ class Ui_Dialog(object):
         self.verticalLayout_4.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
         self.tab4TextEdit = QtWidgets.QPlainTextEdit(self.verticalLayoutWidget_4)
-        self.tab4TextEdit.setReadOnly(True)
+        self.tab4TextEdit.setReadOnly(False)
         self.tab4TextEdit.setObjectName("tab4TextEdit")
         self.verticalLayout_4.addWidget(self.tab4TextEdit)
         self.tab4Label = QtWidgets.QLabel(self.tab_4)
@@ -182,7 +182,7 @@ class Ui_Dialog(object):
         self.tabs.addTab(self.tab_4, "")
 
         self.retranslateUi(Dialog)
-        self.tabs.setCurrentIndex(1)
+        self.tabs.setCurrentIndex(4)
         self.buttonBox.accepted.connect(Dialog.accept)
         self.buttonBox.rejected.connect(Dialog.reject)
         self.clearButton_2.clicked.connect(self.miniLogTextEdit.clear)
