@@ -63,8 +63,7 @@ def test_sequence_url():
     assert ad.detect(url) != (ad.AutoDetectEnum.sequence_url,)
     assert ad.detect(url) == (ad.AutoDetectEnum.image_url,)
     url = "http://www.website.com/something[2-5]/[1-10].jpg"
-    assert ad.detect(url) != (ad.AutoDetectEnum.sequence_url,)
-    assert ad.detect(url) == (ad.AutoDetectEnum.image_url,)
+    assert ad.detect(url) == (ad.AutoDetectEnum.sequence_url,)
     url = "http://www.website.com/something.jpg"
     assert ad.detect(url) != (ad.AutoDetectEnum.sequence_url, )
     assert ad.detect(url) == (ad.AutoDetectEnum.image_url, )
