@@ -1,7 +1,7 @@
 import hashlib
 import os
 import psutil
-from jive.lib.ClusterShell.NodeSet import NodeSet
+from jive.vendor.ClusterShell.NodeSet import NodeSet
 from pathlib import Path
 from urllib.parse import urlparse
 
