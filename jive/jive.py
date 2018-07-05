@@ -1073,17 +1073,17 @@ class Window(QMainWindow):
         self.open_url_open_imgur_album_act.triggered.connect(self.menu_open_imgur_album)
         #
         key = "Ctrl+S"
-        self.save_image_act = QAction("Save current image as...", self)
+        self.save_image_act = QAction("&Save current image as...", self)
         self.shortcuts.register_menubar_action(key, self.save_image_act, self.save_image)
         #
         self.save_image_list_act = QAction("Save image list as...", self)
         self.save_image_list_act.triggered.connect(self.save_image_list)
         #
-        self.export_image_list_to_clipboard_act = QAction("Export image list to clipboard", self)
+        self.export_image_list_to_clipboard_act = QAction("E&xport image list to clipboard", self)
         self.export_image_list_to_clipboard_act.triggered.connect(self.export_image_list_to_clipboard)
         #
         key = "F5"
-        self.reload_current_image_act = QAction("Reload current image", self)
+        self.reload_current_image_act = QAction("&Reload current image", self)
         self.shortcuts.register_menubar_action(key, self.reload_current_image_act, self.reload_current_image)
         #
         key = "I"
@@ -1108,7 +1108,7 @@ class Window(QMainWindow):
         self.about_qt_act.triggered.connect(qApp.aboutQt)
         #
         key = "Ctrl+Alt+R"
-        self.reset_act = QAction("&Reset", self)
+        self.reset_act = QAction("Reset", self)
         self.shortcuts.register_menubar_action(key, self.reset_act, partial(self.reset, "reset"))
         #
         key = "Q"
@@ -1116,15 +1116,15 @@ class Window(QMainWindow):
         self.shortcuts.register_menubar_action(key, self.quit_act, self.close)
         #
         key = "I"
-        self.image_info_act = QAction("Image info", self)
+        self.image_info_act = QAction("Image &info", self)
         self.shortcuts.register_menubar_action(key, self.image_info_act, self.image_info)
         #
         key = "Alt+M"
-        self.hide_menubar_act = QAction("Hide menu bar", self)
+        self.hide_menubar_act = QAction("&Hide menu bar", self)
         self.shortcuts.register_menubar_action(key, self.hide_menubar_act, self.toggle_menubar)
         #
         key = "Ctrl+M"
-        self.show_mouse_pointer_act = QAction("Show mouse pointer", self, checkable=True, checked=True)
+        self.show_mouse_pointer_act = QAction("Show &mouse pointer", self, checkable=True, checked=True)
         self.shortcuts.register_menubar_action(key, self.show_mouse_pointer_act, self.toggle_mouse_pointer)
         #
         self.shuffle_images_act = QAction("&Shuffle images", self)
@@ -1149,7 +1149,7 @@ class Window(QMainWindow):
         self.extract_images_from_webpage_act = QAction("E&xtract images from a webpage", self)
         self.shortcuts.register_menubar_action(key, self.extract_images_from_webpage_act, self.extract_images_from_webpage)
         #
-        self.open_custom_url_list_act = QAction("Open list of image URLs", self)
+        self.open_custom_url_list_act = QAction("Open &list of image URLs", self)
         self.open_custom_url_list_act.triggered.connect(self.open_custom_url_list)
 
     def create_menubar(self):
