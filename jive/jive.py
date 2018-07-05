@@ -1076,6 +1076,12 @@ class Window(QMainWindow):
         self.save_image_act = QAction("Save current image as...", self)
         self.shortcuts.register_menubar_action(key, self.save_image_act, self.save_image)
         #
+        self.save_image_list_act = QAction("Save image list as...", self)
+        self.save_image_list_act.triggered.connect(self.save_image_list)
+        #
+        self.export_image_list_to_clipboard_act = QAction("Export image list to clipboard", self)
+        self.export_image_list_to_clipboard_act.triggered.connect(self.export_image_list_to_clipboard)
+        #
         key = "F5"
         self.reload_current_image_act = QAction("Reload current image", self)
         self.shortcuts.register_menubar_action(key, self.reload_current_image_act, self.reload_current_image)
@@ -1143,7 +1149,7 @@ class Window(QMainWindow):
         self.extract_images_from_webpage_act = QAction("E&xtract images from a webpage", self)
         self.shortcuts.register_menubar_action(key, self.extract_images_from_webpage_act, self.extract_images_from_webpage)
         #
-        self.open_custom_url_list_act = QAction("Open &custom image URLs", self)
+        self.open_custom_url_list_act = QAction("Open list of image URLs", self)
         self.open_custom_url_list_act.triggered.connect(self.open_custom_url_list)
 
     def create_menubar(self):
@@ -1178,6 +1184,8 @@ class Window(QMainWindow):
         fileMenu.addAction(self.open_custom_url_list_act)
         fileMenu.addSeparator()
         fileMenu.addAction(self.save_image_act)
+        fileMenu.addAction(self.save_image_list_act)
+        fileMenu.addAction(self.export_image_list_to_clipboard_act)
         fileMenu.addAction(self.reload_current_image_act)
         fileMenu.addSeparator()
         fileMenu.addAction(self.reset_act)
@@ -1645,7 +1653,7 @@ You cannot delete it.
         options |= QFileDialog.DontUseNativeDialog
         filter = "Images (*.bmp *.jpg *.jpe *.jpeg *.png *.pbm *.pgm *.ppm *.xbm *.xpm)"
         offer_fname = str(Path(self.settings.get_last_dir_save_as(), self.curr_img.get_file_name_only()))
-        print(offer_fname)
+        # print(offer_fname)
         file_obj = QFileDialog.getSaveFileName(self,
                                                caption="Save current image",
                                                directory=offer_fname,
@@ -1660,6 +1668,48 @@ You cannot delete it.
                 self.settings.set_last_dir_save_as(str(Path(fname).parent))
             else:
                 log.info(f"the file was NOT saved")
+
+    def get_image_list(self):
+        res = []
+        for img in self.list_of_images:
+            res.append(img.get_absolute_path_or_url())
+        #
+        return res
+
+    def export_image_list_to_clipboard(self):
+        lst = self.get_image_list()
+        if len(lst) == 0:
+            self.statusbar.flash_message(red("no"))
+            self.play_error_sound()
+            return
+        # else
+        content = ("\n".join(lst)).strip() + "\n"
+        self.copy_text_to_clipboard(content)
+        log.info("the image list was copied to the clipboard")
+        self.statusbar.flash_message(blue("copied to clipboard"))
+
+    def save_image_list(self):
+        lst = self.get_image_list()
+        if len(lst) == 0:
+            self.statusbar.flash_message(red("no"))
+            self.play_error_sound()
+            return
+        # else
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        offer_fname = "image_list.txt"
+        file_obj = QFileDialog.getSaveFileName(self,
+                                               caption="Save image list",
+                                               directory=offer_fname,
+                                               options=options)
+        fname = file_obj[0]
+        if fname:
+            content = "\n".join(lst)
+            with open(fname, "w") as f:
+                print(content, file=f)
+            if Path(fname).is_file():
+                log.info(f"image list was saved to {fname}")
+                self.statusbar.flash_message(blue("saved"))
 
     def not_yet_implemented(self):
         self.statusbar.flash_message(red("not yet implemented"))
@@ -1822,10 +1872,13 @@ file system, then <strong>commit</strong> your changes.
         val = self.scroll.horizontalScrollBar().value()
         self.scroll.horizontalScrollBar().setValue(val - 100)
 
-    def copy_path_to_clipboard(self):
-        text = self.curr_img.get_absolute_path_or_url()
+    def copy_text_to_clipboard(self, text):
         cb = QApplication.clipboard()
         cb.setText(text)
+
+    def copy_path_to_clipboard(self):
+        text = self.curr_img.get_absolute_path_or_url()
+        self.copy_text_to_clipboard(text)
         msg = "{0} copied to clipboard".format("path" if self.curr_img.local_file else "URL")
         self.statusbar.flash_message(msg, wait=cfg.MESSAGE_FLASH_TIME_3)
 
