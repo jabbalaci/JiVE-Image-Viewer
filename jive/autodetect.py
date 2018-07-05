@@ -40,7 +40,7 @@ def detect(text):
 
     if text.startswith(("http://", "https://")):
         # http://www.website.com/[001-030].jpg
-        if sequence.is_valid_sequence_url(text, verbose=False):
+        if sequence.is_valid_sequence_url(text):
             return (AutoDetectEnum.sequence_url, )    # 1-long tuple
         if Path(text).suffix.lower() in cfg.SUPPORTED_FORMATS:
             return (AutoDetectEnum.image_url, )    # 1-long tuple

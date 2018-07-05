@@ -614,7 +614,7 @@ class Window(QMainWindow):
         self.jump_to_image(0)    # this way the 2nd image will be preloaded
 
     def open_sequence_urls(self, seq_url, redraw=False):
-        urls = sequence.get_urls_from_sequence_url(seq_url, statusbar=self.statusbar)
+        urls = sequence.get_urls_from_sequence_url(seq_url)
         self.open_urls(urls)
 
     def open_imgur_album(self, text):

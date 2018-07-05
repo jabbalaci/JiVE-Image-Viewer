@@ -18,6 +18,7 @@ pytest = "*"
 pyinstaller = "*"
 pynt = "*"
 "pypiwin32" = "*"
+ipython = "*"
 
 [requires]
 python_version = "3.6"
