@@ -50,6 +50,13 @@ on webpage B you get the best result in Tab 3 for instance. Check all the tabs
 and select the one that contains the most relevant images. With the eye-balling
 technique it must be easy :)
 
+On Tabs 1 to 4, the text areas are editable. Thus, if there are some irrelevant
+images in the list, you can delete them. When the list looks good, hit OK.
+
+The tab names include the number of images. These counters are updated when you switch
+between tabs. Empty lines and comments are ignored. The counter reflects the number
+of image URLs only.
+
 Keyboard navigation
 -------------------
 
