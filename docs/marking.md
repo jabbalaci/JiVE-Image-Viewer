@@ -29,3 +29,9 @@ No changes are made until you commit them!
 
 When you are done, press *c* to commmit your changes.
 Warning! Deleted images will be gone!
+
+Save all images
+---------------
+
+With *Ctrl+A* you can mark all the images to be saved.
+Then press *c* to commit.
