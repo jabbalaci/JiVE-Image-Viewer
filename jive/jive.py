@@ -1076,6 +1076,10 @@ class Window(QMainWindow):
         self.save_image_act = QAction("Save current image as...", self)
         self.shortcuts.register_menubar_action(key, self.save_image_act, self.save_image)
         #
+        key = "F5"
+        self.reload_current_image_act = QAction("Reload current image", self)
+        self.shortcuts.register_menubar_action(key, self.reload_current_image_act, self.reload_current_image)
+        #
         key = "I"
         self.image_info_act = QAction("Image &info", self)
         self.shortcuts.register_menubar_action(key, self.image_info_act, self.image_info)
@@ -1174,6 +1178,7 @@ class Window(QMainWindow):
         fileMenu.addAction(self.open_custom_url_list_act)
         fileMenu.addSeparator()
         fileMenu.addAction(self.save_image_act)
+        fileMenu.addAction(self.reload_current_image_act)
         fileMenu.addSeparator()
         fileMenu.addAction(self.reset_act)
         fileMenu.addAction(self.quit_act)
@@ -1619,6 +1624,16 @@ You cannot delete it.
 
     def slideshow(self):
         self.not_yet_implemented()
+
+    def reload_current_image(self):
+        if not self.curr_img:
+            self.statusbar.flash_message(red("no"))
+            self.play_error_sound()
+            return
+        # else
+        self.statusbar.flash_message(blue("reload"))
+        self.curr_img.read(force=True)
+        self.redraw()
 
     def save_image(self):
         if not self.curr_img or self.curr_img.image_state == ImageProperty.IMAGE_STATE_PROBLEM:

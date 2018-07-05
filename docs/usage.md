@@ -262,3 +262,11 @@ Save current image as... (under *File* or *Ctrl+S*)
 
 You can save the current image with *Ctrl+S*. You need to specify the
 destination folder and file name.
+
+Reload the current image (*F5*)
+-------------------------------
+
+With *F5* you can reload the current image. It's useful if you modify
+the current image with another program (for instance you opened the
+current image with Gimp). To see the changes, just press *F5*.
+
