@@ -6,9 +6,9 @@ from PyQt5.QtWidgets import (QApplication, QShortcut)
 from PyQt5.QtWidgets import QDialog
 from functools import partial
 
-from jive import showTabs, icons_rc
-from jive.webpage import webpage
 from jive import helper
+from jive import showTabs
+from jive.webpage import webpage
 
 
 class SimpleScrape(QDialog, showTabs.Ui_Dialog):
