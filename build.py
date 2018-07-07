@@ -139,9 +139,11 @@ def verify_config_file(exe_or_tests):
 @task()
 def clean():
     """
-    clean PyInstaller files and directories
+    * clean PyInstaller files and directories
+    * remove the log file
     """
     remove_file("start.spec")
+    remove_file("info.log")
     remove_directory("build")
     remove_directory("dist")
 
@@ -189,3 +191,4 @@ def compile_ui():
     """
     compile(in_file="jive/tabs.ui", out_file="jive/showTabs.py")
     compile(in_file="jive/urllist.ui", out_file="jive/showUrlList.py")
+    compile(in_file="jive/folding.ui", out_file="jive/showFolding.py")

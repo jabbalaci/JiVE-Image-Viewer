@@ -63,6 +63,7 @@ from jive.imagewithextra import ImageWithExtraInfo
 from jive.important import ImportantFilesAndFolders
 from jive.simplescrape import SimpleScrape
 from jive.customurls import CustomUrls
+from jive.urlfolding import UrlFolding
 
 OFF = False
 ON = True
@@ -1151,6 +1152,9 @@ class Window(QMainWindow):
         #
         self.open_custom_url_list_act = QAction("Open &list of image URLs", self)
         self.open_custom_url_list_act.triggered.connect(self.open_custom_url_list)
+        #
+        self.url_folding_act = QAction("URL &folding / unfolding", self)
+        self.url_folding_act.triggered.connect(self.url_folding)
 
     def create_menubar(self):
         self.menubar = self.menuBar()
@@ -1202,6 +1206,7 @@ class Window(QMainWindow):
         toolsMenu.addAction(self.shuffle_images_act)
         toolsMenu.addAction(self.find_duplicates_act)
         toolsMenu.addAction(self.extract_images_from_webpage_act)
+        toolsMenu.addAction(self.url_folding_act)
 
         # helpMenu
         helpMenu.addAction(self.help_act)
@@ -1788,6 +1793,11 @@ file system, then <strong>commit</strong> your changes.
         self.custom_url_list = CustomUrls(log)
         self.custom_url_list.show()
         self.custom_url_list.urlList.connect(self.open_urls)
+
+    def url_folding(self):
+        self.url_folding_window = UrlFolding(self)
+        self.url_folding_window.show()
+        self.url_folding_window.urlList.connect(self.open_urls)
 
     def menu_open_tumblr_post(self):
         text, okPressed = QInputDialog.getText(self,
