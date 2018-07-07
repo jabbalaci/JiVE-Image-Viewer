@@ -35,7 +35,7 @@ class Ui_Dialog(object):
         self.extractButton = QtWidgets.QPushButton(self.frame)
         self.extractButton.setGeometry(QtCore.QRect(20, 179, 101, 41))
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("../assets/ok.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(":/assets/ok.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.extractButton.setIcon(icon)
         self.extractButton.setIconSize(QtCore.QSize(28, 28))
         self.extractButton.setObjectName("extractButton")
@@ -58,7 +58,7 @@ class Ui_Dialog(object):
         self.clearButton.setGeometry(QtCore.QRect(520, 60, 41, 30))
         self.clearButton.setText("")
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap("../assets/clear.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon1.addPixmap(QtGui.QPixmap(":/assets/clear.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.clearButton.setIcon(icon1)
         self.clearButton.setObjectName("clearButton")
         self.label_2 = QtWidgets.QLabel(self.frame)
@@ -247,3 +247,4 @@ class Ui_Dialog(object):
         self.tab4CopyButton.setText(_translate("Dialog", "Copy"))
         self.tabs.setTabText(self.tabs.indexOf(self.tab_4), _translate("Dialog", "Tab 4"))
 
+from jive import icons_rc

@@ -18,6 +18,7 @@ pyinstaller = "*"
 pynt = "*"
 "pypiwin32" = "*"
 ipython = "*"
+rope = "*"
 
 [requires]
 python_version = "3.6"

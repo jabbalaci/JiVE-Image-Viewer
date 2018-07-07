@@ -1,1 +1,0 @@
-pynt compile_ui

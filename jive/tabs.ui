@@ -92,8 +92,8 @@
        <string>  Extract</string>
       </property>
       <property name="icon">
-       <iconset>
-        <normaloff>../assets/ok.png</normaloff>../assets/ok.png</iconset>
+       <iconset resource="icons.qrc">
+        <normaloff>:/assets/ok.png</normaloff>:/assets/ok.png</iconset>
       </property>
       <property name="iconSize">
        <size>
@@ -176,8 +176,8 @@
        <string/>
       </property>
       <property name="icon">
-       <iconset>
-        <normaloff>../assets/clear.png</normaloff>../assets/clear.png</iconset>
+       <iconset resource="icons.qrc">
+        <normaloff>:/assets/clear.png</normaloff>:/assets/clear.png</iconset>
       </property>
      </widget>
      <widget class="QLabel" name="label_2">
@@ -222,8 +222,8 @@
        <string/>
       </property>
       <property name="icon">
-       <iconset>
-        <normaloff>../assets/clear.png</normaloff>../assets/clear.png</iconset>
+       <iconset resource="icons.qrc">
+        <normaloff>:/assets/clear.png</normaloff>:/assets/clear.png</iconset>
       </property>
      </widget>
      <widget class="QLabel" name="label_3">
@@ -599,7 +599,9 @@
   <tabstop>tab4TextEdit</tabstop>
   <tabstop>tab1TextEdit</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="icons.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>buttonBox</sender>

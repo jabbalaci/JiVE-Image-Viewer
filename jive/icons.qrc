@@ -1,0 +1,9 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+    <file>../assets/clear.png</file>
+    <file>../assets/ok.png</file>
+    <file>../assets/clipboard.png</file>
+    <file>../assets/down.png</file>
+    <file>../assets/up.png</file>
+</qresource>
+</RCC>

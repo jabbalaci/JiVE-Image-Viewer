@@ -99,9 +99,17 @@ def copy_file(src, dest):
     print(f"└ end: copy {src} -> {pretty(dest)}")
 
 
-def compile(in_file, out_file):
-    uic = "pyuic5"    # for Linux
-    cmd = f"{uic} {in_file} -o {out_file}"
+def compile_ui(in_file, out_file):
+    prg = "pyuic5"    # for Linux
+    cmd = f"{prg} {in_file} -o {out_file}"
+    print(f"┌ start: compile {in_file} -> {out_file}")
+    os.system(cmd)
+    print(f"└ end: compile {in_file} -> {out_file}")
+
+
+def compile_rc(in_file, out_file):
+    prg = "pyrcc5"    # for Linux
+    cmd = f"{prg} {in_file} -o {out_file}"
     print(f"┌ start: compile {in_file} -> {out_file}")
     os.system(cmd)
     print(f"└ end: compile {in_file} -> {out_file}")
@@ -132,6 +140,28 @@ def verify_config_file(exe_or_tests):
     return True
 
 
+def replace_line_in_file(fname, before, after):
+    print(f"┌ start: replace line in {fname}")
+    bak = fname + ".bak"
+    with open(fname, 'r') as f:
+        with open(bak, 'w') as to:
+            for line in f:
+                line = line.rstrip("\n")
+                if line == before:
+                    line = after
+                to.write(line + "\n")
+            #
+        #
+    #
+    old = Path(fname)
+    new = Path(bak)
+    if new.is_file() and os.path.getsize(str(new)) > 0:
+        new.rename(old)
+    else:
+        print("Error: replace line didn't succeed")
+    print(f"└ end: replace line in {fname}")
+
+
 ###########
 ## Tasks ##
 ###########
@@ -139,8 +169,7 @@ def verify_config_file(exe_or_tests):
 @task()
 def clean():
     """
-    * clean PyInstaller files and directories
-    * remove the log file
+    remove (1) PyInstaller files and directories and (2) the log file
     """
     remove_file("start.spec")
     remove_file("info.log")
@@ -185,10 +214,19 @@ def tests():
 
 
 @task()
-def compile_ui():
+def compile_gui():
     """
     compile .ui files to .py files
     """
-    compile(in_file="jive/tabs.ui", out_file="jive/showTabs.py")
-    compile(in_file="jive/urllist.ui", out_file="jive/showUrlList.py")
-    compile(in_file="jive/folding.ui", out_file="jive/showFolding.py")
+    compile_ui(in_file="jive/tabs.ui", out_file="jive/showTabs.py")
+    compile_ui(in_file="jive/urllist.ui", out_file="jive/showUrlList.py")
+    compile_ui(in_file="jive/folding.ui", out_file="jive/showFolding.py")
+    #
+    compile_rc(in_file="jive/icons.qrc", out_file="jive/icons_rc.py")
+    #
+    replace_line_in_file(fname="jive/showTabs.py",
+                         before="import icons_rc",
+                         after="from jive import icons_rc")
+    replace_line_in_file(fname="jive/showFolding.py",
+                         before="import icons_rc",
+                         after="from jive import icons_rc")

@@ -45,8 +45,8 @@
        <string/>
       </property>
       <property name="icon">
-       <iconset>
-        <normaloff>../assets/down.png</normaloff>../assets/down.png</iconset>
+       <iconset resource="icons.qrc">
+        <normaloff>:/assets/down.png</normaloff>:/assets/down.png</iconset>
       </property>
       <property name="iconSize">
        <size>
@@ -78,8 +78,8 @@
        <string/>
       </property>
       <property name="icon">
-       <iconset>
-        <normaloff>../assets/up.png</normaloff>../assets/up.png</iconset>
+       <iconset resource="icons.qrc">
+        <normaloff>:/assets/up.png</normaloff>:/assets/up.png</iconset>
       </property>
       <property name="iconSize">
        <size>
@@ -133,8 +133,8 @@
     <string/>
    </property>
    <property name="icon">
-    <iconset>
-     <normaloff>../assets/clear.png</normaloff>../assets/clear.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/assets/clear.png</normaloff>:/assets/clear.png</iconset>
    </property>
   </widget>
   <widget class="QLabel" name="label_2">
@@ -191,8 +191,8 @@
     <string/>
    </property>
    <property name="icon">
-    <iconset>
-     <normaloff>../assets/clipboard.png</normaloff>../assets/clipboard.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/assets/clipboard.png</normaloff>:/assets/clipboard.png</iconset>
    </property>
   </widget>
   <widget class="QLabel" name="label_4">
@@ -249,8 +249,8 @@
     <string/>
    </property>
    <property name="icon">
-    <iconset>
-     <normaloff>../assets/clear.png</normaloff>../assets/clear.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/assets/clear.png</normaloff>:/assets/clear.png</iconset>
    </property>
   </widget>
   <widget class="QPushButton" name="urlListClipboard">
@@ -269,8 +269,8 @@
     <string/>
    </property>
    <property name="icon">
-    <iconset>
-     <normaloff>../assets/clipboard.png</normaloff>../assets/clipboard.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/assets/clipboard.png</normaloff>:/assets/clipboard.png</iconset>
    </property>
   </widget>
   <widget class="QLabel" name="label_6">
@@ -337,6 +337,8 @@
   <tabstop>urlListClipboard</tabstop>
   <tabstop>urlListClear</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="icons.qrc"/>
+ </resources>
  <connections/>
 </ui>
