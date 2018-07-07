@@ -134,7 +134,6 @@ class SimpleScrape(QDialog, showTabs.Ui_Dialog):
             self.log.warning(msg)
             self.mini_log(msg)
             self.clear_tabs()
-            raise
 
     def mini_log(self, text):
         self.miniLogTextEdit.appendPlainText(text)

@@ -1886,6 +1886,10 @@ file system, then <strong>commit</strong> your changes.
         cb = QApplication.clipboard()
         cb.setText(text)
 
+    def get_text_from_clipboard(self):
+        cb = QApplication.clipboard()
+        return cb.text()
+
     def copy_path_to_clipboard(self):
         text = self.curr_img.get_absolute_path_or_url()
         self.copy_text_to_clipboard(text)

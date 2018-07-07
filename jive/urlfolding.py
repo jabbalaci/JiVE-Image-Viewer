@@ -29,6 +29,9 @@ class UrlFolding(QDialog, showFolding.Ui_Dialog):
         self.urlListOpen.clicked.connect(self.open_urls)
         self.sequenceUrlOpen.clicked.connect(self.unfold_and_open_urls)
 
+        self.sequenceUrlPasteClipboard.clicked.connect(self.paste_sequence_url_from_clipboard)
+        self.urlListPasteClipboard.clicked.connect(self.paste_url_list_from_clipboard)
+
     def unfold_and_open_urls(self):
         self.unpackButton.click()
         self.open_urls()
@@ -65,9 +68,18 @@ class UrlFolding(QDialog, showFolding.Ui_Dialog):
         text = self.sequenceUrlEdit.text().strip()
         self.copy_text_to_clipboard(text)
 
+    def paste_sequence_url_from_clipboard(self):
+        text = self.parent.get_text_from_clipboard()
+        self.sequenceUrlEdit.setText(text)
+
     def copy_url_list_to_clipboard(self):
         content = self.urlListEdit.toPlainText().strip() + "\n"
         self.copy_text_to_clipboard(content)
+
+    def paste_url_list_from_clipboard(self):
+        text = self.parent.get_text_from_clipboard()
+        self.urlListEdit.clear()
+        self.urlListEdit.appendPlainText(text)
 
     def copy_text_to_clipboard(self, text):
         self.parent.copy_text_to_clipboard(text)
