@@ -26,19 +26,19 @@ class Commit:
         """
         Number of images flagged to be saved.
         """
-        return sum(1 for img in self.parent.list_of_images if img.to_save)
+        return sum(1 for img in self.parent.imgList.list_of_images if img.to_save)
 
     def to_delete(self):
         """
         Number of images flagged to be deleted.
         """
-        return sum(1 for img in self.parent.list_of_images if img.to_delete)
+        return sum(1 for img in self.parent.imgList.list_of_images if img.to_delete)
 
     def to_wallpaper(self):
         """
         Number of images flagged to be saved as wallpapers.
         """
-        return sum(1 for img in self.parent.list_of_images if img.to_wallpaper)
+        return sum(1 for img in self.parent.imgList.list_of_images if img.to_wallpaper)
 
     def has_something_to_commit(self):
         val1 = self.to_save()
@@ -79,7 +79,7 @@ class Commit:
         Return the number of images that were saved successfully.
         """
         folder = cfg.PLATFORM_SETTINGS['wallpapers_dir']
-        lst = [img for img in self.parent.list_of_images if img.to_wallpaper]
+        lst = [img for img in self.parent.imgList.list_of_images if img.to_wallpaper]
 
         return self._save_files(folder, lst, "saving wallpapers", cfg.WALLPAPER_SAVE)
 
@@ -90,7 +90,7 @@ class Commit:
         Return the number of images that were saved successfully.
         """
         folder = cfg.PLATFORM_SETTINGS['saves_dir']
-        lst = [img for img in self.parent.list_of_images if img.to_save]
+        lst = [img for img in self.parent.imgList.list_of_images if img.to_save]
 
         return self._save_files(folder, lst, "saving", cfg.NORMAL_SAVE)
 
@@ -99,31 +99,31 @@ class Commit:
             return 0
         # else, there's something to delete
         pos_img = None
-        if not self.parent.curr_img.to_delete:
+        if not self.parent.imgList.curr_img.to_delete:
             # we don't want to delete the current image
-            pos_img = self.parent.curr_img
+            pos_img = self.parent.imgList.curr_img
         else:
             # we want to delete the current image
-            images_to_keep_right = [img for img in self.parent.list_of_images[self.parent.curr_img_idx + 1:] if
+            images_to_keep_right = [img for img in self.parent.imgList.list_of_images[self.parent.imgList.curr_img_idx + 1:] if
                                     not img.to_delete]
             if len(images_to_keep_right) > 0:
                 pos_img = images_to_keep_right[0]
             else:
-                images_to_keep_left = [img for img in self.parent.list_of_images[:self.parent.curr_img_idx] if
+                images_to_keep_left = [img for img in self.parent.imgList.list_of_images[:self.parent.imgList.curr_img_idx] if
                                        not img.to_delete]
                 if len(images_to_keep_left) > 0:
                     pos_img = images_to_keep_left[-1]
         #
-        to_delete = [img for img in self.parent.list_of_images if img.to_delete]
+        to_delete = [img for img in self.parent.imgList.list_of_images if img.to_delete]
         result = self.delete_physically(to_delete)
 
-        to_keep = [img for img in self.parent.list_of_images if not img.to_delete]
-        self.parent.list_of_images = to_keep
+        to_keep = [img for img in self.parent.imgList.list_of_images if not img.to_delete]
+        self.parent.imgList.list_of_images = to_keep
         if len(to_keep) > 0:
             # there are remaining images, thus pos_img points to an image that we want to keep
-            idx = self.parent.list_of_images.index(pos_img)
+            idx = self.parent.imgList.list_of_images.index(pos_img)
             # log.debug(f"index: {idx}")
-            self.parent.jump_to_image_and_dont_care_about_the_previous_image(idx)
+            self.parent.imgList.jump_to_image_and_dont_care_about_the_previous_image(idx)
         else:
             self.parent.reset()
 
