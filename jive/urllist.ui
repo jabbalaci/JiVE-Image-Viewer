@@ -114,13 +114,14 @@
    <property name="geometry">
     <rect>
      <x>49</x>
-     <y>416</y>
+     <y>406</y>
      <width>21</width>
-     <height>18</height>
+     <height>31</height>
     </rect>
    </property>
    <property name="font">
     <font>
+     <pointsize>14</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -158,14 +159,15 @@
   <widget class="QLabel" name="label_8">
    <property name="geometry">
     <rect>
-     <x>107</x>
-     <y>416</y>
+     <x>109</x>
+     <y>405</y>
      <width>21</width>
-     <height>18</height>
+     <height>31</height>
     </rect>
    </property>
    <property name="font">
     <font>
+     <pointsize>14</pointsize>
      <weight>75</weight>
      <bold>true</bold>
     </font>
@@ -177,7 +179,7 @@
   <widget class="QLabel" name="label_2">
    <property name="geometry">
     <rect>
-     <x>283</x>
+     <x>282</x>
      <y>416</y>
      <width>21</width>
      <height>18</height>
@@ -185,8 +187,9 @@
    </property>
    <property name="font">
     <font>
-     <weight>75</weight>
-     <bold>true</bold>
+     <pointsize>14</pointsize>
+     <weight>50</weight>
+     <bold>false</bold>
     </font>
    </property>
    <property name="text">
