@@ -54,6 +54,7 @@ from jive import settings
 from jive import shortcuts as scuts
 from jive import statusbar as sbar
 from jive.commit import Commit
+from jive.customurls import CustomUrls
 from jive.exceptions import ImageError, FileNotSaved
 from jive.extractors import imgur, subreddit, tumblr, sequence
 from jive.helper import bold, gray, green, lightblue, pretty_num, red, yellow, blue
@@ -62,7 +63,6 @@ from jive.imageview import ImageView
 from jive.imagewithextra import ImageWithExtraInfo
 from jive.important import ImportantFilesAndFolders
 from jive.simplescrape import SimpleScrape
-from jive.customurls import CustomUrls
 from jive.urlfolding import UrlFolding
 
 OFF = False
@@ -2114,6 +2114,26 @@ file system, then <strong>commit</strong> your changes.
         #
         if self.important_files_and_folders_dialog:
             self.important_files_and_folders_dialog.close()
+        #
+        try:
+            # maybe it doesn't exist at all (the window was never opened), thus we'd refer to
+            # a non-existing attribute -> exception
+            if self.url_folding_window:
+                self.url_folding_window.close()
+        except:
+            pass
+        #
+        try:
+            if self.simple_scrape:
+                self.simple_scrape.close()
+        except:
+            pass
+        #
+        try:
+            if self.custom_url_list:
+                self.custom_url_list.close()
+        except:
+            pass
         #
         self.settings.write()
         #
