@@ -7,5 +7,6 @@
     <file>../assets/down.png</file>
     <file>../assets/up.png</file>
     <file>../assets/cancel.png</file>
+    <file>../assets/open_file.png</file>
 </qresource>
 </RCC>

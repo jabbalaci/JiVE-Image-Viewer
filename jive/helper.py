@@ -1,11 +1,12 @@
 import hashlib
 import os
 import psutil
-from jive.vendor.ClusterShell.NodeSet import NodeSet
+from PyQt5.QtWidgets import (QApplication)
 from pathlib import Path
 from urllib.parse import urlparse
 
 from jive import config as cfg
+from jive.vendor.ClusterShell.NodeSet import NodeSet
 
 BYTE = 1
 KB = 1024 * BYTE
@@ -243,3 +244,13 @@ def unfold_sequence_url(text):
     nodeset = NodeSet(text)
     res = [str(node) for node in nodeset]
     return res
+
+
+def copy_text_to_clipboard(text):
+    cb = QApplication.clipboard()
+    cb.setText(text)
+
+
+def get_text_from_clipboard():
+    cb = QApplication.clipboard()
+    return cb.text()

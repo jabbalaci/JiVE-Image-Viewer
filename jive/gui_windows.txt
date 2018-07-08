@@ -1,0 +1,6 @@
+.ui file        generated .py file          window creation             window class name
+--------        ------------------          ---------------             -----------------
+
+folding.ui      showFolding.py              urlfolding.py               UrlFolding
+tabs.ui         showTabs.py                 simplescrape.py             SimpleScrape
+urllist.ui      showUrlList.py              customurls.py               CustomUrls

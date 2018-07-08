@@ -230,3 +230,6 @@ def compile_gui():
     replace_line_in_file(fname="jive/showFolding.py",
                          before="import icons_rc",
                          after="from jive import icons_rc")
+    replace_line_in_file(fname="jive/showUrlList.py",
+                         before="import icons_rc",
+                         after="from jive import icons_rc")

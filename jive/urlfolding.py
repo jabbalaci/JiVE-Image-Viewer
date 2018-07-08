@@ -10,9 +10,8 @@ from jive import showFolding
 class UrlFolding(QDialog, showFolding.Ui_Dialog):
     urlList = Signal(list)
 
-    def __init__(self, parent):
+    def __init__(self):
         super().__init__()
-        self.parent = parent
         self.setupUi(self)
 
         self.add_shortcuts()
@@ -66,23 +65,20 @@ class UrlFolding(QDialog, showFolding.Ui_Dialog):
 
     def copy_sequence_url_to_clipboard(self):
         text = self.sequenceUrlEdit.text().strip()
-        self.copy_text_to_clipboard(text)
+        helper.copy_text_to_clipboard(text)
 
     def paste_sequence_url_from_clipboard(self):
-        text = self.parent.get_text_from_clipboard()
+        text = helper.get_text_from_clipboard()
         self.sequenceUrlEdit.setText(text)
 
     def copy_url_list_to_clipboard(self):
         content = self.urlListEdit.toPlainText().strip() + "\n"
-        self.copy_text_to_clipboard(content)
+        helper.copy_text_to_clipboard(content)
 
     def paste_url_list_from_clipboard(self):
-        text = self.parent.get_text_from_clipboard()
+        text = helper.get_text_from_clipboard()
         self.urlListEdit.clear()
         self.urlListEdit.appendPlainText(text)
-
-    def copy_text_to_clipboard(self, text):
-        self.parent.copy_text_to_clipboard(text)
 
     # def mini_log(self, text):
     #     self.miniLog.appendPlainText(text)

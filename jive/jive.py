@@ -1689,7 +1689,7 @@ You cannot delete it.
             return
         # else
         content = ("\n".join(lst)).strip() + "\n"
-        self.copy_text_to_clipboard(content)
+        helper.copy_text_to_clipboard(content)
         log.info("the image list was copied to the clipboard")
         self.statusbar.flash_message(blue("copied to clipboard"))
 
@@ -1787,16 +1787,19 @@ file system, then <strong>commit</strong> your changes.
     def extract_images_from_webpage(self):
         self.simple_scrape = SimpleScrape(log)
         self.simple_scrape.show()
+        self.simple_scrape.setFixedSize(self.simple_scrape.size())  # disable resize
         self.simple_scrape.urlList.connect(self.open_urls)
 
     def open_custom_url_list(self):
         self.custom_url_list = CustomUrls(log)
         self.custom_url_list.show()
+        self.custom_url_list.setFixedSize(self.custom_url_list.size())  # disable resize
         self.custom_url_list.urlList.connect(self.open_urls)
 
     def url_folding(self):
-        self.url_folding_window = UrlFolding(self)
+        self.url_folding_window = UrlFolding()
         self.url_folding_window.show()
+        self.url_folding_window.setFixedSize(self.url_folding_window.size())    # disable resize
         self.url_folding_window.urlList.connect(self.open_urls)
 
     def menu_open_tumblr_post(self):
@@ -1882,17 +1885,17 @@ file system, then <strong>commit</strong> your changes.
         val = self.scroll.horizontalScrollBar().value()
         self.scroll.horizontalScrollBar().setValue(val - 100)
 
-    def copy_text_to_clipboard(self, text):
-        cb = QApplication.clipboard()
-        cb.setText(text)
-
-    def get_text_from_clipboard(self):
-        cb = QApplication.clipboard()
-        return cb.text()
+    # def copy_text_to_clipboard(self, text):
+    #     cb = QApplication.clipboard()
+    #     cb.setText(text)
+    #
+    # def get_text_from_clipboard(self):
+    #     cb = QApplication.clipboard()
+    #     return cb.text()
 
     def copy_path_to_clipboard(self):
         text = self.curr_img.get_absolute_path_or_url()
-        self.copy_text_to_clipboard(text)
+        helper.copy_text_to_clipboard(text)
         msg = "{0} copied to clipboard".format("path" if self.curr_img.local_file else "URL")
         self.statusbar.flash_message(msg, wait=cfg.MESSAGE_FLASH_TIME_3)
 
