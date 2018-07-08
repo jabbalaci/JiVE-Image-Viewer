@@ -72,6 +72,7 @@ class Ui_Dialog(object):
         icon3 = QtGui.QIcon()
         icon3.addPixmap(QtGui.QPixmap(":/assets/clipboard.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.sequenceUrlClipboard.setIcon(icon3)
+        self.sequenceUrlClipboard.setIconSize(QtCore.QSize(24, 24))
         self.sequenceUrlClipboard.setObjectName("sequenceUrlClipboard")
         self.label_4 = QtWidgets.QLabel(Dialog)
         self.label_4.setGeometry(QtCore.QRect(43, 50, 21, 18))
@@ -96,6 +97,7 @@ class Ui_Dialog(object):
         self.urlListClipboard.setGeometry(QtCore.QRect(17, 450, 51, 30))
         self.urlListClipboard.setText("")
         self.urlListClipboard.setIcon(icon3)
+        self.urlListClipboard.setIconSize(QtCore.QSize(24, 24))
         self.urlListClipboard.setObjectName("urlListClipboard")
         self.label_6 = QtWidgets.QLabel(Dialog)
         self.label_6.setGeometry(QtCore.QRect(590, 430, 21, 18))
@@ -142,8 +144,16 @@ class Ui_Dialog(object):
         self.sequenceUrlPasteClipboard.setIcon(icon4)
         self.sequenceUrlPasteClipboard.setIconSize(QtCore.QSize(36, 36))
         self.sequenceUrlPasteClipboard.setObjectName("sequenceUrlPasteClipboard")
+        self.cancelButton = QtWidgets.QPushButton(Dialog)
+        self.cancelButton.setGeometry(QtCore.QRect(270, 450, 107, 30))
+        icon5 = QtGui.QIcon()
+        icon5.addPixmap(QtGui.QPixmap(":/assets/cancel.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.cancelButton.setIcon(icon5)
+        self.cancelButton.setIconSize(QtCore.QSize(24, 24))
+        self.cancelButton.setObjectName("cancelButton")
 
         self.retranslateUi(Dialog)
+        self.cancelButton.clicked.connect(Dialog.close)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
         Dialog.setTabOrder(self.sequenceUrlEdit, self.unpackButton)
         Dialog.setTabOrder(self.unpackButton, self.packButton)
@@ -157,7 +167,7 @@ class Ui_Dialog(object):
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
-        Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
+        Dialog.setWindowTitle(_translate("Dialog", "URL folding / unfolding"))
         self.sequenceUrlEdit.setPlaceholderText(_translate("Dialog", "sequence URL"))
         self.unpackButton.setToolTip(_translate("Dialog", "unfold (unpack)"))
         self.packButton.setToolTip(_translate("Dialog", "fold (pack)"))
@@ -180,5 +190,6 @@ class Ui_Dialog(object):
         self.label_8.setText(_translate("Dialog", "|"))
         self.label_9.setText(_translate("Dialog", "|"))
         self.sequenceUrlPasteClipboard.setToolTip(_translate("Dialog", "paste from clipboard"))
+        self.cancelButton.setText(_translate("Dialog", " &Cancel"))
 
 from jive import icons_rc

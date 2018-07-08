@@ -6,5 +6,6 @@
     <file>../assets/paste_from_clipboard.png</file>
     <file>../assets/down.png</file>
     <file>../assets/up.png</file>
+    <file>../assets/cancel.png</file>
 </qresource>
 </RCC>

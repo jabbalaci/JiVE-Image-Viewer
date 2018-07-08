@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from PyQt5.QtCore import pyqtSignal as Signal
-from PyQt5.QtWidgets import QDialog
+from PyQt5.QtWidgets import QDialog, QDialogButtonBox
 
 from jive import helper
 from jive import showFolding

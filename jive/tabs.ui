@@ -89,7 +89,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>  Extract</string>
+       <string>  E&amp;xtract</string>
       </property>
       <property name="icon">
        <iconset resource="icons.qrc">
@@ -336,14 +336,27 @@
     <widget class="QPushButton" name="tab1CopyButton">
      <property name="geometry">
       <rect>
-       <x>530</x>
+       <x>550</x>
        <y>325</y>
-       <width>61</width>
+       <width>41</width>
        <height>30</height>
       </rect>
      </property>
+     <property name="toolTip">
+      <string>copy to clipboard</string>
+     </property>
      <property name="text">
-      <string>Copy</string>
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="icons.qrc">
+       <normaloff>:/assets/clipboard.png</normaloff>:/assets/clipboard.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>26</width>
+       <height>26</height>
+      </size>
      </property>
     </widget>
    </widget>
@@ -415,14 +428,27 @@
     <widget class="QPushButton" name="tab2CopyButton">
      <property name="geometry">
       <rect>
-       <x>530</x>
+       <x>550</x>
        <y>325</y>
-       <width>61</width>
+       <width>41</width>
        <height>30</height>
       </rect>
      </property>
+     <property name="toolTip">
+      <string>copy to clipboard</string>
+     </property>
      <property name="text">
-      <string>Copy</string>
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="icons.qrc">
+       <normaloff>:/assets/clipboard.png</normaloff>:/assets/clipboard.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>26</width>
+       <height>26</height>
+      </size>
      </property>
     </widget>
    </widget>
@@ -494,14 +520,27 @@
     <widget class="QPushButton" name="tab3CopyButton">
      <property name="geometry">
       <rect>
-       <x>530</x>
+       <x>550</x>
        <y>325</y>
-       <width>61</width>
+       <width>41</width>
        <height>30</height>
       </rect>
      </property>
+     <property name="toolTip">
+      <string>copy to clipboard</string>
+     </property>
      <property name="text">
-      <string>Copy</string>
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="icons.qrc">
+       <normaloff>:/assets/clipboard.png</normaloff>:/assets/clipboard.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>26</width>
+       <height>26</height>
+      </size>
      </property>
     </widget>
    </widget>
@@ -573,14 +612,27 @@
     <widget class="QPushButton" name="tab4CopyButton">
      <property name="geometry">
       <rect>
-       <x>530</x>
+       <x>550</x>
        <y>325</y>
-       <width>61</width>
+       <width>41</width>
        <height>30</height>
       </rect>
      </property>
+     <property name="toolTip">
+      <string>copy to clipboard</string>
+     </property>
      <property name="text">
-      <string>Copy</string>
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="icons.qrc">
+       <normaloff>:/assets/clipboard.png</normaloff>:/assets/clipboard.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>26</width>
+       <height>26</height>
+      </size>
      </property>
     </widget>
    </widget>
