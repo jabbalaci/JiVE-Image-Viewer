@@ -83,6 +83,11 @@ ON = True
 # TEST_REMOTE_URL_FILE = "https://i.imgur.com/k489QN8.jpg"    # femme pirate
 # TEST_TUMBLR_POST = "https://different-landscapes.tumblr.com/post/174158537319"    # tree
 
+#########################
+#                       #
+#  class ImageProperty  #
+#                       #
+#########################
 
 class ImageProperty:
     """
@@ -357,11 +362,16 @@ class ImageProperty:
             log.warning(f"unknown exception happened while saving {self.get_absolute_path_or_url()} as {dest}")
         #
         return False
-
 # end class ImageProperty
 
 
-class Window(QMainWindow):
+######################
+#                    #
+#  class MainWindow  #
+#                    #
+######################
+
+class MainWindow(QMainWindow):
     def __init__(self, argv):
         super().__init__()
         self.argv = argv
@@ -2158,7 +2168,6 @@ Tip: hit No and commit your changes.
                 event.accept()
             else:
                 event.ignore()
-
 # end class Window(QMainWindow)
 
 
@@ -2184,7 +2193,7 @@ def main(argv):
     check_api_keys()
     #
     App = QApplication(argv)
-    window = Window(argv)
+    window = MainWindow(argv)
     window.show()
     sys.exit(App.exec())
 
