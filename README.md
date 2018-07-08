@@ -5,8 +5,6 @@ A general purpose, cross-platform image viewer with some built-in NSFW support, 
 A unique feature of JiVE is that it allows you to browse online images just as if they were local images. JiVE
 is tested under Linux and Windows.
 
-This is a work in progress... but it's already usable.
-
 Table of Contents
 -----------------
 
@@ -20,6 +18,8 @@ Table of Contents
 * [Marking images (save, wallpaper, delete)](docs/marking.md)
 * [Browsing a subreddit](docs/browsing_subreddit.md)
 * [Sequence URL](docs/sequence_url.md)
+* [Open custom image URLs](docs/open_custom_urls.md)
+* [Export the image list](docs/export.md)
 * [Preferences](docs/preferences.md)
 * [Command-line arguments](docs/command_line.md)
 * Tools
@@ -46,4 +46,4 @@ Selecting an NSFW subreddit:
 </p>
 
 The subreddits are read from a config file (`categories/categories.yaml`), so feel free to edit and extend
-this file with your favourite subreddits...
+this file with your favorite subreddits...

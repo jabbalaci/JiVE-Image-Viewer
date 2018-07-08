@@ -1,9 +1,8 @@
 Installation
 ============
 
-JiVE is still a work in progress, but it's already usable. At the
-moment I only provide the source code that you need to install
-manually.
+If you want to try the latest version, you need to
+download the source code and install it manually.
 
 Requirements
 ------------

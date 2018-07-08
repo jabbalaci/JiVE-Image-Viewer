@@ -64,5 +64,4 @@ The window can be used without mouse too. Paste the URL (*Ctrl+V*) and Press Ent
 extract the images. If you click on OK (*Alt+O*), the content of Tab 1 will be used.
 
 When the images are extracted, you can browse between the tabs with *Alt+Left*, *Alt+Right* or
-*Ctrl+PgUp*, *Ctrl+PgDown*. If you hit the Enter on Tab 1 -- Tab 4, the content of the
-current tab will be used.
+*Ctrl+PgUp*, *Ctrl+PgDown*. If you click on OK (or press *Alt+O*) on Tab 1 -- Tab 4, the content of the current tab will be used.

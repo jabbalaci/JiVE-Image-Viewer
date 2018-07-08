@@ -19,3 +19,20 @@ Example (Warning! NSFW content!)
 Here is a concrete NSFW example: https://content9.erosberry.com/digitaldesire.com/6003/[00-03].jpg
 
 Press *Ctrl+U* (auto-detect URL) and paste the example above.
+
+GUI
+---
+
+Under *Tools* -> *URL folding / unfolding* you can find a GUI for manipulating
+sequence URLs:
+
+<p align="center">
+  <img width="50%" src="../assets/screenshots/url_folding.png">
+</p>
+
+At the top, you can insert a sequence URL. With *Open* you can open
+its images. If you press the blue Down arrow, the sequence URL will be unpacked.
+
+You can also insert a list of image URLs in the text area and then press
+the blue Up arrow. The list will be compressed into a sequence URL.
+Pressing the Open button will open the image links in the text area.

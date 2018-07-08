@@ -23,7 +23,7 @@ platform too.
 
 A unique feature of JiVE is that it allows you to browse
 online images just as if they were local images. We can say
-that online images are first-class citizens :) For instance,
+that online images are first-class citizens. For instance,
 you can provide the name of a subreddit. JiVE extracts all the images
 from the subreddit and then you can browse among them with the arrow keys.
 Local and online images are handled the same way.
