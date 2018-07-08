@@ -99,7 +99,7 @@ def copy_file(src, dest):
     print(f"└ end: copy {src} -> {pretty(dest)}")
 
 
-def compile_ui(in_file, out_file):
+def compile_ui_file(in_file, out_file):
     prg = "pyuic5"    # for Linux
     cmd = f"{prg} {in_file} -o {out_file}"
     print(f"┌ start: compile {in_file} -> {out_file}")
@@ -107,7 +107,7 @@ def compile_ui(in_file, out_file):
     print(f"└ end: compile {in_file} -> {out_file}")
 
 
-def compile_rc(in_file, out_file):
+def compile_rc_file(in_file, out_file):
     prg = "pyrcc5"    # for Linux
     cmd = f"{prg} {in_file} -o {out_file}"
     print(f"┌ start: compile {in_file} -> {out_file}")
@@ -214,22 +214,36 @@ def tests():
 
 
 @task()
-def compile_gui():
+def ui_compile():
     """
-    compile .ui files to .py files
+    compile .ui files
     """
-    compile_ui(in_file="jive/tabs.ui", out_file="jive/showTabs.py")
-    compile_ui(in_file="jive/urllist.ui", out_file="jive/showUrlList.py")
-    compile_ui(in_file="jive/folding.ui", out_file="jive/showFolding.py")
-    #
-    compile_rc(in_file="jive/icons.qrc", out_file="jive/icons_rc.py")
+    compile_ui_file(in_file="jive/tabs.ui", out_file="jive/showTabs.py")
+    compile_ui_file(in_file="jive/urllist.ui", out_file="jive/showUrlList.py")
+    compile_ui_file(in_file="jive/folding.ui", out_file="jive/showFolding.py")
     #
     replace_line_in_file(fname="jive/showTabs.py",
-                         before="import icons_rc",
-                         after="from jive import icons_rc")
-    replace_line_in_file(fname="jive/showFolding.py",
                          before="import icons_rc",
                          after="from jive import icons_rc")
     replace_line_in_file(fname="jive/showUrlList.py",
                          before="import icons_rc",
                          after="from jive import icons_rc")
+    replace_line_in_file(fname="jive/showFolding.py",
+                        before="import icons_rc",
+                        after="from jive import icons_rc")
+
+
+@task()
+def rc_compile():
+    """
+    compile .qrc resource file
+    """
+    compile_rc_file(in_file="jive/icons.qrc", out_file="jive/icons_rc.py")
+
+
+@task(rc_compile, ui_compile)
+def all_compile():
+    """
+    compile everything (.ui files and .qrc)
+    """
+    pass
