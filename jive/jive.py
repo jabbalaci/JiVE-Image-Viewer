@@ -654,6 +654,17 @@ class ImageList:
 
         return any([val1, val2, val3])
 
+    def mark_all_images_to_save(self):
+        for img in self._list_of_images:
+            img.to_save = True
+
+    def get_image_list(self):
+        """
+        Return the path / URL of the images that are in the current list.
+        """
+        result = [img.get_absolute_path_or_url() for img in self._list_of_images]
+        return result
+
 
 ######################
 #                    #
@@ -1579,8 +1590,7 @@ class MainWindow(QMainWindow):
         self.shortcuts.register_window_shortcut(key, self.shortcutMarkAllToSave, self.mark_all_images_to_save)
 
     def mark_all_images_to_save(self):
-        for img in self.imgList.get_list_of_images():
-            img.to_save = True
+        self.imgList.mark_all_images_to_save()
         self.statusbar.flash_message(blue("all marked for save"))
         self.redraw()
 
@@ -1718,6 +1728,9 @@ You cannot delete it.
     def slideshow(self):
         self.not_yet_implemented()
 
+    def not_yet_implemented(self):
+        self.statusbar.flash_message(red("not yet implemented"))
+
     def reload_current_image(self):
         if not self.imgList.get_curr_img():
             self.statusbar.flash_message(red("no"))
@@ -1754,15 +1767,8 @@ You cannot delete it.
             else:
                 log.info(f"the file was NOT saved")
 
-    def get_image_list(self):
-        res = []
-        for img in self.imgList.get_list_of_images():
-            res.append(img.get_absolute_path_or_url())
-        #
-        return res
-
     def export_image_list_to_clipboard(self):
-        lst = self.get_image_list()
+        lst = self.imgList.get_image_list()
         if len(lst) == 0:
             self.statusbar.flash_message(red("no"))
             self.play_error_sound()
@@ -1774,7 +1780,7 @@ You cannot delete it.
         self.statusbar.flash_message(blue("copied to clipboard"))
 
     def save_image_list(self):
-        lst = self.get_image_list()
+        lst = self.imgList.get_image_list()
         if len(lst) == 0:
             self.statusbar.flash_message(red("no"))
             self.play_error_sound()
@@ -1795,9 +1801,6 @@ You cannot delete it.
             if Path(fname).is_file():
                 log.info(f"image list was saved to {fname}")
                 self.statusbar.flash_message(blue("saved"))
-
-    def not_yet_implemented(self):
-        self.statusbar.flash_message(red("not yet implemented"))
 
     def open_with_gimp(self):
         if not self.imgList.get_curr_img():
@@ -2193,20 +2196,17 @@ file system, then <strong>commit</strong> your changes.
         try:
             # maybe it doesn't exist at all (the window was never opened), thus we'd refer to
             # a non-existing attribute -> exception
-            if self.url_folding_window:
-                self.url_folding_window.close()
+            self.url_folding_window.close()
         except:
             pass
         #
         try:
-            if self.simple_scrape:
-                self.simple_scrape.close()
+            self.simple_scrape.close()
         except:
             pass
         #
         try:
-            if self.custom_url_list:
-                self.custom_url_list.close()
+            self.custom_url_list.close()
         except:
             pass
         #

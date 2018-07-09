@@ -26,12 +26,21 @@ class Commit:
         return self.parent.imgList.has_something_to_commit()
 
     def to_save(self):
+        """
+        Number of images flagged to be saved.
+        """
         return self.parent.imgList.to_save()
 
     def to_delete(self):
+        """
+        Number of images flagged to be deleted.
+        """
         return self.parent.imgList.to_delete()
 
     def to_wallpaper(self):
+        """
+        Number of images flagged to be saved as wallpapers.
+        """
         return self.parent.imgList.to_wallpaper()
 
     def _save_files(self, folder, lst, msg, method):
