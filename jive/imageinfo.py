@@ -74,7 +74,7 @@ class ImageInfo(QDialog):
     def grid_layout_creation_2(self):
         self.group_box_2 = QGroupBox("Summary")
 
-        length = len(self.parent.imgList.list_of_images)
+        length = len(self.parent.imgList.get_list_of_images())
 
         layout = QGridLayout()
         layout.addWidget(QLabel(bold("Marked to be saved:")), 0, 0)
@@ -84,7 +84,7 @@ class ImageInfo(QDialog):
 
         layout.addWidget(QLabel(bold("Marked to be deleted:")), 1, 0)
         num = self.commit.to_delete()
-        remain = len(self.parent.imgList.list_of_images) - num
+        remain = len(self.parent.imgList.get_list_of_images()) - num
         text = f"{num} (out of {length}) [remain {remain}]"
         layout.addWidget(QLabel(text), 1, 1)
 
