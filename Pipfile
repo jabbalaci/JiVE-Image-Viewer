@@ -19,6 +19,7 @@ pynt = "*"
 "pypiwin32" = "*"
 ipython = "*"
 rope = "*"
+sip = "*"
 
 [requires]
 python_version = "3.6"

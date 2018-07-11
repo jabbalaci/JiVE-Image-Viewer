@@ -30,6 +30,7 @@ import os
 import random
 import requests
 from PyQt5 import QtGui
+from PyQt5 import sip
 from PyQt5.QtCore import QPoint, Qt
 from PyQt5.QtGui import QCursor, QKeySequence, QPixmap
 from PyQt5.QtMultimedia import QSound
@@ -67,6 +68,11 @@ from jive.urlfolding import UrlFolding
 
 OFF = False
 ON = True
+
+# Leave it here! This way we force pyinstaller to include PyQt5.sip.so
+# in the EXE. Without that file the EXE fails to start and for some reason
+# it was not added automatically.
+sip_version = sip.SIP_VERSION
 
 # TEST_IMG = "pinup.jpg"
 # TEST_IMG = "girl.jpg"
