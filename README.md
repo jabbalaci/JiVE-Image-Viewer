@@ -30,6 +30,16 @@ Table of Contents
 * [Logging](docs/logging.md)
 * [FAQ](docs/faq.md)
 
+Demo
+----
+
+Click on the image below to open a YouTube video that shows the basic
+functions of JiVE:
+
+<div align="center">
+  <a href="https://www.youtube.com/watch?v=V50lAUdm-qw"><img width="60%" src="assets/screenshots/youtube_screenshot.png" alt="view demo on YouTube"></a>
+</div>
+
 Screenshots
 -----------
 
@@ -47,14 +57,3 @@ Selecting an NSFW subreddit:
 
 The subreddits are read from a config file (`categories/categories.yaml`), so feel free to edit and extend
 this file with your favorite subreddits...
-
-Demo
-----
-
-Click on the image below to open a YouTube video that shows the basic
-functions of JiVE:
-
-<div align="center">
-  <a href="https://www.youtube.com/watch?v=V50lAUdm-qw"><img width="60%" src="assets/screenshots/youtube_screenshot.png" alt="view demo on YouTube"></a>
-</div>
-
