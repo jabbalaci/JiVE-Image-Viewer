@@ -3,11 +3,11 @@
 SCRIPT=`realpath -s $0`
 SCRIPTPATH=`dirname $SCRIPT`
 
-bak=$PWD
+bak="$PWD"
 
 cd $SCRIPTPATH
 VENV_DIR=`pipenv --venv`
-cd $bak
+cd "$bak"
 
 export PATH=$VENV_DIR/bin:$PATH
 
