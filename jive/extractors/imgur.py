@@ -1,8 +1,9 @@
-import re
 import sys
 
 import imgurpython
+import re
 from imgurpython import ImgurClient
+from typing import Optional, List
 
 from jive import config as cfg
 from jive import mylogging as log
@@ -10,7 +11,7 @@ from jive import mylogging as log
 client = None
 
 
-def connection():
+def connection() -> None:
     global client
 
     try:
@@ -21,16 +22,16 @@ def connection():
         client = None
 
 
-def is_album(url):
+def is_album(url: str) -> bool:
     return 'imgur.com' in url and ('/a/' in url or '/gallery/' in url)
 
 
-def get_album_id(url):
+def get_album_id(url: str) -> Optional[str]:
     m = re.search(r'/(?:a|gallery)/([^/?#]+)', url)
     return m.group(1) if m else None
 
 
-def extract_images_from_an_album(url):
+def extract_images_from_an_album(url: str) -> List[str]:
     if client is None:
         connection()
 
@@ -39,10 +40,10 @@ def extract_images_from_an_album(url):
         log.warning(f"problem with your imgur API keys, cannot process {url}")
         return []
     #
-    res = []
+    res: List[str] = []
     album_id = get_album_id(url)
     if album_id:
-        images = []
+        images = []    # type: ignore
         try:
             images = client.get_album_images(album_id)
         except (imgurpython.helpers.error.ImgurClientError, TypeError):

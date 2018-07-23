@@ -4,18 +4,19 @@ import psutil
 from PyQt5.QtWidgets import (QApplication)
 from pathlib import Path
 from urllib.parse import urlparse
-
+from typing import Tuple, List, Any, Set, Union
 from jive import config as cfg
+from PyQt5.QtGui import QClipboard
 from jive.vendor.ClusterShell.NodeSet import NodeSet
 
-BYTE = 1
-KB = 1024 * BYTE
-MB = 1024 * KB
-GB = 1024 * MB
-TB = 1024 * GB
+BYTE: int = 1
+KB: int = 1024 * BYTE
+MB: int = 1024 * KB
+GB: int = 1024 * MB
+TB: int = 1024 * GB
 
 
-def read_image_files(dir_path):
+def read_image_files(dir_path: str) -> List[str]:
     res = []
     for f in sorted(os.listdir(dir_path)):
         if Path(f).suffix.lower() in cfg.SUPPORTED_FORMATS:
@@ -25,90 +26,102 @@ def read_image_files(dir_path):
     return res
 
 
-def pretty_num(num):
+def pretty_num(num: int) -> str:
     """
     Prettify a large number, e.g. 1977 -> "1,977".
     """
     return "{:,}".format(num)
 
 
-def sizeof_fmt(num):
+def sizeof_fmt(num: int) -> str:
     """
     Convert memory consumption to human readable format.
     """
+    value = float(num)
+
+    result = ""
     for x in ['b', 'K', 'M', 'G', 'T']:
-        if num < 1024:
-            return "{0}{1}".format(round(num), x)
-        num /= 1024
+        if value < 1024:
+            result = "{0}{1}".format(round(value), x)
+            break
+        value /= 1024
+    #
+    return result
 
 
-def file_size_fmt(num):
+def file_size_fmt(num: int) -> str:
     """
     Convert file size to human readable format.
     """
+    value = float(num)
+
+    result = ""
     for x in ['bytes', 'kB', 'MB', 'GB', 'TB']:
-        if num < 1000:
-            return "{0} {1}".format(round(num, 1), x)
-        num /= 1000
+        if value < 1000:
+            result = "{0} {1}".format(round(value, 1), x)
+            break
+        value /= 1000
+    #
+    return result
 
 
-def get_memory_usage():
+def get_memory_usage() -> str:
     process = psutil.Process(os.getpid())
-    in_bytes = process.memory_info().rss
+    in_bytes: int = process.memory_info().rss
     return sizeof_fmt(in_bytes)
 
 
-def color(col, text, bold=True):
+def color(col: str, text: str, bold: bool = True) -> str:
     if bold:
         return f"<font color='{col}'><strong>{text}</strong></font>"
     # else
     return f"<font color='{col}'>{text}</font>"
 
 
-def green(text, bold=True):
+def green(text: str, bold: bool = True) -> str:
     """
     Hacker green :)
     """
     return color("#04ff02", text, bold)
 
 
-def red(text, bold=True):
+def red(text: str, bold: bool = True) -> str:
     return color("red", text, bold)
 
 
-def blue(text, bold=True):
+def blue(text: str, bold: bool = True) -> str:
     return color("blue", text, bold)
 
 
-def yellow(text, bold=True):
+def yellow(text: str, bold: bool = True) -> str:
     return color("yellow", text, bold)
 
 
-def lightblue(text, bold=True):
+def lightblue(text: str, bold: bool = True) -> str:
     return color("#ACB1E6", text, bold)
 
 
-def gray(text, bold=True):
+def gray(text: str, bold: bool = True) -> str:
     return color("gray", text, bold)
 
 
-def bold(text):
+def bold(text: str) -> str:
     return f"<strong>{text}</strong>"
 
 
-def get_screen_size(app):
+def get_screen_size(app) -> Tuple[int, int]:
     screen = app.primaryScreen()
     size = screen.size()
     return (size.width(), size.height())
 
 
-def get_screen_available_geometry(app):
+def get_screen_available_geometry(app) -> Tuple[int, int]:
     screen = app.primaryScreen()
     rect = screen.availableGeometry()
     return (rect.width(), rect.height())
 
 
-def shorten(text, length=40):
+def shorten(text: str, length: int = 40) -> str:
     if len(text) <= length:
         return text
     # else
@@ -116,15 +129,15 @@ def shorten(text, length=40):
     return f"{text[:half]}...{text[-half:]}"
 
 
-def string_to_md5(content):
+def string_to_md5(text: str) -> str:
     """
     Calculate the md5 hash of a string.
     """
-    content = content.encode("utf8")
-    return hashlib.md5(content).hexdigest()
+    raw: bytes = text.encode("utf8")
+    return hashlib.md5(raw).hexdigest()
 
 
-def file_to_md5(filename, block_size=8192):
+def file_to_md5(fname: str, block_size: int = 8192) -> str:
     """
     Calculate the md5 hash of a file. Memory-friendly solution,
     it reads the file piece by piece.
@@ -132,7 +145,7 @@ def file_to_md5(filename, block_size=8192):
     https://stackoverflow.com/questions/1131220/get-md5-hash-of-big-files-in-python
     """
     md5 = hashlib.md5()
-    with open(filename, 'rb') as f:
+    with open(fname, 'rb') as f:
         while True:
             data = f.read(block_size)
             if not data:
@@ -142,7 +155,7 @@ def file_to_md5(filename, block_size=8192):
     return md5.hexdigest()
 
 
-def get_referer(url):
+def get_referer(url: str) -> str:
     """
     If an image is forbidden (status code 403), we can try using a referer.
     It works sometimes.
@@ -151,12 +164,12 @@ def get_referer(url):
     return f"{p.scheme}://{p.netloc}"
 
 
-def remove_duplicates(lst):
+def remove_duplicates(lst: List[Any]) -> List[Any]:
     """
     Remove duplicates from a list AND keep the order of the elements.
     """
-    res = []
-    bag = set()
+    res: List[Any] = []
+    bag: Set[Any] = set()
     for e in lst:
         if e not in bag:
             res.append(e)
@@ -166,7 +179,7 @@ def remove_duplicates(lst):
     return res
 
 
-def lev_dist(s,t):
+def lev_dist(s: str, t: str) -> int:
     """
     The Levenshtein distance (or edit distance) between two strings
     is the minimal number of "edit operations" required to change
@@ -195,7 +208,7 @@ def lev_dist(s,t):
     return d[S-1, T-1]
 
 
-def clean(lines):
+def clean(lines: List[str]) -> List[str]:
     """
     Remove empty lines and commented lines.
     """
@@ -203,7 +216,7 @@ def clean(lines):
     return res
 
 
-def filter_image_urls(lst):
+def filter_image_urls(lst: List[str]) -> List[str]:
     """
     Input: list of URLs.
     Output: elements in the list that are image URLs.
@@ -211,14 +224,14 @@ def filter_image_urls(lst):
     return [url for url in lst if Path(url).suffix.lower() in cfg.SUPPORTED_FORMATS]
 
 
-def get_image_urls_only(lst):
+def get_image_urls_only(lst: List[str]) -> List[str]:
     lst = clean(lst)
     lst = filter_image_urls(lst)
     #
     return lst
 
 
-def fold_urls(lst):
+def fold_urls(lst: List[str]) -> str:
     """
     The opposite of extracting (unfolding) a sequence URL. Now the input is a list of URLs
     that we want to compress (fold) to a sequence URL.
@@ -233,7 +246,7 @@ def fold_urls(lst):
     return str(res)
 
 
-def unfold_sequence_url(text):
+def unfold_sequence_url(text: str) -> List[str]:
     """
     The opposite of folding. From a sequence URL restore all the URLs (unpack, unfold).
 
@@ -246,11 +259,11 @@ def unfold_sequence_url(text):
     return res
 
 
-def copy_text_to_clipboard(text):
-    cb = QApplication.clipboard()
+def copy_text_to_clipboard(text: str) -> None:
+    cb: QClipboard = QApplication.clipboard()
     cb.setText(text)
 
 
-def get_text_from_clipboard():
-    cb = QApplication.clipboard()
+def get_text_from_clipboard() -> str:
+    cb: QClipboard = QApplication.clipboard()
     return cb.text()

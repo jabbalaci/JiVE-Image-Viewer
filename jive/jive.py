@@ -16,7 +16,7 @@ if __name__ == "__main__":
     import os, sys
     # This is a trick. This way I can launch jive.py (this file) during
     # the development and I don't need to start ../start.py every time.
-    folder = os.path.join(os.path.dirname(__file__), "..")
+    folder: str = os.path.join(os.path.dirname(__file__), "..")
     if folder not in sys.path:
         sys.path.insert(0, folder)
     sys.argv[0] = "../start.py"
@@ -66,13 +66,13 @@ from jive.important import ImportantFilesAndFolders
 from jive.simplescrape import SimpleScrape
 from jive.urlfolding import UrlFolding
 
-OFF = False
-ON = True
+OFF: bool = False
+ON: bool = True
 
 # Leave it here! This way we force pyinstaller to include PyQt5.sip.so
 # in the EXE. Without that file the EXE fails to start and for some reason
 # it was not added automatically.
-sip_version = sip.SIP_VERSION
+sip_version: int = sip.SIP_VERSION
 
 # TEST_IMG = "pinup.jpg"
 # TEST_IMG = "girl.jpg"

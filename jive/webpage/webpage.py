@@ -3,6 +3,7 @@
 import requests
 from bs4 import BeautifulSoup
 from pathlib import Path
+from typing import List, Dict
 from urllib.parse import urljoin
 
 from jive import config as cfg
@@ -13,70 +14,70 @@ from jive.webpage.clustering import Cluster
 # from jive import mylogging as log
 
 
-def to_soup(html_source, parser='lxml'):
+def to_soup(html_source: str, parser: str = 'lxml') -> BeautifulSoup:
     return BeautifulSoup(html_source, parser)
 
 
-def get_links_from_html(soup, base_url=None):
+def get_links_from_html(soup: BeautifulSoup, base_url: str = None) -> List[str]:
     """
     Get the links on a webpage. If the URL of the given
     page is provided in base_url, then links are absolute.
 
     The soup object is NOT modified.
     """
-    li = []
+    result = []
     for tag in soup.findAll('a', href=True):
         if base_url:
             link = urljoin(base_url, tag['href'])
         else:
             link = tag['href']
 
-        li.append(link)
+        result.append(link)
 
-    return li
+    return result
 
 
-def get_images_from_html(soup, base_url=None):
+def get_images_from_html(soup: BeautifulSoup, base_url: str = None) -> List[str]:
     """
     Get image src's on a webpage. If the URL of the given
     page is provided in base_url, then links are absolute.
 
     The soup object is NOT modified.
     """
-    li = []
+    result = []
     for tag in soup.findAll('img', src=True):
         if base_url:
             link = urljoin(base_url, tag['src'])
         else:
             link = tag['src']
 
-        li.append(link)
+        result.append(link)
 
-    return li
+    return result
 
 
-def filter_images(urls):
+def filter_images(urls: List[str]) -> List[str]:
     return [url for url in urls if Path(url).suffix.lower() in cfg.SUPPORTED_FORMATS]
 
 
-def extract(url, get_links=True, get_images=True):
-    if get_links == False and get_images == False:
+def extract(url, get_links=True, get_images=True) -> List[str]:
+    if (get_links == False) and (get_images == False):
         return []
     # else
     r = requests.get(url, headers=cfg.headers, timeout=cfg.REQUESTS_TIMEOUT)
     soup = to_soup(r.text)
-    lst = []
+    result = []
     if get_links:
-        lst.extend(get_links_from_html(soup, base_url=url))
+        result.extend(get_links_from_html(soup, base_url=url))
     if get_images:
-        lst.extend(get_images_from_html(soup, base_url=url))
-    lst = filter_images(lst)
-    lst = helper.remove_duplicates(lst)
+        result.extend(get_images_from_html(soup, base_url=url))
+    result = filter_images(result)
+    result = helper.remove_duplicates(result)
 
-    return lst
+    return result
 
 
-def process(lst, sorting=False, clustering=False, distance=10):
+def process(lst: List[str], sorting=False, clustering=False, distance=10) -> List[str]:
     if sorting:
         lst = sorted(lst)
     if clustering:
@@ -90,7 +91,7 @@ def process(lst, sorting=False, clustering=False, distance=10):
     return lst
 
 
-def get_four_variations(url, get_links=True, get_images=True, distance=10):
+def get_four_variations(url, get_links=True, get_images=True, distance=10) -> Dict[int, List[str]]:
     # log.debug(f"url: {url}; get links: {get_links}; get images: {get_images}; distance: {distance}")
 
     urls = extract(url, get_links=get_links, get_images=get_images)

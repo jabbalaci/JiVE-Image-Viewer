@@ -1,16 +1,17 @@
+import sys
+
 import configparser
 import json
 import os
-import sys
-from pprint import pprint
 from pathlib import Path
+from typing import Dict, List
 
 
-def remove_quotes(original):
+def remove_quotes(original) -> Dict[str, Dict[str, str]]:
     d = original.copy()
     for key, value in d.items():
         if isinstance(value, str):
-            s = d[key]
+            s: str = d[key]
             if s.startswith(('"', "'")):
                 s = s[1:]
             if s.endswith(('"', "'")):
@@ -24,7 +25,7 @@ def remove_quotes(original):
 
 
 class Preferences:
-    def __init__(self, preferences_ini, user_data_dir, log):
+    def __init__(self, preferences_ini: str, user_data_dir: str, log) -> None:
         self.preferences_ini = preferences_ini
         self.user_data_dir = user_data_dir
         self.log = log
@@ -36,27 +37,27 @@ class Preferences:
         # else
         self.config.read(preferences_ini)
 
-        self.d = self.to_dict(self.config._sections)
+        self.d: Dict[str, Dict[str, str]] = self.to_dict(self.config._sections)    # type: ignore
 
         # pprint(self.d)
 
-        self.platform_settings = self.extract_platform_settings()
+        self.platform_settings: Dict[str, str] = self.extract_platform_settings()
         if not self.platform_settings:
             self.log.error(f"platform specific settings were not found in {self.preferences_ini}")
             sys.exit(1)
         # else
         self.platform_settings = self.perform_string_interpolation(self.platform_settings)
 
-    def get_platform_settings(self):
+    def get_platform_settings(self) -> Dict[str, str]:
         return self.platform_settings
 
-    def get_as_dict(self):
+    def get_as_dict(self) -> Dict[str, Dict[str, str]]:
         return self.d
 
-    def perform_string_interpolation(self, original):
-        d = original.copy()
+    def perform_string_interpolation(self, original: Dict[str, str]) -> Dict[str, str]:
+        d: Dict[str, str] = original.copy()
 
-        root_dir = d['root_dir']
+        root_dir: str = d['root_dir']
         if root_dir == '$DEFAULT':
             root_dir = self.user_data_dir
             d['root_dir'] = root_dir
@@ -67,17 +68,16 @@ class Preferences:
 
         return d
 
-    def to_dict(self, config):
+    def to_dict(self, config: Dict[str, Dict[str, str]]) -> Dict[str, Dict[str, str]]:
         """
         Nested OrderedDict to normal dict.
         Also, remove the annoying quotes (apostrophes) from around string values.
         """
-        d = json.loads(json.dumps(config))
-        d = remove_quotes(d)
-        return d
+        d: Dict[str, Dict[str, str]] = json.loads(json.dumps(config))
+        return remove_quotes(d)
 
-    def extract_platform_settings(self):
-        text = sys.platform
+    def extract_platform_settings(self) -> Dict[str, str]:
+        text: str = sys.platform
         try:
             if text.startswith("linux"):
                 return self.d["Linux"]
@@ -88,15 +88,15 @@ class Preferences:
             self.log.error(f"missing section in {self.preferences_ini}: [{text.capitalize()}]")
             return {}
 
-    def make_directories(self, d):
+    def make_directories(self, d: Dict[str, str]) -> None:
         """
         Gets a directory list and creates all of them if they don't exist.
         Exit with an error in case of problem.
         """
-        directory_keys = ('root_dir', 'saves_dir', 'wallpapers_dir', 'tmp_dir', 'cache_dir')
+        directory_keys: List[str] = ['root_dir', 'saves_dir', 'wallpapers_dir', 'tmp_dir', 'cache_dir']
 
         for key in directory_keys:
-            entry = d[key]
+            entry: str = d[key]
             p = Path(entry)
             if not p.is_dir():
                 try:

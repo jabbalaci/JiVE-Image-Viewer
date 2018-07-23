@@ -6,9 +6,10 @@ from pathlib import Path
 
 from jive import config as cfg
 from jive import mylogging as log
+from typing import Tuple, Optional, List
 
 
-def extract_parts_from(url):
+def extract_parts_from(url: str) -> Optional[Tuple[str, str]]:
     m = re.search(r'https?://([^.]*)\.tumblr\.com/(?:post|image)/([^/]*)', url)
     if m:
         blog_name = m.group(1)
@@ -24,21 +25,21 @@ def extract_parts_from(url):
     return None
 
 
-def is_post(url):
+def is_post(url: str) -> bool:
     return extract_parts_from(url) is not None
 
 
-def extract_images_from_a_specific_post(url):
+def extract_images_from_a_specific_post(url: str) -> List[str]:
     if cfg.TUMBLR_API_KEY is None:
         log.warning(f"no tumblr API key found, cannot process {url}")
         return []
     #
-    res = extract_parts_from(url)
-    # print(res)
+    parts = extract_parts_from(url)
+    # print(parts)
 
-    urls = []
-    if res:
-        blog_name, post_id = res
+    result = []
+    if parts:
+        blog_name, post_id = parts
         # print(parsed)
         api_call = f"https://api.tumblr.com/v2/blog/{blog_name}.tumblr.com/posts/photo?id={post_id}&api_key={cfg.TUMBLR_API_KEY}"
         # print("#", api_call)
@@ -57,10 +58,10 @@ def extract_images_from_a_specific_post(url):
                 for photo in photos:
                     img_url = photo["original_size"]["url"]
                     if Path(img_url).suffix.lower() in cfg.SUPPORTED_FORMATS:
-                        urls.append(img_url)
+                        result.append(img_url)
                 #
             #
         else:
             log.warning("Unauthorized tumblr access. Is your API key valid?")
     #
-    return urls
+    return result

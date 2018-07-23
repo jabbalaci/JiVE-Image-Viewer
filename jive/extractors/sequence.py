@@ -17,10 +17,11 @@ From the sequence URL we restore the complete list of URLs.
 import re
 
 from jive import helper
+from typing import List
 from jive import mylogging as log
 
 
-def is_valid_sequence_url(url, verbose=False):
+def is_valid_sequence_url(url: str, verbose: bool = False) -> bool:
     m = re.search("\[(.+?)-(.+?)\]", url)
     if not m:
         if verbose: log.warning(f"no sequence was found in {url}")
@@ -29,7 +30,7 @@ def is_valid_sequence_url(url, verbose=False):
     return True
 
 
-def get_urls_from_sequence_url(url):
+def get_urls_from_sequence_url(url: str) -> List[str]:
     if not is_valid_sequence_url(url):
         return []
     # else

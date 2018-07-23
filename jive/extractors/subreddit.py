@@ -1,21 +1,20 @@
 import re
-from pathlib import Path
-
 import requests
 from PyQt5.QtWidgets import QApplication
+from pathlib import Path
+from typing import Optional, List
 
 from jive import config as cfg
 from jive import mylogging as log
 from jive.extractors import imgur, tumblr
 from jive.imagewithextra import ImageWithExtraInfo
-from jive.helper import blue
 
 url_template = "https://www.reddit.com/r/{subreddit}/.json"
 
 url_template_with_after_id = "https://www.reddit.com/r/{subreddit}/.json?after={after_id}"
 
 
-def get_subreddit_name(text):
+def get_subreddit_name(text: str) -> Optional[str]:
     # with examples
     #
     # earthporn
@@ -34,7 +33,7 @@ def get_subreddit_name(text):
     return None
 
 
-def read_subreddit(subreddit, after_id=None, statusbar=None, mainWindow=None):
+def read_subreddit(subreddit, after_id=None, statusbar=None, mainWindow=None) -> List[ImageWithExtraInfo]:
     try:
         if mainWindow:
             mainWindow.loading_line.show()
@@ -44,7 +43,7 @@ def read_subreddit(subreddit, after_id=None, statusbar=None, mainWindow=None):
             img_url = url_template_with_after_id.format(subreddit=subreddit, after_id=after_id)
         r = requests.get(img_url, headers=cfg.headers, timeout=cfg.REQUESTS_TIMEOUT)
         d = r.json()
-        res = []
+        result = []
         total = len(d["data"]["children"])
         for idx, child in enumerate(d["data"]["children"], start=1):
             percent = round(idx * 100 / total)
@@ -65,7 +64,7 @@ def read_subreddit(subreddit, after_id=None, statusbar=None, mainWindow=None):
                 'next_page_url': f'https://www.reddit.com/r/{subreddit}/.json?after={after_id}'
             }
             if Path(link).suffix.lower() in cfg.SUPPORTED_FORMATS:
-                res.append(ImageWithExtraInfo(link, extra))
+                result.append(ImageWithExtraInfo(link, extra))
                 continue
             #
             if domain.endswith(".tumblr.com"):
@@ -78,7 +77,7 @@ def read_subreddit(subreddit, after_id=None, statusbar=None, mainWindow=None):
                 # print("# extracted images:", len(images))
                 for img_url in images:
                     if Path(img_url).suffix.lower() in cfg.SUPPORTED_FORMATS:
-                        res.append(ImageWithExtraInfo(img_url, extra))
+                        result.append(ImageWithExtraInfo(img_url, extra))
                     #
                 #
                 continue
@@ -92,7 +91,7 @@ def read_subreddit(subreddit, after_id=None, statusbar=None, mainWindow=None):
                         images = []
                     for img_url in images:
                         if Path(img_url).suffix.lower() in cfg.SUPPORTED_FORMATS:
-                            res.append(ImageWithExtraInfo(img_url, extra))
+                            result.append(ImageWithExtraInfo(img_url, extra))
                         #
                     #
                 else:
@@ -102,12 +101,12 @@ def read_subreddit(subreddit, after_id=None, statusbar=None, mainWindow=None):
                         img_url = link + ".jpg"    # it works sometimes
                         r = requests.head(img_url, headers=cfg.headers, timeout=cfg.REQUESTS_TIMEOUT)
                         if r.ok:
-                            res.append(ImageWithExtraInfo(img_url, extra))
+                            result.append(ImageWithExtraInfo(img_url, extra))
                     except:
-                        log.warning(f"problem with {link} -> {url}")
+                        log.warning(f"problem with {link} -> {img_url}")
             # end imgur section
         #
-        return res
+        return result
     except KeyError:
         log.warning(f"cannot extract data from {img_url}")
         return []
