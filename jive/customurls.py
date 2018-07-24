@@ -1,8 +1,7 @@
 import os
 from PyQt5 import QtGui
 from PyQt5.QtCore import pyqtSignal as Signal
-from PyQt5.QtWidgets import QDialog
-from PyQt5.QtWidgets import (QFileDialog)
+from PyQt5.QtWidgets import QDialog, QFileDialog
 
 from jive import helper
 from jive import showUrlList
@@ -11,7 +10,7 @@ from jive import showUrlList
 class CustomUrls(QDialog, showUrlList.Ui_Dialog):
     urlList = Signal(list)
 
-    def __init__(self, log):
+    def __init__(self, log) -> None:
         super().__init__()
         self.log = log
         self.setupUi(self)
@@ -28,20 +27,20 @@ class CustomUrls(QDialog, showUrlList.Ui_Dialog):
 
         self.add_shortcuts()
 
-    def paste_list_from_clipboard(self):
+    def paste_list_from_clipboard(self) -> None:
         text = helper.get_text_from_clipboard()
         self.textEdit.clear()
         self.textEdit.appendPlainText(text)
 
-    def copy_list_to_clipboard(self):
+    def copy_list_to_clipboard(self) -> None:
         content = self.textEdit.toPlainText().strip() + "\n"
         helper.copy_text_to_clipboard(content)
 
-    def clear_list(self):
+    def clear_list(self) -> None:
         self.textEdit.clear()
         self.textEdit.setFocus()
 
-    def read_from_file(self):
+    def read_from_file(self) -> None:
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         filter = "Text files (*.txt)"
@@ -63,11 +62,11 @@ class CustomUrls(QDialog, showUrlList.Ui_Dialog):
             for _ in range(cnt):
                 self.textEdit.moveCursor(QtGui.QTextCursor.Up, QtGui.QTextCursor.MoveAnchor)  # go back to top
 
-    def ok_was_clicked(self):
+    def ok_was_clicked(self) -> None:
         lst = self.textEdit.toPlainText().strip().splitlines()
         lst = helper.get_image_urls_only(lst)
         # print(lst)
         self.urlList.emit(lst)
 
-    def add_shortcuts(self):
+    def add_shortcuts(self) -> None:
         pass

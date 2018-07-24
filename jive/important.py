@@ -17,7 +17,7 @@ ICON_SIZE = 16
 
 
 class ImportantFilesAndFolders(QDialog):
-    def __init__(self, parent):
+    def __init__(self, parent) -> None:
         super().__init__()
         self.parent = parent
 
@@ -37,7 +37,7 @@ class ImportantFilesAndFolders(QDialog):
 
         self.show()
 
-    def grid_layout_creation_1(self):
+    def grid_layout_creation_1(self) -> None:
         self.group_box_1 = QGroupBox("Files")
         row = -1
 
@@ -72,7 +72,7 @@ class ImportantFilesAndFolders(QDialog):
 
         self.group_box_1.setLayout(layout)
 
-    def grid_layout_creation_2(self):
+    def grid_layout_creation_2(self) -> None:
         self.group_box_2 = QGroupBox("Folders")
         row = -1
 
@@ -129,10 +129,10 @@ class ImportantFilesAndFolders(QDialog):
 
         self.group_box_2.setLayout(layout)
 
-    def copy_to_clipboard(self, text):
+    def copy_to_clipboard(self, text: str) -> None:
         cb = QApplication.clipboard()
         cb.setText(text)
 
-    def add_shortcuts(self):
+    def add_shortcuts(self) -> None:
         self.shortcutCloseQ = QShortcut(QKeySequence("Q"), self)
         self.shortcutCloseQ.activated.connect(self.close)

@@ -11,7 +11,7 @@ from jive import config as cfg
 from jive.exceptions import MissingPreferencesEntry
 
 
-def open_folder(dname):
+def open_folder(dname: str) -> None:
     text = sys.platform
     if text.startswith("linux"):
         Popen(["xdg-open", dname])
@@ -21,7 +21,7 @@ def open_folder(dname):
         Popen(["open", dname])  # TODO : somebody try it on Mac!
 
 
-def open_file_with_editor(parent, fname):
+def open_file_with_editor(parent, fname: str) -> None:
     editor = cfg.PLATFORM_SETTINGS.get('editor')
     try:
         if editor:
@@ -39,7 +39,7 @@ Please verify your text editor in {cfg.PREFERENCES_INI}
         QMessageBox.critical(parent, "Error", msg)
 
 
-def open_file_with_gimp(parent, fname):
+def open_file_with_gimp(parent, fname: str) -> None:
     gimp = cfg.PLATFORM_SETTINGS.get('gimp')
     try:
         if gimp:

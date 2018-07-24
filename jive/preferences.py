@@ -4,14 +4,14 @@ import configparser
 import json
 import os
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Union
 
 
 def remove_quotes(original) -> Dict[str, Dict[str, str]]:
     d = original.copy()
     for key, value in d.items():
         if isinstance(value, str):
-            s: str = d[key]
+            s = d[key]
             if s.startswith(('"', "'")):
                 s = s[1:]
             if s.endswith(('"', "'")):
@@ -55,9 +55,9 @@ class Preferences:
         return self.d
 
     def perform_string_interpolation(self, original: Dict[str, str]) -> Dict[str, str]:
-        d: Dict[str, str] = original.copy()
+        d = original.copy()
 
-        root_dir: str = d['root_dir']
+        root_dir = d['root_dir']
         if root_dir == '$DEFAULT':
             root_dir = self.user_data_dir
             d['root_dir'] = root_dir
@@ -73,11 +73,11 @@ class Preferences:
         Nested OrderedDict to normal dict.
         Also, remove the annoying quotes (apostrophes) from around string values.
         """
-        d: Dict[str, Dict[str, str]] = json.loads(json.dumps(config))
+        d = json.loads(json.dumps(config))
         return remove_quotes(d)
 
     def extract_platform_settings(self) -> Dict[str, str]:
-        text: str = sys.platform
+        text = sys.platform
         try:
             if text.startswith("linux"):
                 return self.d["Linux"]
@@ -93,7 +93,7 @@ class Preferences:
         Gets a directory list and creates all of them if they don't exist.
         Exit with an error in case of problem.
         """
-        directory_keys: List[str] = ['root_dir', 'saves_dir', 'wallpapers_dir', 'tmp_dir', 'cache_dir']
+        directory_keys = ('root_dir', 'saves_dir', 'wallpapers_dir', 'tmp_dir', 'cache_dir')
 
         for key in directory_keys:
             entry: str = d[key]

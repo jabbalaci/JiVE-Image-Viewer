@@ -1,8 +1,8 @@
 import re
+import requests
 from enum import Enum, auto
 from pathlib import Path
-
-import requests
+from typing import Union, Tuple
 
 from jive import config as cfg
 from jive.extractors import imgur
@@ -27,7 +27,7 @@ class AutoDetectEnum(Enum):
     sequence_url = auto()                           # http://www.website.com/[001-030].jpg
 
 
-def detect(text):
+def detect(text: str) -> Union[Tuple[AutoDetectEnum, str], Tuple[AutoDetectEnum], None]:
     """
     Detect what text is.
 

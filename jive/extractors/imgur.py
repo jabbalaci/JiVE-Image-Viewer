@@ -40,7 +40,7 @@ def extract_images_from_an_album(url: str) -> List[str]:
         log.warning(f"problem with your imgur API keys, cannot process {url}")
         return []
     #
-    res: List[str] = []
+    result: List[str] = []
     album_id = get_album_id(url)
     if album_id:
         images = []    # type: ignore
@@ -51,6 +51,6 @@ def extract_images_from_an_album(url: str) -> List[str]:
         except imgurpython.helpers.error.ImgurClientRateLimitError:
             log.warning("Imgur API: rate-limit exceeded", file=sys.stderr)
 
-        res = [img.link for img in images]
+        result = [img.link for img in images]
     #
-    return res
+    return result

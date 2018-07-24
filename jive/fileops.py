@@ -11,11 +11,12 @@ import requests
 import shutil
 from pathlib import Path
 
+from jive.cache import Cache
 from jive import config as cfg
 from jive import mylogging as log
 
 
-def generate_new_name(old_name_with_ext, folder):
+def generate_new_name(old_name_with_ext: str, folder: str) -> str:
     """
     Generate a new name for the file.
 
@@ -34,7 +35,7 @@ def generate_new_name(old_name_with_ext, folder):
             return str(p)
 
 
-def save(img, folder, cache):
+def save(img, folder: str, cache: Cache) -> bool:
     """
     Save the given image to the specified folder.
 
@@ -110,7 +111,7 @@ def save(img, folder, cache):
     return False
 
 
-def save_as(img, cache, dest):
+def save_as(img, cache: Cache, dest: str) -> bool:
     """
     Save the given image to dest (where dest is the absolute path of the destination).
 

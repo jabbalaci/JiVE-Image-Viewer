@@ -14,7 +14,7 @@ from jive.webpage import webpage
 class SimpleScrape(QDialog, showTabs.Ui_Dialog):
     urlList = Signal(list)
 
-    def __init__(self, log):
+    def __init__(self, log) -> None:
         super().__init__()
         self.log = log
         self.setupUi(self)
@@ -35,10 +35,10 @@ class SimpleScrape(QDialog, showTabs.Ui_Dialog):
 
         self.add_shortcuts()
 
-    def onChange(self):
+    def onChange(self) -> None:
         self.update_counters()
 
-    def copy_content_to_clipboard(self, idx):
+    def copy_content_to_clipboard(self, idx: int) -> None:
         text_edit = getattr(self, f"tab{idx}TextEdit")
         text = text_edit.toPlainText().strip() + "\n"
         cb = QApplication.clipboard()
@@ -47,7 +47,7 @@ class SimpleScrape(QDialog, showTabs.Ui_Dialog):
         self.mini_log(msg)
         self.log.info(msg)
 
-    def keyPressEvent(self, evt):
+    def keyPressEvent(self, evt) -> None:
         """
         If you are on Tab 0, pressing Enter won't be equivalent
         to pressing the OK button.
@@ -58,11 +58,11 @@ class SimpleScrape(QDialog, showTabs.Ui_Dialog):
         # else
         super().keyPressEvent(evt)
 
-    def clear_url(self):
+    def clear_url(self) -> None:
         self.urlLineEdit.setText("")
         self.urlLineEdit.setFocus()
 
-    def ok_was_clicked(self):
+    def ok_was_clicked(self) -> None:
         idx = self.tabs.currentIndex()
         if idx == 0:
             idx = 1
@@ -78,16 +78,16 @@ class SimpleScrape(QDialog, showTabs.Ui_Dialog):
         except AttributeError as e:
             self.log.warning(e)
 
-    def clear_tab(self, idx):
+    def clear_tab(self, idx) -> None:
         text_edit = getattr(self, f"tab{idx}TextEdit")  # text edit object of the current tab
         text_edit.clear()
         self.update_counter(idx)
 
-    def clear_tabs(self):
+    def clear_tabs(self) -> None:
         for idx in range(1, 4+1):
             self.clear_tab(idx)
 
-    def update_counter(self, idx):
+    def update_counter(self, idx) -> None:
         template = "Count: {0}"
         label = getattr(self, f"tab{idx}CountLabel")  # count label object of the current tab
         text_edit = getattr(self, f"tab{idx}TextEdit")  # text edit object of the current tab
@@ -100,11 +100,11 @@ class SimpleScrape(QDialog, showTabs.Ui_Dialog):
         else:
             self.tabs.setTabText(self.tabs.indexOf(tab), f"Tab {idx}")
 
-    def update_counters(self):
+    def update_counters(self) -> None:
         for idx in range(1, 4+1):
             self.update_counter(idx)
 
-    def fill_tab(self, idx, lst):
+    def fill_tab(self, idx, lst) -> None:
         text_edit = getattr(self, f"tab{idx}TextEdit")
         self.clear_tab(idx)
 
@@ -116,7 +116,7 @@ class SimpleScrape(QDialog, showTabs.Ui_Dialog):
 
         self.update_counter(idx)
 
-    def extract_images(self):
+    def extract_images(self) -> None:
         url = self.urlLineEdit.text().strip()
         distance = self.distanceSpinBox.value()
         get_links = self.getLinksCheckBox.isChecked()
@@ -135,10 +135,10 @@ class SimpleScrape(QDialog, showTabs.Ui_Dialog):
             self.mini_log(msg)
             self.clear_tabs()
 
-    def mini_log(self, text):
+    def mini_log(self, text) -> None:
         self.miniLogTextEdit.appendPlainText(text)
 
-    def add_shortcuts(self):
+    def add_shortcuts(self) -> None:
         key = "Alt+Right"
         self.nextTabShortcut = QShortcut(QKeySequence(key), self)
         self.nextTabShortcut.activated.connect(self.next_tab)
@@ -153,7 +153,7 @@ class SimpleScrape(QDialog, showTabs.Ui_Dialog):
         self.prevTabShortcut2 = QShortcut(QKeySequence(key), self)
         self.prevTabShortcut2.activated.connect(self.prev_tab)
 
-    def next_tab(self):
+    def next_tab(self) -> None:
         number_of_tabs = self.tabs.count()
         curr = self.tabs.currentIndex()
         curr += 1
@@ -161,7 +161,7 @@ class SimpleScrape(QDialog, showTabs.Ui_Dialog):
             curr = number_of_tabs - 1
         self.tabs.setCurrentIndex(curr)
 
-    def prev_tab(self):
+    def prev_tab(self) -> None:
         curr = self.tabs.currentIndex()
         curr -= 1
         if curr < 0:

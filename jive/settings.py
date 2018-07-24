@@ -2,13 +2,14 @@ import json
 import os
 import shutil
 from pathlib import Path
+from typing import Dict
 
 from jive import config as cfg
 from jive import mylogging as log
 
 
 class Settings:
-    def __init__(self):
+    def __init__(self) -> None:
         self.d = self.read()
         self.original = self.d.copy()
         #
@@ -26,7 +27,7 @@ class Settings:
         self.last_dir_save_as = self.d['last_dir_save_as']
         self.last_open_url_auto_detect = self.d['last_open_url_auto_detect']
 
-    def read(self):
+    def read(self) -> Dict[str, str]:
         try:
             with open(cfg.SETTINGS_FILE) as f:
                 d = json.load(f)
@@ -35,13 +36,13 @@ class Settings:
         except:
             return {}    # empty dict
 
-    def _make_dir(self):
+    def _make_dir(self) -> None:
         folder = Path(cfg.SETTINGS_FILE).parent
         if not folder.is_dir():
             folder.mkdir(parents=True)
             log.info(f"{folder} was created")
 
-    def write(self):
+    def write(self) -> None:
         if self.d == self.original:
             # log.info(f"{cfg.SETTINGS_FILE} didn't change")
             return
@@ -53,26 +54,26 @@ class Settings:
             shutil.move(cfg.SETTINGS_FILE_BAK, cfg.SETTINGS_FILE)
             log.info(f"{cfg.SETTINGS_FILE} was written")
 
-    def set_last_dir_opened(self, folder):
+    def set_last_dir_opened(self, folder: str) -> None:
         self.d['last_dir_opened'] = folder
 
-    def get_last_dir_opened(self):
+    def get_last_dir_opened(self) -> str:
         return self.d['last_dir_opened']
     #
-    def set_last_dir_save_as(self, folder):
+    def set_last_dir_save_as(self, folder: str) -> None:
         self.d['last_dir_save_as'] = folder
 
-    def get_last_dir_save_as(self):
+    def get_last_dir_save_as(self) -> str:
         return self.d['last_dir_save_as']
     #
-    def set_last_file_opened(self, fname):
+    def set_last_file_opened(self, fname: str) -> None:
         self.d['last_file_opened'] = fname
 
-    def get_last_file_opened(self):
+    def get_last_file_opened(self) -> str:
         return self.d['last_file_opened']
     #
-    def set_last_open_url_auto_detect(self, text):
+    def set_last_open_url_auto_detect(self, text: str) -> None:
         self.d['last_open_url_auto_detect'] = text
 
-    def get_last_open_url_auto_detect(self):
+    def get_last_open_url_auto_detect(self) -> str:
         return self.d['last_open_url_auto_detect']

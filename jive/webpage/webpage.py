@@ -60,7 +60,7 @@ def filter_images(urls: List[str]) -> List[str]:
     return [url for url in urls if Path(url).suffix.lower() in cfg.SUPPORTED_FORMATS]
 
 
-def extract(url, get_links=True, get_images=True) -> List[str]:
+def extract(url, get_links: bool = True, get_images: bool = True) -> List[str]:
     if (get_links == False) and (get_images == False):
         return []
     # else
@@ -77,7 +77,7 @@ def extract(url, get_links=True, get_images=True) -> List[str]:
     return result
 
 
-def process(lst: List[str], sorting=False, clustering=False, distance=10) -> List[str]:
+def process(lst: List[str], sorting: bool = False, clustering: bool = False, distance: int = 10) -> List[str]:
     if sorting:
         lst = sorted(lst)
     if clustering:
@@ -91,7 +91,7 @@ def process(lst: List[str], sorting=False, clustering=False, distance=10) -> Lis
     return lst
 
 
-def get_four_variations(url, get_links=True, get_images=True, distance=10) -> Dict[int, List[str]]:
+def get_four_variations(url: str, get_links: bool = True, get_images: bool = True, distance: int = 10) -> Dict[int, List[str]]:
     # log.debug(f"url: {url}; get links: {get_links}; get images: {get_images}; distance: {distance}")
 
     urls = extract(url, get_links=get_links, get_images=get_images)

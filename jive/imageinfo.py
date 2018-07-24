@@ -13,7 +13,7 @@ ICON_SIZE = 16
 
 
 class ImageInfo(QDialog):
-    def __init__(self, parent, img):
+    def __init__(self, parent, img) -> None:
         super().__init__()
         self.parent = parent
         self.commit = self.parent.commit
@@ -38,7 +38,7 @@ class ImageInfo(QDialog):
     # def closeEvent(self, event):
     #     self.parent.setEnabled(True)
 
-    def grid_layout_creation_1(self):
+    def grid_layout_creation_1(self) -> None:
         self.group_box_1 = QGroupBox("Image info")
 
         layout = QGridLayout()
@@ -71,7 +71,7 @@ class ImageInfo(QDialog):
 
         self.group_box_1.setLayout(layout)
 
-    def grid_layout_creation_2(self):
+    def grid_layout_creation_2(self) -> None:
         self.group_box_2 = QGroupBox("Summary")
 
         length = len(self.parent.imgList.get_list_of_images())
@@ -95,11 +95,11 @@ class ImageInfo(QDialog):
 
         self.group_box_2.setLayout(layout)
 
-    def copy_to_clipboard(self, text):
+    def copy_to_clipboard(self, text: str) -> None:
         cb = QApplication.clipboard()
         cb.setText(text)
 
-    def add_shortcuts(self):
+    def add_shortcuts(self) -> None:
         self.shortcutCloseI = QShortcut(QKeySequence("I"), self)
         self.shortcutCloseI.activated.connect(self.close)
 

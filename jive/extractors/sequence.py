@@ -15,9 +15,9 @@ From the sequence URL we restore the complete list of URLs.
 """
 
 import re
+from typing import List
 
 from jive import helper
-from typing import List
 from jive import mylogging as log
 
 

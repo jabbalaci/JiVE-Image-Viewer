@@ -33,7 +33,7 @@ def get_subreddit_name(text: str) -> Optional[str]:
     return None
 
 
-def read_subreddit(subreddit, after_id=None, statusbar=None, mainWindow=None) -> List[ImageWithExtraInfo]:
+def read_subreddit(subreddit, after_id: str = None, statusbar=None, mainWindow=None) -> List[ImageWithExtraInfo]:
     try:
         if mainWindow:
             mainWindow.loading_line.show()

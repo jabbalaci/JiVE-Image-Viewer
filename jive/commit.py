@@ -6,44 +6,44 @@ d - delete the image
 w - save image to a wallpaper folder
 """
 
-from pathlib import Path
 from time import sleep
 
 from PyQt5.QtWidgets import QApplication
+from pathlib import Path
 
 from jive import config as cfg
 from jive import mylogging as log
 
 
 class Commit:
-    def __init__(self, parent):
+    def __init__(self, parent) -> None:
         self.parent = parent
         self.statusbar = self.parent.statusbar
         self.message_label = self.statusbar.message_label
         self.progressbar = self.statusbar.progressbar
 
-    def has_something_to_commit(self):
+    def has_something_to_commit(self) -> bool:
         return self.parent.imgList.has_something_to_commit()
 
-    def to_save(self):
+    def to_save(self) -> int:
         """
         Number of images flagged to be saved.
         """
         return self.parent.imgList.to_save()
 
-    def to_delete(self):
+    def to_delete(self) -> int:
         """
         Number of images flagged to be deleted.
         """
         return self.parent.imgList.to_delete()
 
-    def to_wallpaper(self):
+    def to_wallpaper(self) -> int:
         """
         Number of images flagged to be saved as wallpapers.
         """
         return self.parent.imgList.to_wallpaper()
 
-    def _save_files(self, folder, lst, msg, method):
+    def _save_files(self, folder: str, lst, msg: str, method: int) -> int:
         """
         Save images in `lst` to the specified folder.
 
@@ -68,7 +68,7 @@ class Commit:
 
         return cnt
 
-    def save_wallpapers(self):
+    def save_wallpapers(self) -> int:
         """
         Save all the images that were marked as wallpapers.
 
@@ -79,7 +79,7 @@ class Commit:
 
         return self._save_files(folder, lst, "saving wallpapers", cfg.WALLPAPER_SAVE)
 
-    def save_others(self):
+    def save_others(self) -> int:
         """
         Save all the images that were marked to be saved.
 
@@ -90,7 +90,7 @@ class Commit:
 
         return self._save_files(folder, lst, "saving", cfg.NORMAL_SAVE)
 
-    def delete_files(self):
+    def delete_files(self) -> int:
         if self.to_delete() == 0:
             return 0
         # else, there's something to delete
@@ -126,7 +126,7 @@ class Commit:
         # how many images were removed successfully
         return result
 
-    def delete_physically(self, death_list):
+    def delete_physically(self, death_list) -> int:
         """
         Delete the images in the list from the file system.
 

@@ -3,10 +3,10 @@
 import re
 import requests
 from pathlib import Path
+from typing import Tuple, Optional, List
 
 from jive import config as cfg
 from jive import mylogging as log
-from typing import Tuple, Optional, List
 
 
 def extract_parts_from(url: str) -> Optional[Tuple[str, str]]:

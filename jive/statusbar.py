@@ -5,7 +5,7 @@ from jive import config as cfg
 
 
 class StatusBar(QWidget):
-    def __init__(self, parent=None):
+    def __init__(self, parent=None) -> None:
         super().__init__()
         self.parent = parent
         #
@@ -45,21 +45,21 @@ class StatusBar(QWidget):
         #
         self.message_timer = None
 
-    def reset(self):
+    def reset(self) -> None:
         self.message_label.setText("")
         self.curr_pos_label.setText("")
         self.file_name_label.setText("")
         self.resolution_label.setText("")
 
-    def flash_message(self, msg, wait=cfg.MESSAGE_FLASH_TIME_2):
+    def flash_message(self, msg: str, wait: int = cfg.MESSAGE_FLASH_TIME_2) -> None:
         self.message_label.setText(msg)
         if self.message_timer:
             self.message_timer.stop()
             self.message_timer.deleteLater()
         self.message_timer = QTimer()
-        self.message_timer.timeout.connect(self.delete_flashed_message)
-        self.message_timer.setSingleShot(True)
-        self.message_timer.start(wait)
+        self.message_timer.timeout.connect(self.delete_flashed_message)    # type: ignore
+        self.message_timer.setSingleShot(True)    # type: ignore
+        self.message_timer.start(wait)    # type: ignore
 
-    def delete_flashed_message(self):
+    def delete_flashed_message(self) -> None:
         self.message_label.setText("")

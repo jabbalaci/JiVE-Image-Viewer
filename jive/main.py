@@ -40,6 +40,7 @@ from PyQt5.QtWidgets import (QAction, QApplication, QDesktopWidget,
                              QScrollArea, QShortcut, QVBoxLayout, qApp)
 from functools import partial
 from pathlib import Path
+from typing import Tuple, Optional, Union, List
 
 from jive import autodetect
 from jive import cache
@@ -54,6 +55,7 @@ from jive import opener
 from jive import settings
 from jive import shortcuts as scuts
 from jive import statusbar as sbar
+from jive.cache import Cache
 from jive.commit import Commit
 from jive.customurls import CustomUrls
 from jive.exceptions import ImageError, FileNotSaved
@@ -102,7 +104,7 @@ class ImageProperty:
     IMAGE_STATE_OK = 1
     IMAGE_STATE_PROBLEM = 2
 
-    def __init__(self, img, parent):
+    def __init__(self, img, parent) -> None:
         if isinstance(img, ImageWithExtraInfo):
             self.name = img.fpath_or_url
             self.extra_info = img.extra_info
@@ -112,16 +114,16 @@ class ImageProperty:
         self.local_file = self._is_local_file(self.name)
         self.parent = parent
         self.zoom_ratio = 1.0
-        self.original_img = None    # will be set in read()
-        self.image_state = None     # will be set in read()
-        self.zoomed_img = None      # will be set in read()
-        self.file_size = -1         # will be set in read()
+        self.original_img: Optional[QPixmap] = None     # will be set in read()
+        self.image_state: Optional[int] = None          # will be set in read()
+        self.zoomed_img: Optional[QPixmap] = None       # will be set in read()
+        self.file_size = -1                             # will be set in read()
         self.to_save = False
         self.to_delete = False
         self.to_wallpaper = False
 
     @classmethod
-    def to_pixmap(cls, name, cache):
+    def to_pixmap(cls, name: str, cache: Cache) -> Tuple[QPixmap, int, int]:
         try:
             pm = None
             file_size = -1
@@ -164,7 +166,7 @@ class ImageProperty:
             log.warning(f"cannot read the image {name}")
             return (QPixmap(str(Path(cfg.ASSETS_DIR, "not_found.png"))), cls.IMAGE_STATE_PROBLEM, -1)
 
-    def read(self, force=False, preload=False):
+    def read(self, force: bool = False, preload: bool = False) -> 'ImageProperty':
         """
         Construct the pixmap for the current image.
 
@@ -191,7 +193,7 @@ class ImageProperty:
 
         return self
 
-    def free(self):
+    def free(self) -> None:
         """
         Call it when you switch to another image, thus you can free the memory
         occupied by the pixmaps (original and zoomed ones).
@@ -199,89 +201,93 @@ class ImageProperty:
         self.original_img = None
         self.zoomed_img = None
 
-    def _is_local_file(self, name):
+    def _is_local_file(self, name: str) -> bool:
         return os.path.isfile(name)
 
-    def zoom_in(self):
+    def zoom_in(self) -> None:
         self.zoom_ratio *= 1.1
         self.calculate_zoomed_image()
 
-    def zoom_out(self):
+    def zoom_out(self) -> None:
         self.zoom_ratio *= 0.9
         self.calculate_zoomed_image()
 
-    def calculate_zoomed_image(self):
-        self.zoomed_img = self.original_img.scaled(self.zoom_ratio * self.original_img.width(),
-                                                   self.zoom_ratio * self.original_img.height(),
-                                                   Qt.KeepAspectRatio,
-                                                   Qt.SmoothTransformation)
+    def calculate_zoomed_image(self) -> QPixmap:
+        if self.original_img:
+            self.zoomed_img = self.original_img.scaled(self.zoom_ratio * self.original_img.width(),
+                                                       self.zoom_ratio * self.original_img.height(),
+                                                       Qt.KeepAspectRatio,
+                                                       Qt.SmoothTransformation)
         return self.zoomed_img
 
-    def set_zoomed_img(self, pm):
+    def set_zoomed_img(self, pm: QPixmap) -> None:
         self.zoomed_img = pm
         # If there's a problem with an image, we return not_found.png,
         # thus division by 0 cannot happen here.
-        self.zoom_ratio = pm.width() / self.original_img.width()
+        if pm and self.original_img:
+            self.zoom_ratio = pm.width() / self.original_img.width()
 
-    def zoom_reset(self):
+    def zoom_reset(self) -> None:
         self.zoom_ratio = 1.0
         self.zoomed_img = self.original_img
 
-    def fit_img_to_window(self):
+    def fit_img_to_window(self) -> None:
         width, height = self.parent.available_width_and_height()
-        pm = self.original_img.scaled(width,
-                                      height,
-                                      Qt.KeepAspectRatio,
-                                      Qt.SmoothTransformation)
-        self.set_zoomed_img(pm)
+        if self.original_img:
+            pm = self.original_img.scaled(width,
+                                          height,
+                                          Qt.KeepAspectRatio,
+                                          Qt.SmoothTransformation)
+            self.set_zoomed_img(pm)
 
-    def fit_img_to_window_width(self):
+    def fit_img_to_window_width(self) -> None:
         window_width = self.parent.geometry().width()
         new_width = window_width * (cfg.IMG_WIDTH_TO_WINDOW_WIDTH_IN_PERCENT / 100)
         new_height = new_width / self.get_aspect_ratio()
-        pm = self.original_img.scaled(new_width,
-                                      new_height,
-                                      Qt.KeepAspectRatio,
-                                      Qt.SmoothTransformation)
-        self.set_zoomed_img(pm)
+        if self.original_img:
+            pm = self.original_img.scaled(new_width,
+                                          new_height,
+                                          Qt.KeepAspectRatio,
+                                          Qt.SmoothTransformation)
+            self.set_zoomed_img(pm)
 
-    def get_file_name_only(self):
+    def get_file_name_only(self) -> str:
         return str(Path(self.name).name)
 
-    def get_file_name_or_url(self):
+    def get_file_name_or_url(self) -> str:
         if self.local_file:
             return str(Path(self.name).name)
         else:
             return self.name
 
-    def get_absolute_path_or_url(self):
+    def get_absolute_path_or_url(self) -> str:
         if self.local_file:
             return str(Path(self.name).absolute())
         else:
             return self.name
 
-    def get_aspect_ratio(self):
-        return self.original_img.width() / self.original_img.height()
+    def get_aspect_ratio(self) -> float:
+        return self.original_img.width() / self.original_img.height()    # type: ignore
 
-    def get_file_size(self, human_readable=False):
+    def get_file_size(self, human_readable: bool = False) -> Union[int, str]:
         if not human_readable:
             return self.file_size
         else:
             return helper.file_size_fmt(self.file_size) if self.file_size > -1 else ""
 
-    def toggle_save(self):
+    def toggle_save(self) -> None:
         self.to_save = not self.to_save
 
-    def toggle_delete(self):
+    def toggle_delete(self) -> None:
         self.to_delete = not self.to_delete
 
-    def toggle_wallpaper(self):
+    def toggle_wallpaper(self) -> None:
         self.to_wallpaper = not self.to_wallpaper
 
-    def set_file_size(self):
+    def set_file_size(self) -> None:
         self.file_size = os.path.getsize(self.name)
 
-    def get_flags(self):
+    def get_flags(self) -> str:
         sb = []
         if self.to_save:
             sb.append("save")
@@ -291,7 +297,7 @@ class ImageProperty:
             sb.append("wallpaper")
         return ", ".join(sb) if sb else "--"
 
-    def get_short_flags(self):
+    def get_short_flags(self) -> str:
         sb = []
         if self.to_save:
             sb.append(yellow("S"))
@@ -301,14 +307,14 @@ class ImageProperty:
             sb.append(lightblue("W"))
         return "<br>".join(sb)
 
-    def is_it_in_a_subreddit(self):
+    def is_it_in_a_subreddit(self) -> bool:
         """
         If this image is in a subreddit, return True.
         Else, return False.
         """
         return "subreddit" in self.extra_info
 
-    def is_it_really_the_last(self):
+    def is_it_really_the_last(self) -> bool:
         """
         Return True if this image is really the last and there is no way to load more images.
         For instance: we open a folder.
@@ -321,7 +327,7 @@ class ImageProperty:
 
         return True
 
-    def save_to_filesystem(self, folder, method):
+    def save_to_filesystem(self, folder: str, method: int) -> bool:
         """
         Save the image to the given folder.
 
@@ -347,7 +353,7 @@ class ImageProperty:
         #
         return False
 
-    def save_as(self, dest):
+    def save_as(self, dest: str) -> bool:
         """
         Save the image to dest (where dest is the absolute path of the destination).
 
@@ -378,36 +384,36 @@ class ImageProperty:
 #####################
 
 class ImageList:
-    def __init__(self, parent):
+    def __init__(self, parent) -> None:
         self.mainWindow = parent
         self.reset()
 
         self._prev_random_img_idx = -1
 
-    def reset(self):
-        self._list_of_images = []
+    def reset(self) -> None:
+        self._list_of_images: List[ImageProperty] = []
         self._curr_img_idx = -1
         self._curr_img = None
 
-    def get_curr_img(self):
+    def get_curr_img(self) -> Optional[ImageProperty]:
         return self._curr_img
 
-    def set_curr_img(self, img):
+    def set_curr_img(self, img) -> None:
         self._curr_img = img
 
-    def get_curr_img_idx(self):
+    def get_curr_img_idx(self) -> int:
         return self._curr_img_idx
 
-    def set_curr_img_idx(self, idx):
+    def set_curr_img_idx(self, idx: int) -> None:
         self._curr_img_idx = idx
 
-    def get_list_of_images(self):
+    def get_list_of_images(self) -> List[ImageProperty]:
         return self._list_of_images
 
-    def set_list_of_images(self, lst):
+    def set_list_of_images(self, lst: List[ImageProperty]) -> None:
         self._list_of_images = lst
 
-    def _find_image_index_by_name(self, name):
+    def _find_image_index_by_name(self, name: str) -> int:
         for i in range(len(self._list_of_images)):
             if self._list_of_images[i].name == name:
                 return i
@@ -415,15 +421,15 @@ class ImageList:
         #
         return -1    # not found
 
-    def shuffle_images(self):
+    def shuffle_images(self) -> None:
         # if there are no images or if there is only one, shuffle makes no sense
         length = len(self._list_of_images)
         if (length == 0) or (length == 1):
             self.mainWindow.statusbar.flash_message(blue("done"))
             return
         # else
-        name = self._curr_img.name
-        old_name = self._curr_img.name
+        name = self._curr_img.name    # type: ignore
+        old_name = self._curr_img.name    # type: ignore
         # Make sure that we position on a different image
         # every time we make a shuffle. Retry 10 times to
         # avoid an infinite loop.
@@ -440,7 +446,7 @@ class ImageList:
         self.mainWindow.statusbar.flash_message(blue("done"))
         self.jump_to_image(0)    # it will free the current image if necessary
 
-    def jump_to_next_image(self):
+    def jump_to_next_image(self) -> None:
         if len(self._list_of_images) == 0:
             self.mainWindow.statusbar.flash_message(red("no more"), wait=cfg.MESSAGE_FLASH_TIME_1)
             self.mainWindow.play_error_sound()
@@ -448,11 +454,11 @@ class ImageList:
         # else
         if self._curr_img_idx == len(self._list_of_images) - 1:
             self.mainWindow.statusbar.flash_message(red("no more"), wait=cfg.MESSAGE_FLASH_TIME_1)
-            if self._curr_img.is_it_really_the_last():
+            if self._curr_img.is_it_really_the_last():    # type: ignore
                 self.mainWindow.play_error_sound()
             img = self._curr_img
-            subreddit_name = img.extra_info.get("subreddit")
-            after_id = img.extra_info.get("after_id")
+            subreddit_name = img.extra_info.get("subreddit")    # type: ignore
+            after_id = img.extra_info.get("after_id")    # type: ignore
             if img and subreddit_name and after_id:
                 urls = []
                 if self.mainWindow.auto_load_next_subreddit_page:
@@ -494,14 +500,14 @@ class ImageList:
         #
         self.jump_to_image(new_idx)
 
-    def jump_to_first_image(self):
+    def jump_to_first_image(self) -> None:
         self.jump_to_image(0)
 
-    def jump_to_last_image(self):
+    def jump_to_last_image(self) -> None:
         new_idx = len(self._list_of_images) - 1
         self.jump_to_image(new_idx)
 
-    def jump_to_prev_image(self):
+    def jump_to_prev_image(self) -> None:
         if len(self._list_of_images) == 0 or self._curr_img_idx == 0:
             self.mainWindow.statusbar.flash_message(red("no less"), wait=cfg.MESSAGE_FLASH_TIME_1)
             self.mainWindow.play_error_sound()
@@ -513,15 +519,15 @@ class ImageList:
         #
         self.jump_to_image(new_idx)
 
-    def jump_five_percent_forward(self):
+    def jump_five_percent_forward(self) -> None:
         offset = round(5 * len(self._list_of_images) / 100)
         self.jump_to_image(self._curr_img_idx + offset)
 
-    def jump_five_percent_backward(self):
+    def jump_five_percent_backward(self) -> None:
         offset = round(5 * len(self._list_of_images) / 100)
         self.jump_to_image(self._curr_img_idx - offset)
 
-    def jump_to_image(self, new_idx):
+    def jump_to_image(self, new_idx: int) -> None:
         old_idx = self._curr_img_idx
         if old_idx == new_idx:
             return
@@ -532,7 +538,7 @@ class ImageList:
         if self._curr_img_idx < 0:
             self._curr_img_idx = 0
         #
-        self._curr_img = self._list_of_images[self._curr_img_idx].read()
+        self._curr_img = self._list_of_images[self._curr_img_idx].read()    # type: ignore
         # not needed any more, free_others() will take care of it
         # if old_idx >= 0 and old_idx != self.imgList.curr_img_idx:
         #     self.imgList.list_of_images[old_idx].free()  # don't forget to free it!
@@ -548,7 +554,7 @@ class ImageList:
 
         # log.debug(self.imgList.curr_img.extra_info)
 
-    def jump_to_image_and_dont_care_about_the_previous_image(self, idx):
+    def jump_to_image_and_dont_care_about_the_previous_image(self, idx: int) -> None:
         self._curr_img_idx = idx
         #
         if self._curr_img_idx >= len(self._list_of_images):
@@ -556,7 +562,7 @@ class ImageList:
         if self._curr_img_idx < 0:
             self._curr_img_idx = 0
         #
-        self._curr_img = self._list_of_images[self._curr_img_idx].read()
+        self._curr_img = self._list_of_images[self._curr_img_idx].read()    # type: ignore
         self.mainWindow.scroll_to_top()
         self.mainWindow.redraw()
         #
@@ -567,14 +573,14 @@ class ImageList:
         # let's always call it (with and without preload), just to be sure to free memory
         self.free_others()
 
-    def preload_next_image(self):
+    def preload_next_image(self) -> None:
         try:
             next_img = self._list_of_images[self._curr_img_idx + 1]
             next_img.read(preload=True)
         except IndexError:
             pass    # we are at the last image, there's no next one
 
-    def preload_prev_image(self):
+    def preload_prev_image(self) -> None:
         try:
             minus_1 = self._curr_img_idx - 1
             if minus_1 < 0:
@@ -584,7 +590,7 @@ class ImageList:
         except IndexError:
             pass    # we are at the beginning, there's no previous one
 
-    def free_others(self):
+    def free_others(self) -> None:
         """
         Without preload, browsing worked like this: you are on an image (A),
         and you jump to somewhere (new). You load the new image and you free the
@@ -615,7 +621,7 @@ class ImageList:
             img.free()
         # log.debug(f"{len(others)} images were freed")
 
-    def jump_to_random_image(self):
+    def jump_to_random_image(self) -> None:
         if len(self._list_of_images) > 1:
             # always choose a different image:
             while True:
@@ -627,7 +633,7 @@ class ImageList:
             self._prev_random_img_idx = self._curr_img_idx    # save where we were
             self.jump_to_image(idx)
 
-    def jump_to_prev_random_image(self):
+    def jump_to_prev_random_image(self) -> None:
         if self._prev_random_img_idx == -1:
             return
         # else
@@ -635,36 +641,36 @@ class ImageList:
         self._prev_random_img_idx = self._curr_img_idx  # save where we were
         self.jump_to_image(jump_to)
 
-    def to_save(self):
+    def to_save(self) -> int:
         """
         Number of images flagged to be saved.
         """
         return sum(1 for img in self._list_of_images if img.to_save)
 
-    def to_delete(self):
+    def to_delete(self) -> int:
         """
         Number of images flagged to be deleted.
         """
         return sum(1 for img in self._list_of_images if img.to_delete)
 
-    def to_wallpaper(self):
+    def to_wallpaper(self) -> int:
         """
         Number of images flagged to be saved as wallpapers.
         """
         return sum(1 for img in self._list_of_images if img.to_wallpaper)
 
-    def has_something_to_commit(self):
+    def has_something_to_commit(self) -> bool:
         val1 = self.to_save()
         val2 = self.to_delete()
         val3 = self.to_wallpaper()
 
         return any([val1, val2, val3])
 
-    def mark_all_images_to_save(self):
+    def mark_all_images_to_save(self) -> None:
         for img in self._list_of_images:
             img.to_save = True
 
-    def get_image_list(self):
+    def get_image_list(self) -> List[str]:
         """
         Return the path / URL of the images that are in the current list.
         """

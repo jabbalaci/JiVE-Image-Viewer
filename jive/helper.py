@@ -1,29 +1,30 @@
 import hashlib
 import os
 import psutil
+from PyQt5.QtGui import QClipboard
 from PyQt5.QtWidgets import (QApplication)
 from pathlib import Path
+from typing import Tuple, List, Any, Set
 from urllib.parse import urlparse
-from typing import Tuple, List, Any, Set, Union
+
 from jive import config as cfg
-from PyQt5.QtGui import QClipboard
 from jive.vendor.ClusterShell.NodeSet import NodeSet
 
-BYTE: int = 1
-KB: int = 1024 * BYTE
-MB: int = 1024 * KB
-GB: int = 1024 * MB
-TB: int = 1024 * GB
+BYTE = 1
+KB = 1024 * BYTE
+MB = 1024 * KB
+GB = 1024 * MB
+TB = 1024 * GB
 
 
 def read_image_files(dir_path: str) -> List[str]:
-    res = []
+    result = []
     for f in sorted(os.listdir(dir_path)):
         if Path(f).suffix.lower() in cfg.SUPPORTED_FORMATS:
-            res.append(str(Path(dir_path, f)))
+            result.append(str(Path(dir_path, f)))
         #
     #
-    return res
+    return result
 
 
 def pretty_num(num: int) -> str:

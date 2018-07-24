@@ -1,8 +1,9 @@
-from jive import mylogging as log
+from typing import Dict
+
 from jive import helper
 
 
-def _set_file_sizes(list_of_images):
+def _set_file_sizes(list_of_images) -> None:
     """
     Ask the file size of each image and register it.
     """
@@ -10,22 +11,22 @@ def _set_file_sizes(list_of_images):
         img.set_file_size()
 
 
-def debug(d):
+def debug(d: Dict) -> None:
     for key, images in d.items():
         if len(images) > 1:
             print(", ".join(img.get_file_name_only() for img in images))
 
 
 def _get_potential_duplicates(d):
-    res = []
+    result = []
     for size, images in d.items():
         if len(images) > 1:
-            res.extend(images)
+            result.extend(images)
     #
-    return res
+    return result
 
 
-def mark_duplicates(list_of_images):
+def mark_duplicates(list_of_images) -> int:
     """
     Find duplicates. Keep just one and mark the others to be deleted.
 
@@ -36,7 +37,7 @@ def mark_duplicates(list_of_images):
 
     # first dict.
     # key: size; value: list of img objects
-    d = {}
+    d: Dict = {}
     for img in list_of_images:
         size = img.file_size
         if size not in d:

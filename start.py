@@ -2,7 +2,7 @@
 
 import sys
 
-from jive import jive
+from jive import main
 
 
-jive.main(sys.argv)
+main.main(sys.argv)

@@ -22,7 +22,7 @@ class Cluster:
     def __init__(self) -> None:
         self.clusters: Dict[str, Dict] = {'clusters': {}}
  
-    def clustering(self, elems, distance=DISTANCE) -> None:
+    def clustering(self, elems, distance: int = DISTANCE) -> None:
         """
         Clusterize the input elements.
 
