@@ -169,15 +169,15 @@ def remove_duplicates(lst: List[Any]) -> List[Any]:
     """
     Remove duplicates from a list AND keep the order of the elements.
     """
-    res: List[Any] = []
+    result: List[Any] = []
     bag: Set[Any] = set()
     for e in lst:
         if e not in bag:
-            res.append(e)
+            result.append(e)
             bag.add(e)
         #
     #
-    return res
+    return result
 
 
 def lev_dist(s: str, t: str) -> int:
@@ -213,8 +213,7 @@ def clean(lines: List[str]) -> List[str]:
     """
     Remove empty lines and commented lines.
     """
-    res = [line for line in lines if line.strip() and not line.strip().startswith('#')]
-    return res
+    return [line for line in lines if line.strip() and not line.strip().startswith('#')]
 
 
 def filter_image_urls(lst: List[str]) -> List[str]:
@@ -243,8 +242,8 @@ def fold_urls(lst: List[str]) -> str:
 
     Tip from here: https://old.reddit.com/r/Python/comments/8w2737/pack_and_unpack_a_sequence_url/
     """
-    res = NodeSet.fromlist(lst)    # it's a ClusterShell.NodeSet.NodeSet object
-    return str(res)
+    result = NodeSet.fromlist(lst)    # it's a ClusterShell.NodeSet.NodeSet object
+    return str(result)
 
 
 def unfold_sequence_url(text: str) -> List[str]:
@@ -256,8 +255,8 @@ def unfold_sequence_url(text: str) -> List[str]:
     """
     # Create a new nodeset from string
     nodeset = NodeSet(text)
-    res = [str(node) for node in nodeset]
-    return res
+    result = [str(node) for node in nodeset]
+    return result
 
 
 def copy_text_to_clipboard(text: str) -> None:

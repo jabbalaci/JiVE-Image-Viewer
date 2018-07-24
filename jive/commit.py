@@ -10,9 +10,11 @@ from time import sleep
 
 from PyQt5.QtWidgets import QApplication
 from pathlib import Path
+from typing import List
 
 from jive import config as cfg
 from jive import mylogging as log
+from jive.imageproperty import ImageProperty
 
 
 class Commit:
@@ -43,7 +45,7 @@ class Commit:
         """
         return self.parent.imgList.to_wallpaper()
 
-    def _save_files(self, folder: str, lst, msg: str, method: int) -> int:
+    def _save_files(self, folder: str, lst: List[ImageProperty], msg: str, method: int) -> int:
         """
         Save images in `lst` to the specified folder.
 
@@ -126,7 +128,7 @@ class Commit:
         # how many images were removed successfully
         return result
 
-    def delete_physically(self, death_list) -> int:
+    def delete_physically(self, death_list: List[ImageProperty]) -> int:
         """
         Delete the images in the list from the file system.
 
