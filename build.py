@@ -214,6 +214,15 @@ def tests():
 
 
 @task()
+def mypy():
+    """
+    run mypy
+    """
+    cmd = "mypy jive/ --ignore-missing-imports --follow-imports=skip"
+    call_external_command(cmd)
+
+
+@task()
 def ui_compile():
     """
     compile .ui files
