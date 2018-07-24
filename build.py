@@ -18,6 +18,17 @@ from subprocess import PIPE, Popen
 
 from pynt import task
 
+def get_platform():
+    text = sys.platform
+    if text.startswith("linux"):
+        return "linux"
+    if text.startswith("win"):
+        return "windows"
+    # else
+    raise RuntimeError("unknown platform")
+
+platform = get_platform()
+
 
 def remove_file(fname):
     if not os.path.exists(fname):
@@ -97,6 +108,12 @@ def copy_file(src, dest):
     print(f"┌ start: copy {src} -> {pretty(dest)}")
     shutil.copy(src, dest)
     print(f"└ end: copy {src} -> {pretty(dest)}")
+
+
+def rename_file(src, dest):
+    print(f"┌ start: rename {src} -> {dest}")
+    shutil.move(src, dest)
+    print(f"└ end: rename {src} -> {dest}")
 
 
 def compile_ui_file(in_file, out_file):
@@ -198,6 +215,10 @@ def exe():
         copy_file("categories/categories.yaml", "dist/categories")
         copy_file("tools/verify_your_api_keys.py", "dist/tools")
         copy_file("preferences.ini", "dist/")
+        if platform == "linux":
+            rename_file("dist/start", "dist/jive")
+        elif platform == "windows":
+            rename_file("dist/start.exe", "dist/jive.exe")
 
 
 @task()

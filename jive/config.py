@@ -10,15 +10,18 @@ if __name__ == "__main__":
 
 #############################################################################
 
+import sys
+
 import os
 from appdirs import AppDirs
 from pathlib import Path
-from typing import Set, Dict, Optional
+from typing import Dict, Optional
 
 from jive import mylogging as log
 from jive.preferences import Preferences
 
 VERSION = "0.7.1"
+tmp = sys.version    # Leave it here! This way "import sys" won't be removed accidentally.
 
 appname = "JiveImageViewer"
 app_dirs = AppDirs(appname, "")    # app_dirs.user_data_dir is what we need
