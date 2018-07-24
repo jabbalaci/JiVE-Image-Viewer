@@ -1,9 +1,10 @@
-from typing import Dict
+from typing import List, Dict, Any
 
 from jive import helper
+from jive.imageproperty import ImageProperty
 
 
-def _set_file_sizes(list_of_images) -> None:
+def _set_file_sizes(list_of_images: List[ImageProperty]) -> None:
     """
     Ask the file size of each image and register it.
     """
@@ -11,13 +12,13 @@ def _set_file_sizes(list_of_images) -> None:
         img.set_file_size()
 
 
-def debug(d: Dict) -> None:
+def debug(d: Dict[Any, List[ImageProperty]]) -> None:
     for key, images in d.items():
         if len(images) > 1:
             print(", ".join(img.get_file_name_only() for img in images))
 
 
-def _get_potential_duplicates(d):
+def _get_potential_duplicates(d: Dict[int, List[ImageProperty]]) -> List[ImageProperty]:
     result = []
     for size, images in d.items():
         if len(images) > 1:
@@ -26,7 +27,7 @@ def _get_potential_duplicates(d):
     return result
 
 
-def mark_duplicates(list_of_images) -> int:
+def mark_duplicates(list_of_images: List[ImageProperty]) -> int:
     """
     Find duplicates. Keep just one and mark the others to be deleted.
 
@@ -37,7 +38,7 @@ def mark_duplicates(list_of_images) -> int:
 
     # first dict.
     # key: size; value: list of img objects
-    d: Dict = {}
+    d: Dict[int, List[ImageProperty]] = {}
     for img in list_of_images:
         size = img.file_size
         if size not in d:
@@ -51,14 +52,14 @@ def mark_duplicates(list_of_images) -> int:
 
     # second dict.
     # key: md5 hash of the file's content; value: list of img objects
-    d = {}
+    d2: Dict[str, List[ImageProperty]] = {}
     for img in potential_duplicates:
         key = helper.file_to_md5(img.name)
-        if key not in d:
-            d[key] = []
-        d[key].append(img)
+        if key not in d2:
+            d2[key] = []
+        d2[key].append(img)
 
-    # debug(d)
+    # debug(d2)
 
     # Well, maybe the user has selected some images for deletion.
     # I choose this way: when there are some duplicates, I keep the first one
@@ -66,7 +67,7 @@ def mark_duplicates(list_of_images) -> int:
 
     cnt = 0
 
-    for key, images in d.items():
+    for key, images in d2.items():
         if len(images) > 1:
             images[0].to_delete = False
             for img in images[1:]:

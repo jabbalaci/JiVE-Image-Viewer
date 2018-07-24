@@ -239,7 +239,7 @@ def mypy():
     """
     run mypy
     """
-    cmd = "mypy jive/ --ignore-missing-imports --follow-imports=skip"
+    cmd = "mypy jive/ --ignore-missing-imports --follow-imports=skip --check-untyped-defs"
     call_external_command(cmd)
 
 
