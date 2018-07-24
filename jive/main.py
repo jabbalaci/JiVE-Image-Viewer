@@ -4,11 +4,13 @@
 This is the main file.
 """
 
+# check compatibility
 try:
-    # check compatibility
-    eval('f"{1+1}"')
-except SyntaxError:
-    raise ImportError("The application requires Python 3.6+")
+    import sys
+    assert sys.version_info.major == 3
+    assert sys.version_info.minor >= 6
+except AssertionError:
+    raise RuntimeError("JiVE requires Python 3.6+!")
 
 ##############################################################################
 
@@ -16,7 +18,7 @@ if __name__ == "__main__":
     import os, sys
     # This is a trick. This way I can launch jive.py (this file) during
     # the development and I don't need to start ../start.py every time.
-    folder: str = os.path.join(os.path.dirname(__file__), "..")
+    folder = os.path.join(os.path.dirname(__file__), "..")
     if folder not in sys.path:
         sys.path.insert(0, folder)
     sys.argv[0] = "../start.py"
