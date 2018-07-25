@@ -25,6 +25,7 @@ Table of Contents
 * Tools
   + [Find duplicates](docs/duplicates.md)
 * Development
+  + [[dev] Build automation](docs/build.md)
   + [[dev] Local settings](docs/settings.md)
   + [[dev] caching](docs/cache.md)
 * [Logging](docs/logging.md)
