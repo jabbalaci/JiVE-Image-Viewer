@@ -106,6 +106,9 @@ venv.bak/
 .pyre/
 .pyre_configuration
 
+# MonkeyType
+monkeytype.sqlite3
+
 # Jabba's own
 .idea/
 samples*/

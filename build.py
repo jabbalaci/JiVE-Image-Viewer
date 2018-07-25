@@ -192,6 +192,7 @@ def clean():
     remove_file("info.log")
     remove_directory("build")
     remove_directory("dist")
+    remove_file("monkeytype.sqlite3")
 
 
 @task()
