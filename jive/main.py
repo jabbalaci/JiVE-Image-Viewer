@@ -126,6 +126,10 @@ class MainWindow(QMainWindow):
         self.image_info_dialog = None                     # will be set later
         self.important_files_and_folders_dialog = None    # will be set later
 
+        # it must be here, before calling init_ui()
+        self.show_subreddits = \
+            True if cfg.PREFERENCES_OPTIONS.get("enable_subreddits", "") == "yes" else False
+
         self.init_ui()
 
         self.commit = Commit(self)    # it must come after the init_ui()
@@ -750,10 +754,12 @@ class MainWindow(QMainWindow):
             else:
                 open_url_menu.addAction(entry)
         # self.menu.addAction(self.open_url_act)
-        open_subreddit_categories = QMenu(self.menu)
-        open_subreddit_categories.setTitle("Select subreddit...")
-        self.menu.addMenu(open_subreddit_categories)
-        categories.Categories(self, open_subreddit_categories, self.open_subreddit).populate()
+        if self.show_subreddits:
+            open_subreddit_categories = QMenu(self.menu)
+            open_subreddit_categories.setTitle("Select subreddit...")
+            self.menu.addMenu(open_subreddit_categories)
+            categories.Categories(self, open_subreddit_categories, self.open_subreddit).populate()
+        # endif
         self.menu.addSeparator()
         open_with_menu = QMenu(self.menu)
         open_with_menu.setTitle("Open with...")

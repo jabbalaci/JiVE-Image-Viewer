@@ -20,7 +20,7 @@ from typing import Dict, Optional
 from jive import mylogging as log
 from jive.preferences import Preferences
 
-VERSION = "0.7.1"
+VERSION = "0.7.2"
 tmp = sys.version    # Leave it here! This way "import sys" won't be removed accidentally.
 
 appname = "JiveImageViewer"
