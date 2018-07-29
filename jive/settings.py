@@ -5,7 +5,8 @@ from pathlib import Path
 from typing import Dict
 
 from jive import config as cfg
-from jive import mylogging as log
+
+log = cfg.log
 
 
 class Settings:

@@ -8,11 +8,12 @@ from typing import Tuple, Optional, Union
 from jive import config as cfg
 from jive import fileops
 from jive import helper
-from jive import mylogging as log
 from jive.cache import Cache
 from jive.exceptions import ImageError, FileNotSaved
 from jive.helper import lightblue, red, yellow
 from jive.imagewithextra import ImageWithExtraInfo
+
+log = cfg.log
 
 
 class ImageProperty:

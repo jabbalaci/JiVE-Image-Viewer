@@ -10,8 +10,7 @@ from jive import config as cfg
 from jive import helper
 from jive.webpage.clustering import Cluster
 
-
-# from jive import mylogging as log
+log = cfg.log
 
 
 def to_soup(html_source: str, parser: str = 'lxml') -> BeautifulSoup:

@@ -6,7 +6,8 @@ from imgurpython import ImgurClient
 from typing import Optional, List
 
 from jive import config as cfg
-from jive import mylogging as log
+
+log = cfg.log
 
 client = None
 

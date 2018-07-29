@@ -45,19 +45,18 @@ from typing import Tuple, Union, List
 from jive import autodetect
 from jive import cache
 from jive import categories
-from jive.extractors import imagefap
 from jive import config as cfg
 from jive import duplicates
-from jive.extractors import fuskator
 from jive import help_dialogs
 from jive import helper
-from jive import mylogging as log
 from jive import opener
 from jive import settings
 from jive import shortcuts as scuts
 from jive import statusbar as sbar
 from jive.commit import Commit
 from jive.customurls import CustomUrls
+from jive.extractors import fuskator
+from jive.extractors import imagefap
 from jive.extractors import imgur, subreddit, tumblr, sequence
 from jive.helper import bold, gray, green, pretty_num, red, blue
 from jive.imageinfo import ImageInfo
@@ -68,6 +67,8 @@ from jive.imagewithextra import ImageWithExtraInfo
 from jive.important import ImportantFilesAndFolders
 from jive.simplescrape import SimpleScrape
 from jive.urlfolding import UrlFolding
+
+log = cfg.log
 
 ON, OFF = True, False
 

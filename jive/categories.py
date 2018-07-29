@@ -4,7 +4,8 @@ from functools import partial
 from typing import Dict, List, KeysView, Union
 
 from jive import config as cfg
-from jive import mylogging as log
+
+log = cfg.log
 
 SORT = True
 # SORT = False

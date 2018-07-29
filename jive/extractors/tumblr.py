@@ -6,7 +6,8 @@ from pathlib import Path
 from typing import Tuple, Optional, List
 
 from jive import config as cfg
-from jive import mylogging as log
+
+log = cfg.log
 
 
 def extract_parts_from(url: str) -> Optional[Tuple[str, str]]:

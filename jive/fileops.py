@@ -13,7 +13,8 @@ from pathlib import Path
 
 from jive.cache import Cache
 from jive import config as cfg
-from jive import mylogging as log
+
+log = cfg.log
 
 
 def generate_new_name(old_name_with_ext: str, folder: str) -> str:

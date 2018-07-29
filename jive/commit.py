@@ -13,8 +13,9 @@ from pathlib import Path
 from typing import List
 
 from jive import config as cfg
-from jive import mylogging as log
 from jive.imageproperty import ImageProperty
+
+log = cfg.log
 
 
 class Commit:

@@ -5,9 +5,10 @@ from pathlib import Path
 from typing import Optional, List
 
 from jive import config as cfg
-from jive import mylogging as log
 from jive.extractors import imgur, tumblr
 from jive.imagewithextra import ImageWithExtraInfo
+
+log = cfg.log
 
 url_template = "https://www.reddit.com/r/{subreddit}/.json"
 
