@@ -45,6 +45,7 @@ from typing import Tuple, Union, List
 from jive import autodetect
 from jive import cache
 from jive import categories
+from jive.extractors import imagefap
 from jive import config as cfg
 from jive import duplicates
 from jive import help_dialogs
@@ -312,6 +313,10 @@ class MainWindow(QMainWindow):
         urls = sequence.get_urls_from_sequence_url(seq_url)
         self.open_urls(urls)
 
+    def open_imagefap_photo(self, url: str) -> None:
+        urls = imagefap.get_urls(url)
+        self.open_urls(urls)
+
     def open_imgur_album(self, text: str) -> None:
         urls = []
         if imgur.is_album(text):
@@ -540,6 +545,10 @@ class MainWindow(QMainWindow):
             log.info("it seems to be an imgur HTML page with an embedded image")
             self.open_remote_url_file(img)
             self.redraw()
+            return
+        if kind == autodetect.AutoDetectEnum.imagefap_photo:
+            log.info("it seems to be an imagefap photo series")
+            self.open_imagefap_photo(text)
             return
 
         log.info("it was detected but it was not handled...")

@@ -7,7 +7,7 @@ from typing import Union, Tuple
 from jive import config as cfg
 from jive.extractors import imgur
 from jive.extractors import sequence
-from jive.extractors import tumblr
+from jive.extractors import tumblr, imagefap
 
 
 class AutoDetectEnum(Enum):
@@ -25,6 +25,7 @@ class AutoDetectEnum(Enum):
     imgur_album = auto()                            # https://imgur.com/a/9p0gCyv , https://imgur.com/gallery/9p0gCyv
     imgur_html_page_with_embedded_image = auto()    # https://imgur.com/k489QN8 , where https://imgur.com/k489QN8.jpg is a valid image
     sequence_url = auto()                           # http://www.website.com/[001-030].jpg
+    imagefap_photo = auto()                         # https://www.imagefap.com/photo/1186623894/ (NSFW)
 
 
 def detect(text: str) -> Union[Tuple[AutoDetectEnum, str], Tuple[AutoDetectEnum], None]:
@@ -62,6 +63,9 @@ def detect(text: str) -> Union[Tuple[AutoDetectEnum, str], Tuple[AutoDetectEnum]
             r = requests.head(img_url, headers=cfg.headers, timeout=cfg.REQUESTS_TIMEOUT)
             if r.ok:
                 return (AutoDetectEnum.imgur_html_page_with_embedded_image, img_url)
+        # endif imgur
+        if imagefap.is_imagefap_photo(text):
+            return (AutoDetectEnum.imagefap_photo, )
     else:
         # earthporn
         if '/' not in text:
