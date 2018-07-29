@@ -5,9 +5,7 @@ from pathlib import Path
 from typing import Union, Tuple
 
 from jive import config as cfg
-from jive.extractors import imgur
-from jive.extractors import sequence
-from jive.extractors import tumblr, imagefap
+from jive.extractors import tumblr, imagefap, imgur, sequence, fuskator
 
 
 class AutoDetectEnum(Enum):
@@ -26,6 +24,8 @@ class AutoDetectEnum(Enum):
     imgur_html_page_with_embedded_image = auto()    # https://imgur.com/k489QN8 , where https://imgur.com/k489QN8.jpg is a valid image
     sequence_url = auto()                           # http://www.website.com/[001-030].jpg
     imagefap_photo = auto()                         # https://www.imagefap.com/photo/1186623894/ (NSFW)
+    fuskator_gallery = auto()                       # https://fuskator.com/full/aeNldhT~ia~/index.html (NSFW), or
+                                                    # https://fuskator.com/thumbs/aeNldhT~ia~/index.html (NSFW)
 
 
 def detect(text: str) -> Union[Tuple[AutoDetectEnum, str], Tuple[AutoDetectEnum], None]:
@@ -66,6 +66,8 @@ def detect(text: str) -> Union[Tuple[AutoDetectEnum, str], Tuple[AutoDetectEnum]
         # endif imgur
         if imagefap.is_imagefap_photo(text):
             return (AutoDetectEnum.imagefap_photo, )
+        if fuskator.is_gallery(text):
+            return (AutoDetectEnum.fuskator_gallery, )
     else:
         # earthporn
         if '/' not in text:

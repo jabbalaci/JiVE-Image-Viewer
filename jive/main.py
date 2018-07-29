@@ -48,6 +48,7 @@ from jive import categories
 from jive.extractors import imagefap
 from jive import config as cfg
 from jive import duplicates
+from jive.extractors import fuskator
 from jive import help_dialogs
 from jive import helper
 from jive import mylogging as log
@@ -317,6 +318,14 @@ class MainWindow(QMainWindow):
         urls = imagefap.get_urls(url)
         self.open_urls(urls)
 
+    def open_fuskator_gallery(self, url: str) -> None:
+        embedded_url = fuskator.extract_embedded_url(url)
+        if embedded_url:
+            log.info(f"embedded URL: {embedded_url}")
+            self.auto_detect_and_open(embedded_url, called_from_gui=False)
+        else:
+            log.warning("no embedded URL was found")
+
     def open_imgur_album(self, text: str) -> None:
         urls = []
         if imgur.is_album(text):
@@ -549,6 +558,10 @@ class MainWindow(QMainWindow):
         if kind == autodetect.AutoDetectEnum.imagefap_photo:
             log.info("it seems to be an imagefap photo series")
             self.open_imagefap_photo(text)
+            return
+        if kind == autodetect.AutoDetectEnum.fuskator_gallery:
+            log.info("it seems to be a fuskator gallery")
+            self.open_fuskator_gallery(text)
             return
 
         log.info("it was detected but it was not handled...")

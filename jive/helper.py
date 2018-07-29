@@ -1,14 +1,18 @@
 import hashlib
 import os
 import psutil
+import requests
 from PyQt5.QtGui import QClipboard
 from PyQt5.QtWidgets import (QApplication)
+from bs4 import BeautifulSoup
 from pathlib import Path
-from typing import Tuple, List, Any, Set
+from typing import Tuple, List, Any, Set, Optional
 from urllib.parse import urlparse
 
 from jive import config as cfg
 from jive.vendor.ClusterShell.NodeSet import NodeSet
+
+log = cfg.log
 
 BYTE = 1
 KB = 1024 * BYTE
@@ -25,6 +29,40 @@ def read_image_files(dir_path: str) -> List[str]:
         #
     #
     return result
+
+
+def get_page_as_requests_object(url: str) -> Optional[requests.Response]:
+    """
+    Get a webpage and return it as a requests Response object.
+    """
+    try:
+        r = requests.get(url, headers=cfg.headers, timeout=cfg.REQUESTS_TIMEOUT)
+        return r
+    except:
+        log.warning(f"couldn't get {url}")
+        return None
+
+
+def get_page_as_text(url: str) -> Optional[str]:
+    """
+    Get a webpage and return its HTML content as a string.
+    """
+    r = get_page_as_requests_object(url)
+    if r:
+        return r.text
+    #
+    return None
+
+
+def get_page_as_soup(url: str) -> Optional[BeautifulSoup]:
+    """
+    Get a webpage and return its HTML content as a BeautifulSoup object.
+    """
+    html = get_page_as_text(url)
+    if html:
+        return BeautifulSoup(html, "lxml")
+    #
+    return None
 
 
 def pretty_num(num: int) -> str:
