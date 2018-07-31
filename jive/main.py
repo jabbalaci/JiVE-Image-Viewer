@@ -43,6 +43,7 @@ from pathlib import Path
 from typing import Tuple, Union, List, Optional
 
 from jive import autodetect
+from jive import bookmarks
 from jive import cache
 from jive import categories
 from jive import config as cfg
@@ -133,6 +134,10 @@ class MainWindow(QMainWindow):
         self.show_subreddits = \
             True if cfg.PREFERENCES_OPTIONS.get("enable_subreddits", "") == "yes" else False
 
+        # it must be here, before calling init_ui()
+        self.show_bookmarks = \
+            True if cfg.PREFERENCES_OPTIONS.get("enable_bookmarks", "") == "yes" else False
+
         self.init_ui()
 
         self.commit = Commit(self)    # it must come after the init_ui()
@@ -176,9 +181,13 @@ class MainWindow(QMainWindow):
         self.statusbar.reset()
         if msg:
             self.statusbar.flash_message(msg)
-        #
-        # if the categories.yaml was changed
+
+        # if categories.yaml changed
         self.create_contextmenu()
+
+        # if bookmarks.yaml changed
+        self.create_menubar()
+
         # remove on-screen flags (S, D, W):
         self.flags_line.setText("")
 
@@ -683,9 +692,13 @@ class MainWindow(QMainWindow):
         #
         self.url_folding_act = QAction("URL &folding / unfolding", self)
         self.url_folding_act.triggered.connect(self.url_folding)
+        #
+        self.open_bookmarks_file_act = QAction("Edit bookmarks", self)
+        self.open_bookmarks_file_act.triggered.connect(partial(opener.open_file_with_editor, self, cfg.bookmarks_file()))
 
     def create_menubar(self) -> None:
         self.menubar = self.menuBar()
+        self.menubar.clear()
         self.shortcuts.disable_conflicting_window_shortcuts()
         # self.menubar.setStyleSheet(cfg.TOP_AND_BOTTOM_BAR_STYLESHEET)
 
@@ -699,6 +712,8 @@ class MainWindow(QMainWindow):
 
         fileMenu = self.menubar.addMenu("&File")
         viewMenu = self.menubar.addMenu("&View")
+        if self.show_bookmarks:
+            bookmarksMenu = self.menubar.addMenu("&Bookmarks")
         toolsMenu = self.menubar.addMenu("&Tools")
         helpMenu = self.menubar.addMenu("&Help")
 
@@ -729,6 +744,16 @@ class MainWindow(QMainWindow):
         viewMenu.addSeparator()
         viewMenu.addAction(self.hide_menubar_act)
         viewMenu.addAction(self.show_mouse_pointer_act)
+
+        # bookmarksMenu
+        if self.show_bookmarks:
+            my_bookmarks_menu = QMenu(self.menubar)
+            my_bookmarks_menu.setTitle("My &bookmarks...")
+            bookmarksMenu.addMenu(my_bookmarks_menu)
+            bookmarks.Bookmarks(self, my_bookmarks_menu, helper.open_new_browser_tab).populate()
+            bookmarksMenu.addSeparator()
+            bookmarksMenu.addAction(self.open_bookmarks_file_act)
+        # endif
 
         # toolsMenu
         toolsMenu.addAction(self.shuffle_images_act)

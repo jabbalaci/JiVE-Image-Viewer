@@ -1,0 +1,26 @@
+# this is the default bookmarks list
+#
+# if you want to customize this list, then do the following:
+# 1) copy this file to your user data dir.
+# 2) customize the copy in your user data dir.
+#
+# You can get the location of your user data dir.
+# in JiVE: View -> Important files and folders, and
+# there "user data dir".
+#
+# Notice that entries are strings! Inside a string,
+# use markdown syntax, i.e. [description](URL)
+
+hentai:
+    - "[HBrowse](https://www.hbrowse.com/)"
+    - "[hentai2read](https://hentai2read.com/)"
+    - "[E-Hentai](https://e-hentai.org/)"
+    - "[animephile](http://www.animephile.com/)"
+xxx comics:
+    - "[Porncomix](https://www.porncomixonline.net/)"
+    - "[multporn.net](http://multporn.net/)"
+comics:
+    - "[Read comics online](https://readcomicbooksonline.org/)"
+    - "[Read Comics Online For Free](https://www.readcomics.io/)"
+others:
+    - "[Luscious](https://luscious.net/)"

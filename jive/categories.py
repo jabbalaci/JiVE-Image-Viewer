@@ -18,7 +18,8 @@ class Categories:
         self.d = self.read()
         # pprint(self.d)
 
-    def read(self) -> Dict[str, List[str]]:
+    @staticmethod
+    def read() -> Dict[str, List[str]]:
         categories = cfg.categories_file()
         try:
             with open(categories) as f:
@@ -30,7 +31,8 @@ class Categories:
             log.warning(e)
             return {}
 
-    def _my_sorted(self, entries: Union[KeysView[str], List[str]]) -> Union[KeysView[str], List[str]]:
+    @staticmethod
+    def _my_sorted(entries: Union[KeysView[str], List[str]]) -> Union[KeysView[str], List[str]]:
         """
         If SORT is True, then the categories AND the subreddit lists are sorted.
         The sorting is done in a case-insensitive mode.

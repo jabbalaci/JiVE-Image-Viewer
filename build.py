@@ -214,6 +214,7 @@ def exe():
         copy_dir("assets", "dist/assets")
         remove_directory("dist/assets/screenshots")
         copy_file("categories/categories.yaml", "dist/categories")
+        copy_file("bookmarks/bookmarks.yaml", "dist/bookmarks")
         copy_file("tools/verify_your_api_keys.py", "dist/tools")
         copy_file("preferences.ini", "dist/")
         if platform == "linux":

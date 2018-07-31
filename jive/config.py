@@ -20,7 +20,7 @@ from typing import Dict, Optional
 from jive import mylogging as log
 from jive.preferences import Preferences
 
-VERSION = "0.7.3"
+VERSION = "0.7.4"
 tmp = sys.version    # Leave it here! This way "import sys" won't be removed accidentally.
 
 appname = "JiveImageViewer"
@@ -38,14 +38,27 @@ PREFERENCES_INI = str(Path(BASE_DIR, "preferences.ini"))
 
 ERROR_SOUND = str(Path(ASSETS_DIR, "error.wav"))
 
+# BEGIN: categories
 categories_file_default = Path(BASE_DIR, "categories", "categories.yaml")
 categories_file_personal = Path(app_dirs.user_data_dir, "categories.yaml")
 
-def categories_file():
+def categories_file() -> str:
     if categories_file_personal.is_file():
         return str(categories_file_personal)
     # else
     return str(categories_file_default)
+# END: categories
+
+# BEGIN: bookmarks
+bookmarks_file_default = Path(BASE_DIR, "bookmarks", "bookmarks.yaml")
+bookmarks_file_personal = Path(app_dirs.user_data_dir, "bookmarks.yaml")
+
+def bookmarks_file() -> str:
+    if bookmarks_file_personal.is_file():
+        return str(bookmarks_file_personal)
+    # else
+    return str(bookmarks_file_default)
+# END: bookmarks
 
 ## BEGIN: API keys
 # read `api_keys.md` if you have no API keys

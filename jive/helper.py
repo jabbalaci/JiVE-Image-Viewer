@@ -1,3 +1,4 @@
+import webbrowser
 import hashlib
 import os
 import psutil
@@ -305,3 +306,6 @@ def copy_text_to_clipboard(text: str) -> None:
 def get_text_from_clipboard() -> str:
     cb: QClipboard = QApplication.clipboard()
     return str(cb.text())
+
+def open_new_browser_tab(url: str) -> None:
+    webbrowser.open_new_tab(url)
