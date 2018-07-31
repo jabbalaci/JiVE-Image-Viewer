@@ -3,7 +3,7 @@
 import requests
 from bs4 import BeautifulSoup
 from pathlib import Path
-from typing import List, Dict
+from typing import List, Dict, Optional
 from urllib.parse import urljoin
 
 from jive import config as cfg
@@ -17,7 +17,7 @@ def to_soup(html_source: str, parser: str = 'lxml') -> BeautifulSoup:
     return BeautifulSoup(html_source, parser)
 
 
-def get_links_from_html(soup: BeautifulSoup, base_url: str = None) -> List[str]:
+def get_links_from_html(soup: BeautifulSoup, base_url: Optional[str] = None) -> List[str]:
     """
     Get the links on a webpage. If the URL of the given
     page is provided in base_url, then links are absolute.
@@ -36,7 +36,7 @@ def get_links_from_html(soup: BeautifulSoup, base_url: str = None) -> List[str]:
     return result
 
 
-def get_images_from_html(soup: BeautifulSoup, base_url: str = None) -> List[str]:
+def get_images_from_html(soup: BeautifulSoup, base_url: Optional[str] = None) -> List[str]:
     """
     Get image src's on a webpage. If the URL of the given
     page is provided in base_url, then links are absolute.

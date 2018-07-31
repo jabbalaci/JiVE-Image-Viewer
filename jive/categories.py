@@ -23,7 +23,7 @@ class Categories:
         try:
             with open(categories) as f:
                 log.info(f"{categories} was read")
-                result = yaml.safe_load(f)
+                result: Dict[str, List[str]] = yaml.safe_load(f)
                 return result
         except Exception as e:
             log.warning("couldn't read {0}".format(categories))

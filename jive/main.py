@@ -40,7 +40,7 @@ from PyQt5.QtWidgets import (QAction, QApplication, QDesktopWidget,
                              QScrollArea, QShortcut, QVBoxLayout, qApp)
 from functools import partial
 from pathlib import Path
-from typing import Tuple, Union, List
+from typing import Tuple, Union, List, Optional
 
 from jive import autodetect
 from jive import cache
@@ -164,7 +164,7 @@ class MainWindow(QMainWindow):
         # self.open_remote_url_file(TEST_REMOTE_URL_FILE)
         # self.open_tumblr_post(TEST_TUMBLR_POST)
 
-    def reset(self, msg: str = None) -> None:
+    def reset(self, msg: Optional[str] = None) -> None:
         self.setWindowTitle(self.title)
 
         self.imgList.reset()
@@ -292,7 +292,7 @@ class MainWindow(QMainWindow):
         self.imgList.set_curr_img_idx(0)
         self.imgList.set_curr_img(self.imgList.get_list_of_images()[0].read())
 
-    def open_subreddit(self, text: str, after_id: str = None) -> None:
+    def open_subreddit(self, text: str, after_id: Optional[str] = None) -> None:
         subreddit_name = subreddit.get_subreddit_name(text)
         if not subreddit_name:
             log.warning("that's not a subreddit")
@@ -1594,7 +1594,7 @@ file system, then <strong>commit</strong> your changes.
         resolution = "{w} x {h}".format(w=self.imgList.get_curr_img().original_img.width(), h=self.imgList.get_curr_img().original_img.height())    # type: ignore
         # file_size = helper.file_size_fmt(self.imgList.curr_img.file_size) if self.imgList.curr_img.file_size > -1 else ""
         file_size_hr = self.imgList.get_curr_img().get_file_size(human_readable=True)    # type: ignore
-        zoom = int(self.imgList.get_curr_img().zoom_ratio * 100)    # type: ignore
+        zoom = int(self.imgList.get_curr_img().zoom_ratio * 100)
         #
         self.info_line.setText(green("{0} of {1}".format(pretty_num(self.imgList.get_curr_img_idx() + 1), pretty_num(len(self.imgList.get_list_of_images())))))
         #

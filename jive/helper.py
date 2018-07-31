@@ -304,4 +304,4 @@ def copy_text_to_clipboard(text: str) -> None:
 
 def get_text_from_clipboard() -> str:
     cb: QClipboard = QApplication.clipboard()
-    return cb.text()
+    return str(cb.text())

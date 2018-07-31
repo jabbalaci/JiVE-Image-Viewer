@@ -68,7 +68,7 @@ class Cluster:
                     maxi_v = len(v)
                     maxi_k = k
         #
-        result = clusters[maxi_k] if maxi_k != -1 else []
+        result: List[str] = clusters[maxi_k] if maxi_k != -1 else []
         return result
 
     def show(self) -> None:

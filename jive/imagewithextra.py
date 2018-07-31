@@ -1,4 +1,5 @@
-from typing import Dict
+from typing import Dict, Optional
+
 
 class ImageWithExtraInfo:
     """
@@ -8,7 +9,7 @@ class ImageWithExtraInfo:
     reddit ID, comments URL, image title, etc. Thus, extra is a dictionary that contains these
     additional pieces of information.
     """
-    def __init__(self, fpath_or_url: str, extra_info: Dict[str, str] = None) -> None:
+    def __init__(self, fpath_or_url: str, extra_info: Optional[Dict[str, str]] = None) -> None:
         self.fpath_or_url = fpath_or_url    # file path or URL
         if extra_info is None:
             self.extra_info: Dict[str, str] = {}

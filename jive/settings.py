@@ -31,7 +31,7 @@ class Settings:
     def read(self) -> Dict[str, str]:
         try:
             with open(cfg.SETTINGS_FILE) as f:
-                d = json.load(f)
+                d: Dict[str, str] = json.load(f)
                 log.info(f"{cfg.SETTINGS_FILE} was read")
                 return d
         except:

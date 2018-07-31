@@ -4,7 +4,7 @@ import configparser
 import json
 import os
 from pathlib import Path
-from typing import Dict, List, Union
+from typing import Dict, cast
 
 
 def remove_quotes(original) -> Dict[str, Dict[str, str]]:
@@ -21,7 +21,7 @@ def remove_quotes(original) -> Dict[str, Dict[str, str]]:
         if isinstance(value, dict):
             d[key] = remove_quotes(value)
     #
-    return d
+    return cast(Dict[str, Dict[str, str]], d)
 
 
 class Preferences:
