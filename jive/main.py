@@ -712,9 +712,9 @@ class MainWindow(QMainWindow):
 
         fileMenu = self.menubar.addMenu("&File")
         viewMenu = self.menubar.addMenu("&View")
+        toolsMenu = self.menubar.addMenu("&Tools")
         if self.show_bookmarks:
             bookmarksMenu = self.menubar.addMenu("&Bookmarks")
-        toolsMenu = self.menubar.addMenu("&Tools")
         helpMenu = self.menubar.addMenu("&Help")
 
         # fileMenu
