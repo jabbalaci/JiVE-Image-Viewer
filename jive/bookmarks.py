@@ -68,4 +68,7 @@ class Bookmarks:
                     act.triggered.connect(partial(self.open_new_browser_tab_fn, link))
                     menu.addAction(act)
                 else:
-                    log.warning(f"couldn't parse the bookmark line '{entry}'")
+                    if re.search(r"^-{3,}$", entry):    # "---" (with length >= 3) is a separator
+                        menu.addSeparator()
+                    else:
+                        log.warning(f"couldn't parse the bookmark line '{entry}'")

@@ -10,6 +10,14 @@
 #
 # Notice that entries are strings! Inside a string,
 # use markdown syntax, i.e. [description](URL)
+#
+# template:
+#
+# - "[]()"
+#
+# You can also add a separator. Its length must be at least 3 characters:
+#
+# - "-----"
 
 hentai:
     - "[HBrowse](https://www.hbrowse.com/)"
