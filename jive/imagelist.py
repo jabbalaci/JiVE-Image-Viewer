@@ -108,7 +108,7 @@ class ImageList:
                                                         mainWindow=self.mainWindow)
 
                 if len(urls) == 0:
-                    QMessageBox.information(self,
+                    QMessageBox.information(self.mainWindow,
                                             "Info",
                                             "No new images were found.")
                 else:
