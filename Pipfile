@@ -11,6 +11,7 @@ appdirs = "*"
 pyyaml = "*"
 "bs4" = "*"
 lxml = "*"
+requests = "*"
 
 [dev-packages]
 pytest = "*"
