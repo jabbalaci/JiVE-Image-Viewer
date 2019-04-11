@@ -8,10 +8,11 @@ imgurpython = "*"
 "pyqt5" = "*"
 psutil = "*"
 appdirs = "*"
-pyyaml = "*"
+pyyaml = ">=4.2b1"
 "bs4" = "*"
 lxml = "*"
 requests = "*"
+pip = "*"
 
 [dev-packages]
 pytest = "*"

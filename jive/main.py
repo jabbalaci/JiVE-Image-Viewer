@@ -1110,14 +1110,14 @@ Delete: {to_del} (remain {remain})
             self.statusbar.flash_message(red("no"))
             return
         # else
-        if self.imgList.get_curr_img().local_file:    # type: ignore
-            msg = """
-This is a <strong>local</strong> file.<br>
-<br>
-It makes no sense to mark it to be saved.
-""".strip()
-            QMessageBox.warning(self, "Warning", msg)
-            return
+#         if self.imgList.get_curr_img().local_file:    # type: ignore
+#             msg = """
+# This is a <strong>local</strong> file.<br>
+# <br>
+# It makes no sense to mark it to be saved.
+# """.strip()
+#             QMessageBox.warning(self, "Warning", msg)
+#             return
         # else
         self.imgList.get_curr_img().toggle_save()    # type: ignore
         if self.imgList.get_curr_img().to_save:    # type: ignore
