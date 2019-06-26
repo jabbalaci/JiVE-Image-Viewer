@@ -87,7 +87,7 @@ MESSAGE_FLASH_TIME_2 = 2000    # in msec.
 MESSAGE_FLASH_TIME_3 = 3000    # in msec.
 
 headers = {
-    'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0',
+    'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:67.0) Gecko/20100101 Firefox/67.0',
 }
 
 SEPARATOR = "-----"

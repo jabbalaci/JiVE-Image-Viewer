@@ -671,6 +671,9 @@ class MainWindow(QMainWindow):
         self.open_with_gimp_act = QAction("&Gimp", self)
         self.open_with_gimp_act.triggered.connect(self.open_with_gimp)
         #
+        self.open_with_browser_act = QAction("&Browser", self)
+        self.open_with_browser_act.triggered.connect(self.open_with_browser)
+        #
         self.find_duplicates_act = QAction("Find &duplicates", self)
         self.find_duplicates_act.triggered.connect(self.find_duplicates)
         #
@@ -784,7 +787,7 @@ class MainWindow(QMainWindow):
                          self.open_url_open_tumblr_post_act,
                          self.sequence_urls_act]
 
-        open_with_acts = [self.open_with_gimp_act]
+        open_with_acts = [self.open_with_gimp_act, self.open_with_browser_act]
 
         # When I right-click, very often the first menu item gets selected.
         # "Nothing" is added to avoid that problem.
@@ -1268,6 +1271,14 @@ You cannot delete it.
         # else
         name = self.imgList.get_curr_img().get_absolute_path_or_url()    # type: ignore
         opener.open_file_with_gimp(self, name)
+
+    def open_with_browser(self) -> None:
+        if not self.imgList.get_curr_img():
+            self.statusbar.flash_message(red("no image"))
+            return
+        # else
+        name = self.imgList.get_curr_img().get_absolute_path_or_url()    # type: ignore
+        opener.open_file_with_browser(self, name)
 
     def find_duplicates(self) -> None:
         if len(self.imgList.get_list_of_images()) == 0:

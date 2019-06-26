@@ -3,9 +3,10 @@ Open a file with an external application.
 """
 
 import sys
+import webbrowser
+from subprocess import DEVNULL, Popen
 
-from PyQt5.QtWidgets import (QMessageBox)
-from subprocess import Popen, DEVNULL
+from PyQt5.QtWidgets import QMessageBox
 
 from jive import config as cfg
 from jive.exceptions import MissingPreferencesEntry
@@ -55,3 +56,7 @@ def open_file_with_gimp(parent, fname: str) -> None:
 Please verify your Gimp entry in {cfg.PREFERENCES_INI}
 """.strip()
         QMessageBox.critical(parent, "Error", msg)
+
+
+def open_file_with_browser(parent, url: str) -> None:
+    webbrowser.open_new_tab(url)
