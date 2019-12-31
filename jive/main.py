@@ -560,7 +560,7 @@ class MainWindow(QMainWindow):
             self.open_sequence_urls(text)
             return
         if kind == autodetect.AutoDetectEnum.imgur_html_page_with_embedded_image:
-            img = what[1]
+            img = what[1]    # type: ignore
             log.info("it seems to be an imgur HTML page with an embedded image")
             self.open_remote_url_file(img)
             self.redraw()
@@ -1180,12 +1180,12 @@ You cannot delete it.
         # else
         if self.image_info_dialog:
             self.image_info_dialog.close()    # allow just 1 instance; not needed if that window is modal
-        self.image_info_dialog = ImageInfo(self, self.imgList.get_curr_img())
+        self.image_info_dialog = ImageInfo(self, self.imgList.get_curr_img())    # type: ignore
 
     def important_files_and_folders(self) -> None:
         if self.important_files_and_folders_dialog:
             self.important_files_and_folders_dialog.close()    # allow just 1 instance; not needed if that window is modal
-        self.important_files_and_folders_dialog = ImportantFilesAndFolders(self)
+        self.important_files_and_folders_dialog = ImportantFilesAndFolders(self)    # type: ignore
 
     def slideshow(self) -> None:
         self.not_yet_implemented()
@@ -1630,7 +1630,7 @@ file system, then <strong>commit</strong> your changes.
         resolution = "{w} x {h}".format(w=self.imgList.get_curr_img().original_img.width(), h=self.imgList.get_curr_img().original_img.height())    # type: ignore
         # file_size = helper.file_size_fmt(self.imgList.curr_img.file_size) if self.imgList.curr_img.file_size > -1 else ""
         file_size_hr = self.imgList.get_curr_img().get_file_size(human_readable=True)    # type: ignore
-        zoom = int(self.imgList.get_curr_img().zoom_ratio * 100)
+        zoom = int(self.imgList.get_curr_img().zoom_ratio * 100)    # type: ignore
         #
         self.info_line.setText(green("{0} of {1}".format(pretty_num(self.imgList.get_curr_img_idx() + 1), pretty_num(len(self.imgList.get_list_of_images())))))
         #

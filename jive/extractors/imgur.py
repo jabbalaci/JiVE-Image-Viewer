@@ -44,7 +44,7 @@ def extract_images_from_an_album(url: str) -> List[str]:
     result: List[str] = []
     album_id = get_album_id(url)
     if album_id:
-        images = []    # type: ignore
+        images = []
         try:
             images = client.get_album_images(album_id)
         except (imgurpython.helpers.error.ImgurClientError, TypeError):

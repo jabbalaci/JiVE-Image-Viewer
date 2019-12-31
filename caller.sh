@@ -6,7 +6,8 @@ SCRIPTPATH=`dirname $SCRIPT`
 bak="$PWD"
 
 cd $SCRIPTPATH
-VENV_DIR=`pipenv --venv`
+# VENV_DIR=`pipenv --venv`
+VENV_DIR="$HOME/.virtualenvs/jive-image-viewer-py3.8"
 cd "$bak"
 
 export PATH=$VENV_DIR/bin:$PATH
