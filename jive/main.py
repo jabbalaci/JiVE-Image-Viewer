@@ -614,8 +614,9 @@ class MainWindow(QMainWindow):
         self.save_image_act = QAction("&Save current image as...", self)
         self.shortcuts.register_menubar_action(key, self.save_image_act, self.save_image)
         #
+        key = "Ctrl+R"
         self.open_random_subreddit_act = QAction("Open random subreddit", self)
-        self.open_random_subreddit_act.triggered.connect(self.open_random_subreddit)
+        self.shortcuts.register_menubar_action(key, self.open_random_subreddit_act, self.open_random_subreddit)
         #
         self.save_image_list_act = QAction("Save image list as...", self)
         self.save_image_list_act.triggered.connect(self.save_image_list)
@@ -735,6 +736,7 @@ class MainWindow(QMainWindow):
             else:
                 open_url_menu.addAction(entry)
         fileMenu.addAction(self.open_custom_url_list_act)
+        fileMenu.addAction(self.open_random_subreddit_act)
         fileMenu.addSeparator()
         fileMenu.addAction(self.save_image_act)
         fileMenu.addAction(self.save_image_list_act)
