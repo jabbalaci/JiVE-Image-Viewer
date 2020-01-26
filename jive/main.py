@@ -614,6 +614,9 @@ class MainWindow(QMainWindow):
         self.save_image_act = QAction("&Save current image as...", self)
         self.shortcuts.register_menubar_action(key, self.save_image_act, self.save_image)
         #
+        self.open_random_subreddit_act = QAction("Open random subreddit", self)
+        self.open_random_subreddit_act.triggered.connect(self.open_random_subreddit)
+        #
         self.save_image_list_act = QAction("Save image list as...", self)
         self.save_image_list_act.triggered.connect(self.save_image_list)
         #
@@ -799,6 +802,7 @@ class MainWindow(QMainWindow):
         open_url_menu = QMenu(self.menu)
         open_url_menu.setTitle("Open &URL...")
         self.menu.addMenu(open_url_menu)
+        self.menu.addAction(self.open_random_subreddit_act)
         for entry in open_url_acts:
             if isinstance(entry, str):
                 open_url_menu.addSeparator()
@@ -1240,6 +1244,12 @@ You cannot delete it.
         helper.copy_text_to_clipboard(content)
         log.info("the image list was copied to the clipboard")
         self.statusbar.flash_message(blue("copied to clipboard"))
+
+    def open_random_subreddit(self) -> None:
+        subreddit = categories.Categories.get_random_subreddit()
+        log.info(f"random subreddit: {subreddit}")
+        self.statusbar.flash_message(f"/r/{subreddit}", wait=cfg.MESSAGE_FLASH_TIME_8)
+        self.open_subreddit(subreddit)
 
     def save_image_list(self) -> None:
         lst = self.imgList.get_image_list()

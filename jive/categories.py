@@ -2,6 +2,7 @@ import yaml
 from PyQt5.QtWidgets import QAction, QMenu
 from functools import partial
 from typing import Dict, List, KeysView, Union
+import random
 
 from jive import config as cfg
 
@@ -49,3 +50,15 @@ class Categories:
                 act = QAction(subreddit, self.parent)
                 act.triggered.connect(partial(self.open_subreddit_fn, subreddit))
                 menu.addAction(act)
+
+    @staticmethod
+    def get_subreddits() -> List[str]:
+        collect = []
+        d = Categories.read()
+        for k, v in d.items():
+            collect.extend(v)
+        return collect
+
+    @staticmethod
+    def get_random_subreddit() -> str:
+        return random.choice(Categories.get_subreddits())

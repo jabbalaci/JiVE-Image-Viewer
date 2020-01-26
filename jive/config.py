@@ -82,9 +82,14 @@ IMG_WIDTH_TO_WINDOW_WIDTH_IN_PERCENT = 80
 # without .gif:
 SUPPORTED_FORMATS = { ".bmp", ".jpg", ".jpe", ".jpeg", ".png", ".pbm", ".pgm", ".ppm", ".xbm", ".xpm" }
 
-MESSAGE_FLASH_TIME_1 = 1000    # in msec.
-MESSAGE_FLASH_TIME_2 = 2000    # in msec.
-MESSAGE_FLASH_TIME_3 = 3000    # in msec.
+MESSAGE_FLASH_TIME_1 = 1 * 1000    # in msec.
+MESSAGE_FLASH_TIME_2 = 2 * 1000    # in msec.
+MESSAGE_FLASH_TIME_3 = 3 * 1000    # in msec.
+MESSAGE_FLASH_TIME_4 = 4 * 1000    # in msec.
+MESSAGE_FLASH_TIME_5 = 5 * 1000    # in msec.
+MESSAGE_FLASH_TIME_6 = 6 * 1000    # in msec.
+MESSAGE_FLASH_TIME_7 = 7 * 1000    # in msec.
+MESSAGE_FLASH_TIME_8 = 8 * 1000    # in msec.
 
 headers = {
     'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:67.0) Gecko/20100101 Firefox/67.0',
