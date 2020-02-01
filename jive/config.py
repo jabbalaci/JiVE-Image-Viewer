@@ -107,7 +107,7 @@ PREFERENCES_OPTIONS: Dict[str, str] = prefs.get_as_dict().get('Options', {})
 NORMAL_SAVE = 1
 WALLPAPER_SAVE = 2
 
-REQUESTS_TIMEOUT = 3    # seconds
+REQUESTS_TIMEOUT = 5    # seconds
 
 #############################################################################
 
