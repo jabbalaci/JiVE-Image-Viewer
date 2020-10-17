@@ -10,7 +10,7 @@ def open_about(parent) -> None:
 
 <a href="https://github.com/jabbalaci/JiVE-Image-Viewer">https://github.com/jabbalaci/JiVE-Image-Viewer</a>
 
-Laszlo Szathmary (Jabba Laci), 2018
+Laszlo Szathmary (Jabba Laci), 2018--2020
 jabba.laci@gmail.com
 """.strip().replace("\n", "<br>")
     QMessageBox.about(parent, "About", text)

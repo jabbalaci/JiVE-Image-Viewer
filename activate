@@ -1,1 +1,1 @@
-pipenv shell
+poetry shell

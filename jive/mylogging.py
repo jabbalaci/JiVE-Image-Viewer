@@ -4,7 +4,8 @@ import sys
 from pathlib import Path
 
 # BASE_DIR = str(Path(os.path.dirname(os.path.abspath(__file__))).parent)
-BASE_DIR = os.path.dirname(os.path.abspath(sys.argv[0]))
+# BASE_DIR = os.path.dirname(os.path.abspath(sys.argv[0]))
+BASE_DIR = str(Path(os.path.dirname(os.path.abspath(__file__))).parent)
 DEBUG_LOG_FILENAME = str(Path(BASE_DIR, "info.log"))
 
 # set up formatting

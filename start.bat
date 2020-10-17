@@ -1,1 +1,1 @@
-pipenv run python start.py %1
+poetry run python start.py %1
