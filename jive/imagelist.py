@@ -1,10 +1,11 @@
 import random
-from PyQt5.QtWidgets import (QMessageBox)
-from typing import Optional, List
+from typing import List, Optional
+
+from PyQt5.QtWidgets import QMessageBox
 
 from jive import config as cfg
-from jive.extractors import subreddit
-from jive.helper import red, blue
+from jive.extractors import subreddit, tumblr_blog
+from jive.helper import blue, red
 from jive.imageproperty import ImageProperty
 
 
@@ -84,6 +85,8 @@ class ImageList:
             img = self._curr_img
             subreddit_name = img.extra_info.get("subreddit")    # type: ignore
             after_id = img.extra_info.get("after_id")    # type: ignore
+            tumblr_blog_name = img.extra_info.get("tumblr_blog_name")    # type: ignore
+            offset = img.extra_info.get("offset")    # type: ignore
             if img and subreddit_name and after_id:
                 urls = []
                 if self.mainWindow.auto_load_next_subreddit_page:
@@ -107,6 +110,20 @@ class ImageList:
                                                         statusbar=self.mainWindow.statusbar,
                                                         mainWindow=self.mainWindow)
 
+                if len(urls) == 0:
+                    QMessageBox.information(self.mainWindow,
+                                            "Info",
+                                            "No new images were found.")
+                else:
+                    lst = [ImageProperty(url, self.mainWindow) for url in urls]
+                    self._list_of_images.extend(lst)
+                    self.jump_to_next_image()
+                return
+            elif img and tumblr_blog_name and (offset != None):
+                urls = tumblr_blog.get_photo_urls(tumblr_blog_name,
+                                                  offset=offset + cfg.TUMBLR_OFFSET,
+                                                  statusbar=self.mainWindow.statusbar,
+                                                  mainWindow=self.mainWindow)
                 if len(urls) == 0:
                     QMessageBox.information(self.mainWindow,
                                             "Info",

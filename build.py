@@ -241,7 +241,7 @@ def mypy():
     """
     run mypy
     """
-    cmd = "mypy --config-file mypy.ini jive/"
+    cmd = "mypy --config-file mypy.ini jive/ --exclude /vendor/"
     call_external_command(cmd)
 
 

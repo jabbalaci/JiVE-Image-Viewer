@@ -1,5 +1,7 @@
 if __name__ == "__main__":
-    import os, sys
+    import os
+    import sys
+
     # This is a trick. This way I can launch
     # this file during the development.
     folder = os.path.join(os.path.dirname(__file__), "..")
@@ -10,17 +12,17 @@ if __name__ == "__main__":
 
 #############################################################################
 
-import sys
-
 import os
-from appdirs import AppDirs
+import sys
 from pathlib import Path
 from typing import Dict, Optional
+
+from appdirs import AppDirs
 
 from jive import mylogging as log
 from jive.preferences import Preferences
 
-VERSION = "0.7.5"
+VERSION = "0.7.6"
 tmp = sys.version    # Leave it here! This way "import sys" won't be removed accidentally.
 
 appname = "JiveImageViewer"
@@ -64,9 +66,17 @@ def bookmarks_file() -> str:
 # read `api_keys.md` if you have no API keys
 TUMBLR_API_KEY: Optional[str] = os.environ.get("TUMBLR_API_KEY")
 
+TUMBLR_CONSUMER_KEY: Optional[str] = os.environ.get("TUMBLR_CONSUMER_KEY")
+TUMBLR_CONSUMER_SECRET: Optional[str] = os.environ.get("TUMBLR_CONSUMER_SECRET")
+TUMBLR_TOKEN_KEY: Optional[str] = os.environ.get("TUMBLR_TOKEN_KEY")
+TUMBLR_TOKEN_SECRET: Optional[str] = os.environ.get("TUMBLR_TOKEN_SECRET")
+
 IMGUR_CLIENT_ID: Optional[str] = os.environ.get("IMGUR_CLIENT_ID")
 IMGUR_CLIENT_SECRET: Optional[str] = os.environ.get("IMGUR_CLIENT_SECRET")
 ## END: API keys
+
+# when browsing a blog, read 20 posts in one shot
+TUMBLR_OFFSET = 20
 
 ICON = str(Path(ASSETS_DIR, "icon.png"))
 LOGO = str(Path(ASSETS_DIR, "logo.png"))
@@ -92,7 +102,7 @@ MESSAGE_FLASH_TIME_7 = 7 * 1000    # in msec.
 MESSAGE_FLASH_TIME_8 = 8 * 1000    # in msec.
 
 headers = {
-    'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:67.0) Gecko/20100101 Firefox/67.0',
+    'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:87.0) Gecko/20100101 Firefox/87.0',
 }
 
 SEPARATOR = "-----"

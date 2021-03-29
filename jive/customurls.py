@@ -1,10 +1,10 @@
 import os
+
 from PyQt5 import QtGui
 from PyQt5.QtCore import pyqtSignal as Signal
 from PyQt5.QtWidgets import QDialog, QFileDialog
 
-from jive import helper
-from jive import showUrlList
+from jive import helper, showUrlList
 
 
 class CustomUrls(QDialog, showUrlList.Ui_Dialog):
@@ -42,7 +42,7 @@ class CustomUrls(QDialog, showUrlList.Ui_Dialog):
 
     def read_from_file(self) -> None:
         options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
+        options |= QFileDialog.DontUseNativeDialog    # type: ignore
         filter = "Text files (*.txt)"
         file_obj = QFileDialog.getOpenFileName(self,
                                                caption="Open Text File",

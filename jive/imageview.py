@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import QFrame, QGraphicsView
 class ImageView(QGraphicsView):
     def __init__(self, parent) -> None:
         super().__init__()
-        self.parent = parent
+        self.parent = parent    # type: ignore
 
         self.setFrameShape(QFrame.NoFrame)    # no border in fullscreen mode
 

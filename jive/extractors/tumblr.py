@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
 import re
-import requests
 from pathlib import Path
-from typing import Tuple, Optional, List
+from typing import List, Optional, Tuple
 
+import requests
 from jive import config as cfg
 
 log = cfg.log

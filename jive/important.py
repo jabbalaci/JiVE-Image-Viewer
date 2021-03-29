@@ -2,12 +2,13 @@
 Information about the important files and folders.
 """
 
+from functools import partial
+from pathlib import Path
+
 from PyQt5 import QtGui
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import (QApplication, QDialog, QGridLayout, QGroupBox,
                              QLabel, QPushButton, QShortcut, QVBoxLayout)
-from functools import partial
-from pathlib import Path
 
 from jive import config as cfg
 from jive import opener
@@ -19,7 +20,7 @@ ICON_SIZE = 16
 class ImportantFilesAndFolders(QDialog):
     def __init__(self, parent) -> None:
         super().__init__()
-        self.parent = parent
+        self.parent = parent    # type: ignore
 
         self.setWindowTitle("Important files and folders")
         self.setWindowIcon(QtGui.QIcon(str(Path(cfg.ASSETS_DIR, "info.png"))))

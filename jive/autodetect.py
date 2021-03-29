@@ -2,10 +2,10 @@ import re
 import requests
 from enum import Enum, auto
 from pathlib import Path
-from typing import Union, Tuple
+from typing import Union, Tuple, Optional
 
 from jive import config as cfg
-from jive.extractors import tumblr, imagefap, imgur, sequence, fuskator
+from jive.extractors import tumblr, tumblr_blog, imagefap, imgur, sequence, fuskator
 
 
 class AutoDetectEnum(Enum):
@@ -26,14 +26,16 @@ class AutoDetectEnum(Enum):
     imagefap_photo = auto()                         # https://www.imagefap.com/photo/1186623894/ (NSFW)
     fuskator_gallery = auto()                       # https://fuskator.com/full/aeNldhT~ia~/index.html (NSFW), or
                                                     # https://fuskator.com/thumbs/aeNldhT~ia~/index.html (NSFW)
+    tumblr_blog = auto()                            # tumblr://something or https://something.tumblr.com ,
+                                                    # where <something> is the name of the blog
 
 
-def detect(text: str) -> Union[Tuple[AutoDetectEnum, str], Tuple[AutoDetectEnum], None]:
+def detect(text: str) -> Union[Tuple[AutoDetectEnum, Union[str, None]], None]:
     """
     Detect what text is.
 
-    The return value is a tuple, whose first element is an AutoDetectEnum.
-    The tuple can have more elements that contain some extracted data.
+    The return value is a 2-sized tuple, whose first element is an AutoDetectEnum.
+    The second element can contain some extra data. If there's no extra data, the second element is None.
 
     If text couldn't be detected, it returns None.
     """
@@ -42,9 +44,9 @@ def detect(text: str) -> Union[Tuple[AutoDetectEnum, str], Tuple[AutoDetectEnum]
     if text.startswith(("http://", "https://")):
         # http://www.website.com/[001-030].jpg
         if sequence.is_valid_sequence_url(text):
-            return (AutoDetectEnum.sequence_url, )    # 1-long tuple
+            return (AutoDetectEnum.sequence_url, None)
         if Path(text).suffix.lower() in cfg.SUPPORTED_FORMATS:
-            return (AutoDetectEnum.image_url, )    # 1-long tuple
+            return (AutoDetectEnum.image_url, None)
         # https://www.reddit.com/r/EarthPorn/
         # https://reddit.com/r/EarthPorn/
         # https://old.reddit.com/r/EarthPorn/
@@ -53,10 +55,10 @@ def detect(text: str) -> Union[Tuple[AutoDetectEnum, str], Tuple[AutoDetectEnum]
             return (AutoDetectEnum.subreddit_url, m.group(1))
         # https://different-landscapes.tumblr.com/post/174158537319
         if tumblr.is_post(text):
-            return (AutoDetectEnum.tumblr_post, )
+            return (AutoDetectEnum.tumblr_post, None)
         if 'imgur.com' in text:
             if imgur.is_album(text):
-                return (AutoDetectEnum.imgur_album, )
+                return (AutoDetectEnum.imgur_album, None)
             # it's on imgur.com but it's not an album / gallery
             # it may be a single image embedded in an HTML page
             img_url = text + ".jpg"  # it works sometimes
@@ -65,9 +67,15 @@ def detect(text: str) -> Union[Tuple[AutoDetectEnum, str], Tuple[AutoDetectEnum]
                 return (AutoDetectEnum.imgur_html_page_with_embedded_image, img_url)
         # endif imgur
         if imagefap.is_imagefap_photo(text):
-            return (AutoDetectEnum.imagefap_photo, )
+            return (AutoDetectEnum.imagefap_photo, None)
         if fuskator.is_gallery(text):
-            return (AutoDetectEnum.fuskator_gallery, )
+            return (AutoDetectEnum.fuskator_gallery, None)
+        if tumblr_blog.is_blog(text):
+            blog_name = tumblr_blog.extract_blog_name(text)
+            return (AutoDetectEnum.tumblr_blog, blog_name)
+    elif text.startswith("tumblr://"):
+        blog_name = tumblr_blog.extract_blog_name(text)
+        return (AutoDetectEnum.tumblr_blog, blog_name)
     else:
         # earthporn
         if '/' not in text:
@@ -77,5 +85,5 @@ def detect(text: str) -> Union[Tuple[AutoDetectEnum, str], Tuple[AutoDetectEnum]
         m = re.search(r'/r/([^/]*)', text)
         if m:
             return (AutoDetectEnum.subreddit_r_name, m.group(1))
-
+    #
     return None

@@ -15,7 +15,9 @@ except AssertionError:
 ##############################################################################
 
 if __name__ == "__main__":
-    import os, sys
+    import os
+    import sys
+
     # This is a trick. This way I can launch jive.py (this file) during
     # the development and I don't need to start ../start.py every time.
     folder = os.path.join(os.path.dirname(__file__), "..")
@@ -26,11 +28,13 @@ if __name__ == "__main__":
 
 ##############################################################################
 
-import sys
-
 import os
-from PyQt5 import QtGui
-from PyQt5 import sip
+import sys
+from functools import partial
+from pathlib import Path
+from typing import List, Optional, Tuple, Union
+
+from PyQt5 import QtGui, sip
 from PyQt5.QtCore import QPoint, Qt
 from PyQt5.QtGui import QCursor, QKeySequence
 from PyQt5.QtMultimedia import QSound
@@ -38,28 +42,17 @@ from PyQt5.QtWidgets import (QAction, QApplication, QDesktopWidget,
                              QFileDialog, QFrame, QInputDialog, QLabel,
                              QLineEdit, QMainWindow, QMenu, QMessageBox,
                              QScrollArea, QShortcut, QVBoxLayout, qApp)
-from functools import partial
-from pathlib import Path
-from typing import Tuple, Union, List, Optional
 
-from jive import autodetect
-from jive import bookmarks
-from jive import cache
-from jive import categories
+from jive import autodetect, bookmarks, cache, categories
 from jive import config as cfg
-from jive import duplicates
-from jive import help_dialogs
-from jive import helper
-from jive import opener
-from jive import settings
+from jive import duplicates, help_dialogs, helper, opener, settings
 from jive import shortcuts as scuts
 from jive import statusbar as sbar
 from jive.commit import Commit
 from jive.customurls import CustomUrls
-from jive.extractors import fuskator
-from jive.extractors import imagefap
-from jive.extractors import imgur, subreddit, tumblr, sequence
-from jive.helper import bold, gray, green, pretty_num, red, blue
+from jive.extractors import (fuskator, imagefap, imgur, sequence, subreddit,
+                             tumblr, tumblr_blog)
+from jive.helper import blue, bold, gray, green, pretty_num, red
 from jive.imageinfo import ImageInfo
 from jive.imagelist import ImageList
 from jive.imageproperty import ImageProperty
@@ -104,8 +97,8 @@ class MainWindow(QMainWindow):
         self.title = "JiVE"
         self.top = 50
         self.left = 50
-        self.width = 900
-        self.height = 600
+        self.width = 900    # type: ignore
+        self.height = 600    # type: ignore
 
         self.auto_fit = False
         self.auto_width = False
@@ -307,7 +300,12 @@ class MainWindow(QMainWindow):
             log.warning("that's not a subreddit")
             return
         # else
-        urls = subreddit.read_subreddit(subreddit_name, after_id, statusbar=self.statusbar, mainWindow=self)
+        urls: List[ImageWithExtraInfo] = subreddit.read_subreddit(subreddit_name, after_id,
+                                                                  statusbar=self.statusbar, mainWindow=self)
+        self.open_urls(urls)
+
+    def open_tumblr_blog(self, blog_name: str) -> None:
+        urls: List[ImageWithExtraInfo] = tumblr_blog.get_photo_urls(blog_name)
         self.open_urls(urls)
 
     def open_urls(self, urls: Union[List[str], List[ImageWithExtraInfo]]) -> None:
@@ -371,7 +369,7 @@ class MainWindow(QMainWindow):
 
     def init_ui(self) -> None:
         # Option 1:
-        self.setGeometry(self.top, self.left, self.width, self.height)
+        self.setGeometry(self.top, self.left, self.width, self.height)    # type: ignore
         # Option 2:
         # self.center()
         # self.resize(self.width, self.height)
@@ -387,14 +385,15 @@ class MainWindow(QMainWindow):
         # self.central_widget.setStyleSheet("background-color: black")
         self.setCentralWidget(self.img_view)
 
-        self.scroll = QScrollArea()
-        self.scroll.setFrameShape(QFrame.NoFrame)    # no border in fullscreen mode
+        self.scroll = QScrollArea()    # type: ignore
+        # no border in fullscreen mode:
+        self.scroll.setFrameShape(QFrame.NoFrame)    # type: ignore
         self.image_label = QLabel()
-        self.scroll.setAlignment(Qt.AlignCenter)
-        self.scroll.setWidget(self.image_label)
+        self.scroll.setAlignment(Qt.AlignCenter)    # type: ignore
+        self.scroll.setWidget(self.image_label)    # type: ignore
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
-        layout.addWidget(self.scroll)
+        layout.addWidget(self.scroll)    # type: ignore
 
         self.img_view.setLayout(layout)
 
@@ -446,12 +445,12 @@ class MainWindow(QMainWindow):
         self.create_menubar()
 
     def show_scrollbars(self) -> None:
-        self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-        self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)    # type: ignore
+        self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)    # type: ignore
 
     def hide_scrollbars(self) -> None:
-        self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)    # type: ignore
+        self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)    # type: ignore
 
     def make_scrollbars_disappear(self) -> None:
         self.resize(self.geometry().width(),
@@ -506,7 +505,7 @@ class MainWindow(QMainWindow):
                 if kind == autodetect.AutoDetectEnum.imgur_html_page_with_embedded_image:
                     img = what[1]    # type: ignore
                     log.info("it seems to be an imgur HTML page with an embedded image")
-                    self.open_remote_url_file(img)
+                    self.open_remote_url_file(img)    # type: ignore
                     self.redraw()
             else:
                 log.warning("that's not an imgur album / gallery / HTML")
@@ -545,6 +544,11 @@ class MainWindow(QMainWindow):
             log.info("it seems to be a subreddit")
             self.open_subreddit(text)
             return
+        if kind == autodetect.AutoDetectEnum.tumblr_blog:
+            log.info("it seems to be a tumblr blog")
+            blog_name = what[1]
+            self.open_tumblr_blog(blog_name)    # type: ignore
+            return
         if kind == autodetect.AutoDetectEnum.imgur_album:
             log.info("it seems to be an Imgur album")
             self.open_imgur_album(text)
@@ -560,9 +564,9 @@ class MainWindow(QMainWindow):
             self.open_sequence_urls(text)
             return
         if kind == autodetect.AutoDetectEnum.imgur_html_page_with_embedded_image:
-            img = what[1]    # type: ignore
+            img = what[1]
             log.info("it seems to be an imgur HTML page with an embedded image")
-            self.open_remote_url_file(img)
+            self.open_remote_url_file(img)    # type: ignore
             self.redraw()
             return
         if kind == autodetect.AutoDetectEnum.imagefap_photo:
@@ -666,7 +670,7 @@ class MainWindow(QMainWindow):
         self.shortcuts.register_menubar_action(key, self.hide_menubar_act, self.toggle_menubar)
         #
         key = "Ctrl+M"
-        self.show_mouse_pointer_act = QAction("Show &mouse pointer", self, checkable=True, checked=True)
+        self.show_mouse_pointer_act = QAction("Show &mouse pointer", self, checkable=True, checked=True)    # type: ignore
         self.shortcuts.register_menubar_action(key, self.show_mouse_pointer_act, self.toggle_mouse_pointer)
         #
         self.shuffle_images_act = QAction("&Shuffle images", self)
@@ -734,7 +738,7 @@ class MainWindow(QMainWindow):
             if isinstance(entry, str):
                 open_url_menu.addSeparator()
             else:
-                open_url_menu.addAction(entry)
+                open_url_menu.addAction(entry)    # type: ignore
         fileMenu.addAction(self.open_custom_url_list_act)
         fileMenu.addAction(self.open_random_subreddit_act)
         fileMenu.addSeparator()
@@ -809,7 +813,7 @@ class MainWindow(QMainWindow):
             if isinstance(entry, str):
                 open_url_menu.addSeparator()
             else:
-                open_url_menu.addAction(entry)
+                open_url_menu.addAction(entry)    # type: ignore
         # self.menu.addAction(self.open_url_act)
         if self.show_subreddits:
             open_subreddit_categories = QMenu(self.menu)
@@ -846,7 +850,7 @@ class MainWindow(QMainWindow):
 
     def open_dir(self) -> None:
         options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
+        options |= QFileDialog.DontUseNativeDialog    # type: ignore
         folder = QFileDialog.getExistingDirectory(self,
                                                   caption="Open Image Directory",
                                                   directory=self.settings.get_last_dir_opened(),
@@ -858,7 +862,7 @@ class MainWindow(QMainWindow):
 
     def open_file(self) -> None:
         options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
+        options |= QFileDialog.DontUseNativeDialog    # type: ignore
         filter = "Images (*.bmp *.jpg *.jpe *.jpeg *.png *.pbm *.pgm *.ppm *.xbm *.xpm)"
         file_obj = QFileDialog.getOpenFileName(self,
                                                caption="Open Image File",
@@ -1216,7 +1220,7 @@ You cannot delete it.
             return
         # else
         options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
+        options |= QFileDialog.DontUseNativeDialog    # type: ignore
         filter = "Images (*.bmp *.jpg *.jpe *.jpeg *.png *.pbm *.pgm *.ppm *.xbm *.xpm)"
         offer_fname = str(Path(self.settings.get_last_dir_save_as(), self.imgList.get_curr_img().get_file_name_only()))    # type: ignore
         # print(offer_fname)
@@ -1261,7 +1265,7 @@ You cannot delete it.
             return
         # else
         options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
+        options |= QFileDialog.DontUseNativeDialog    # type: ignore
         offer_fname = "image_list.txt"
         file_obj = QFileDialog.getSaveFileName(self,
                                                caption="Save image list",
@@ -1432,23 +1436,23 @@ file system, then <strong>commit</strong> your changes.
                 self.statusbar.flash_message(red("invalid value"))
 
     def scroll_to_top(self) -> None:
-        self.scroll.verticalScrollBar().setValue(0)
+        self.scroll.verticalScrollBar().setValue(0)    # type: ignore
 
     def scroll_down(self, offset: int = 100) -> None:
-        val = self.scroll.verticalScrollBar().value()
-        self.scroll.verticalScrollBar().setValue(val + offset)
+        val = self.scroll.verticalScrollBar().value()    # type: ignore
+        self.scroll.verticalScrollBar().setValue(val + offset)    # type: ignore
 
     def scroll_right(self) -> None:
-        val = self.scroll.horizontalScrollBar().value()
-        self.scroll.horizontalScrollBar().setValue(val + 100)
+        val = self.scroll.horizontalScrollBar().value()    # type: ignore
+        self.scroll.horizontalScrollBar().setValue(val + 100)    # type: ignore
 
     def scroll_up(self, offset: int = 100) -> None:
-        val = self.scroll.verticalScrollBar().value()
-        self.scroll.verticalScrollBar().setValue(val - offset)
+        val = self.scroll.verticalScrollBar().value()    # type: ignore
+        self.scroll.verticalScrollBar().setValue(val - offset)    # type: ignore
 
     def scroll_left(self) -> None:
-        val = self.scroll.horizontalScrollBar().value()
-        self.scroll.horizontalScrollBar().setValue(val - 100)
+        val = self.scroll.horizontalScrollBar().value()    # type: ignore
+        self.scroll.horizontalScrollBar().setValue(val - 100)    # type: ignore
 
     def copy_path_to_clipboard(self) -> None:
         text = self.imgList.get_curr_img().get_absolute_path_or_url()    # type: ignore
@@ -1543,14 +1547,14 @@ file system, then <strong>commit</strong> your changes.
 
     def toggle_fit_window_to_image(self) -> None:
         if self._fit_window_to_image_status == OFF:
-            self._fit_window_to_image_width = self.geometry().width()
-            self._fit_window_to_image_height = self.geometry().height()
+            self._fit_window_to_image_width = self.geometry().width()    # type: ignore
+            self._fit_window_to_image_height = self.geometry().height()    # type: ignore
             #
             self.resize(self.imgList.get_curr_img().zoomed_img.width(),    # type: ignore
                         self.imgList.get_curr_img().zoomed_img.height())    # type: ignore
             self._fit_window_to_image_status = ON
         else:
-            self.resize(self._fit_window_to_image_width,
+            self.resize(self._fit_window_to_image_width,    # type: ignore
                         self._fit_window_to_image_height)
             self._fit_window_to_image_status = OFF
 
@@ -1591,7 +1595,7 @@ file system, then <strong>commit</strong> your changes.
     def show_logo(self) -> None:
         scale = 0.3
         pm = ImageProperty.to_pixmap(cfg.LOGO, self.cache)[0]
-        pm = pm.scaled(self.geometry().width() * scale,
+        pm = pm.scaled(self.geometry().width() * scale,    # type: ignore
                        self.geometry().height() * scale,
                        Qt.KeepAspectRatio,
                        Qt.SmoothTransformation)
@@ -1636,7 +1640,7 @@ file system, then <strong>commit</strong> your changes.
         if self.auto_width:
             self.imgList.get_curr_img().fit_img_to_window_width()    # type: ignore
         pm = self.imgList.get_curr_img().zoomed_img    # type: ignore
-        self.image_label.setPixmap(pm)
+        self.image_label.setPixmap(pm)    # type: ignore
         self.image_label.resize(pm.width(), pm.height())    # type: ignore
         #
         resolution = "{w} x {h}".format(w=self.imgList.get_curr_img().original_img.width(), h=self.imgList.get_curr_img().original_img.height())    # type: ignore

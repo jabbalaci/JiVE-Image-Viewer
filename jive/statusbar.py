@@ -7,7 +7,7 @@ from jive import config as cfg
 class StatusBar(QWidget):
     def __init__(self, parent=None) -> None:
         super().__init__()
-        self.parent = parent
+        self.parent = parent    # type: ignore
         #
         self.message_label = QLabel(self)
         self.sep1 = QLabel("|", self)
@@ -56,7 +56,7 @@ class StatusBar(QWidget):
         if self.message_timer:
             self.message_timer.stop()
             self.message_timer.deleteLater()
-        self.message_timer = QTimer()
+        self.message_timer = QTimer()    # type: ignore
         self.message_timer.timeout.connect(self.delete_flashed_message)    # type: ignore
         self.message_timer.setSingleShot(True)    # type: ignore
         self.message_timer.start(wait)    # type: ignore

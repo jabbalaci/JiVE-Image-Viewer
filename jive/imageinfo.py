@@ -1,9 +1,10 @@
+from functools import partial
+from pathlib import Path
+
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import (QApplication, QDialog, QGridLayout, QGroupBox,
                              QLabel, QPushButton, QShortcut, QVBoxLayout)
-from functools import partial
-from pathlib import Path
 
 from jive import config as cfg
 from jive import helper
@@ -15,8 +16,8 @@ ICON_SIZE = 16
 class ImageInfo(QDialog):
     def __init__(self, parent, img) -> None:
         super().__init__()
-        self.parent = parent
-        self.commit = self.parent.commit
+        self.parent = parent    # type: ignore
+        self.commit = self.parent.commit    # type: ignore
         self.img = img
 
         self.setModal(True)    # not sure if it should be modal or not
@@ -74,7 +75,7 @@ class ImageInfo(QDialog):
     def grid_layout_creation_2(self) -> None:
         self.group_box_2 = QGroupBox("Summary")
 
-        length = len(self.parent.imgList.get_list_of_images())
+        length = len(self.parent.imgList.get_list_of_images())    # type: ignore
 
         layout = QGridLayout()
         layout.addWidget(QLabel(bold("Marked to be saved:")), 0, 0)
@@ -84,7 +85,7 @@ class ImageInfo(QDialog):
 
         layout.addWidget(QLabel(bold("Marked to be deleted:")), 1, 0)
         num = self.commit.to_delete()
-        remain = len(self.parent.imgList.get_list_of_images()) - num
+        remain = len(self.parent.imgList.get_list_of_images()) - num    # type: ignore
         text = f"{num} (out of {length}) [remain {remain}]"
         layout.addWidget(QLabel(text), 1, 1)
 

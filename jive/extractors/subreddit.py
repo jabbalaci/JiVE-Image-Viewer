@@ -1,12 +1,12 @@
 import re
-import requests
-from PyQt5.QtWidgets import QApplication
 from pathlib import Path
-from typing import Optional, List
+from typing import List, Optional
 
+import requests
 from jive import config as cfg
 from jive.extractors import imgur, tumblr
 from jive.imagewithextra import ImageWithExtraInfo
+from PyQt5.QtWidgets import QApplication
 
 log = cfg.log
 

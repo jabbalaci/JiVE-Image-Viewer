@@ -1,15 +1,15 @@
 import os
+from pathlib import Path
+from typing import Optional, Tuple, Union
+
 import requests
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
-from pathlib import Path
-from typing import Tuple, Optional, Union
 
 from jive import config as cfg
-from jive import fileops
-from jive import helper
+from jive import fileops, helper
 from jive.cache import Cache
-from jive.exceptions import ImageError, FileNotSaved
+from jive.exceptions import FileNotSaved, ImageError
 from jive.helper import lightblue, red, yellow
 from jive.imagewithextra import ImageWithExtraInfo
 
@@ -133,11 +133,11 @@ class ImageProperty:
 
     def calculate_zoomed_image(self) -> QPixmap:
         if self.original_img:
-            self.zoomed_img = self.original_img.scaled(self.zoom_ratio * self.original_img.width(),
+            self.zoomed_img = self.original_img.scaled(self.zoom_ratio * self.original_img.width(),    # type: ignore
                                                        self.zoom_ratio * self.original_img.height(),
                                                        Qt.KeepAspectRatio,
                                                        Qt.SmoothTransformation)
-        return self.zoomed_img
+        return self.zoomed_img    # type: ignore
 
     def set_zoomed_img(self, pm: QPixmap) -> None:
         self.zoomed_img = pm
@@ -233,15 +233,24 @@ class ImageProperty:
         """
         return "subreddit" in self.extra_info
 
+    def is_it_in_a_tumblr_blog(self) -> bool:
+        """
+        If this image is in a tumblr blog, return True.
+        Else, return False.
+        """
+        return "tumblr_blog_name" in self.extra_info
+
     def is_it_really_the_last(self) -> bool:
         """
         Return True if this image is really the last and there is no way to load more images.
         For instance: we open a folder.
 
-        At the moment there is only one possibility to load more images: when we open a subreddit.
-        So, if we are in a subreddit, False is returned.
+        At the moment there are two possibilities to load more images:
+        1) when we open a subreddit, or
+        2) when we browse a tumblr blog
+        So, if we are in a subreddit or we are in a tumblr blog, False is returned.
         """
-        if self.is_it_in_a_subreddit():
+        if self.is_it_in_a_subreddit() or self.is_it_in_a_tumblr_blog():
             return False
 
         return True
