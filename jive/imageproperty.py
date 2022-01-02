@@ -133,8 +133,8 @@ class ImageProperty:
 
     def calculate_zoomed_image(self) -> QPixmap:
         if self.original_img:
-            self.zoomed_img = self.original_img.scaled(self.zoom_ratio * self.original_img.width(),    # type: ignore
-                                                       self.zoom_ratio * self.original_img.height(),
+            self.zoomed_img = self.original_img.scaled(int(self.zoom_ratio * self.original_img.width()),
+                                                       int(self.zoom_ratio * self.original_img.height()),
                                                        Qt.KeepAspectRatio,
                                                        Qt.SmoothTransformation)
         return self.zoomed_img    # type: ignore

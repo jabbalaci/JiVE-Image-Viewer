@@ -305,7 +305,8 @@ class MainWindow(QMainWindow):
         self.open_urls(urls)
 
     def open_tumblr_blog(self, blog_name: str) -> None:
-        urls: List[ImageWithExtraInfo] = tumblr_blog.get_photo_urls(blog_name)
+        urls: List[ImageWithExtraInfo] = tumblr_blog.get_photo_urls(blog_name, offset=0,
+                                                                    statusbar=self.statusbar, mainWindow=self)
         self.open_urls(urls)
 
     def open_urls(self, urls: Union[List[str], List[ImageWithExtraInfo]]) -> None:
@@ -1595,8 +1596,8 @@ file system, then <strong>commit</strong> your changes.
     def show_logo(self) -> None:
         scale = 0.3
         pm = ImageProperty.to_pixmap(cfg.LOGO, self.cache)[0]
-        pm = pm.scaled(self.geometry().width() * scale,    # type: ignore
-                       self.geometry().height() * scale,
+        pm = pm.scaled(int(self.geometry().width() * scale),
+                       int(self.geometry().height() * scale),
                        Qt.KeepAspectRatio,
                        Qt.SmoothTransformation)
         self.image_label.setPixmap(pm)
