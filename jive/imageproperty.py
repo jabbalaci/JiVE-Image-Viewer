@@ -216,6 +216,16 @@ class ImageProperty:
             sb.append("wallpaper")
         return ", ".join(sb) if sb else "--"
 
+    def get_subreddit(self) -> tuple[str, str]:
+        text = "--"
+        url = "--"
+        if "subreddit" in self.extra_info:
+            sr = self.extra_info["subreddit"]
+            url = f"https://old.reddit.com/r/{sr}"
+            text = f"/r/{sr}"
+        #
+        return text, url
+
     def get_short_flags(self) -> str:
         sb = []
         if self.to_save:

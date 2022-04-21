@@ -70,6 +70,19 @@ class ImageInfo(QDialog):
         text = self.img.get_flags()
         layout.addWidget(QLabel(text), 4, 1)
 
+        layout.addWidget(QLabel(bold("Subreddit:")), 5, 0)
+        text, url = self.img.get_subreddit()
+        layout.addWidget(QLabel(text), 5, 1)
+        if url != "--":
+            icon = QtGui.QIcon(str(Path(cfg.ASSETS_DIR, "clipboard.png")))
+            btn = QPushButton()
+            btn.setIcon(icon)
+            btn.setIconSize(QtCore.QSize(ICON_SIZE, ICON_SIZE))
+            btn.setToolTip("copy to clipboard")
+            btn.clicked.connect(partial(self.copy_to_clipboard, url))
+            layout.addWidget(btn, 5, 2)
+        #
+
         self.group_box_1.setLayout(layout)
 
     def grid_layout_creation_2(self) -> None:
