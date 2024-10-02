@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-pynt tests
+uv run start.py "$@"

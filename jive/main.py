@@ -7,6 +7,7 @@ This is the main file.
 # check compatibility
 try:
     import sys
+
     assert sys.version_info.major == 3
     assert sys.version_info.minor >= 6
 except AssertionError:
@@ -38,20 +39,41 @@ from PyQt5 import QtGui, sip
 from PyQt5.QtCore import QPoint, Qt
 from PyQt5.QtGui import QCursor, QKeySequence
 from PyQt5.QtMultimedia import QSound
-from PyQt5.QtWidgets import (QAction, QApplication, QDesktopWidget,
-                             QFileDialog, QFrame, QInputDialog, QLabel,
-                             QLineEdit, QMainWindow, QMenu, QMessageBox,
-                             QScrollArea, QShortcut, QVBoxLayout, qApp)
+from PyQt5.QtWidgets import (
+    QAction,
+    QApplication,
+    QDesktopWidget,
+    QFileDialog,
+    QFrame,
+    QInputDialog,
+    QLabel,
+    QLineEdit,
+    QMainWindow,
+    QMenu,
+    QMessageBox,
+    QScrollArea,
+    QShortcut,
+    QVBoxLayout,
+    qApp,
+)
 
-from jive import autodetect, bookmarks, cache, categories
+from jive import (
+    autodetect,
+    bookmarks,
+    cache,
+    categories,
+    duplicates,
+    help_dialogs,
+    helper,
+    opener,
+    settings,
+)
 from jive import config as cfg
-from jive import duplicates, help_dialogs, helper, opener, settings
 from jive import shortcuts as scuts
 from jive import statusbar as sbar
 from jive.commit import Commit
 from jive.customurls import CustomUrls
-from jive.extractors import (fuskator, imagefap, imgur, sequence, subreddit,
-                             tumblr, tumblr_blog)
+from jive.extractors import fuskator, imagefap, imgur, sequence, subreddit, tumblr, tumblr_blog
 from jive.helper import blue, bold, gray, green, pretty_num, red
 from jive.imageinfo import ImageInfo
 from jive.imagelist import ImageList
@@ -97,8 +119,8 @@ class MainWindow(QMainWindow):
         self.title = "JiVE"
         self.top = 50
         self.left = 50
-        self.width = 900    # type: ignore
-        self.height = 600    # type: ignore
+        self.width = 900  # type: ignore
+        self.height = 600  # type: ignore
 
         self.auto_fit = False
         self.auto_width = False
@@ -109,31 +131,33 @@ class MainWindow(QMainWindow):
 
         self.setMouseTracking(True)
 
-        self.setAcceptDrops(True)    # enable drag & drop
+        self.setAcceptDrops(True)  # enable drag & drop
 
         self._fit_window_to_image_status = OFF
-        self._fit_window_to_image_width = None     # will be set later
-        self._fit_window_to_image_height = None    # will be set later
+        self._fit_window_to_image_width = None  # will be set later
+        self._fit_window_to_image_height = None  # will be set later
 
         self.imgList = ImageList(self)
 
         self.shortcuts = scuts.Shortcuts()
         self.add_shortcuts()
 
-        self.image_info_dialog = None                     # will be set later
-        self.important_files_and_folders_dialog = None    # will be set later
+        self.image_info_dialog = None  # will be set later
+        self.important_files_and_folders_dialog = None  # will be set later
 
         # it must be here, before calling init_ui()
-        self.show_subreddits = \
+        self.show_subreddits = (
             True if cfg.PREFERENCES_OPTIONS.get("enable_subreddits", "") == "yes" else False
+        )
 
         # it must be here, before calling init_ui()
-        self.show_bookmarks = \
+        self.show_bookmarks = (
             True if cfg.PREFERENCES_OPTIONS.get("enable_bookmarks", "") == "yes" else False
+        )
 
         self.init_ui()
 
-        self.commit = Commit(self)    # it must come after the init_ui()
+        self.commit = Commit(self)  # it must come after the init_ui()
 
         self.cache = cache.Cache(cfg.PREFERENCES_OPTIONS, cfg.PLATFORM_SETTINGS["cache_dir"])
 
@@ -143,13 +167,16 @@ class MainWindow(QMainWindow):
         if self.use_audio:
             self.error_sound = QSound(cfg.ERROR_SOUND, self)
 
-        self.auto_load_next_subreddit_page = \
-            True if cfg.PREFERENCES_OPTIONS.get("auto_load_next_subreddit_page", "") == "yes" else False
+        self.auto_load_next_subreddit_page = (
+            True
+            if cfg.PREFERENCES_OPTIONS.get("auto_load_next_subreddit_page", "") == "yes"
+            else False
+        )
 
-        self.toggle_auto_fit()           # set it ON and show the flash message
-        self.toggle_show_image_path()    # make it False and hide it
+        self.toggle_auto_fit()  # set it ON and show the flash message
+        self.toggle_show_image_path()  # make it False and hide it
 
-        self.reset()    # it must be last thing here
+        self.reset()  # it must be last thing here
 
         if len(self.argv) > 1:
             self.process_arguments(self.argv)
@@ -300,13 +327,15 @@ class MainWindow(QMainWindow):
             log.warning("that's not a subreddit")
             return
         # else
-        urls: List[ImageWithExtraInfo] = subreddit.read_subreddit(subreddit_name, after_id,
-                                                                  statusbar=self.statusbar, mainWindow=self)
+        urls: List[ImageWithExtraInfo] = subreddit.read_subreddit(
+            subreddit_name, after_id, statusbar=self.statusbar, mainWindow=self
+        )
         self.open_urls(urls)
 
     def open_tumblr_blog(self, blog_name: str) -> None:
-        urls: List[ImageWithExtraInfo] = tumblr_blog.get_photo_urls(blog_name, offset=0,
-                                                                    statusbar=self.statusbar, mainWindow=self)
+        urls: List[ImageWithExtraInfo] = tumblr_blog.get_photo_urls(
+            blog_name, offset=0, statusbar=self.statusbar, mainWindow=self
+        )
         self.open_urls(urls)
 
     def open_urls(self, urls: Union[List[str], List[ImageWithExtraInfo]]) -> None:
@@ -316,8 +345,8 @@ class MainWindow(QMainWindow):
             return
         # else
         self.imgList.set_list_of_images([ImageProperty(url, self) for url in urls])
-        self.imgList.set_curr_img_idx(-1)   # refresh the first image if we are there
-        self.imgList.jump_to_image(0)    # this way the 2nd image will be preloaded
+        self.imgList.set_curr_img_idx(-1)  # refresh the first image if we are there
+        self.imgList.jump_to_image(0)  # this way the 2nd image will be preloaded
 
     def open_sequence_urls(self, seq_url: str) -> None:
         urls = sequence.get_urls_from_sequence_url(seq_url)
@@ -366,11 +395,11 @@ class MainWindow(QMainWindow):
 
     def read_local_dir(self, dir_path: str) -> List[ImageProperty]:
         lst = helper.read_image_files(dir_path)
-        return [ImageProperty(img, self) for img in lst]    # without .read()
+        return [ImageProperty(img, self) for img in lst]  # without .read()
 
     def init_ui(self) -> None:
         # Option 1:
-        self.setGeometry(self.top, self.left, self.width, self.height)    # type: ignore
+        self.setGeometry(self.top, self.left, self.width, self.height)  # type: ignore
         # Option 2:
         # self.center()
         # self.resize(self.width, self.height)
@@ -386,15 +415,15 @@ class MainWindow(QMainWindow):
         # self.central_widget.setStyleSheet("background-color: black")
         self.setCentralWidget(self.img_view)
 
-        self.scroll = QScrollArea()    # type: ignore
+        self.scroll = QScrollArea()  # type: ignore
         # no border in fullscreen mode:
-        self.scroll.setFrameShape(QFrame.NoFrame)    # type: ignore
+        self.scroll.setFrameShape(QFrame.NoFrame)  # type: ignore
         self.image_label = QLabel()
-        self.scroll.setAlignment(Qt.AlignCenter)    # type: ignore
-        self.scroll.setWidget(self.image_label)    # type: ignore
+        self.scroll.setAlignment(Qt.AlignCenter)  # type: ignore
+        self.scroll.setWidget(self.image_label)  # type: ignore
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
-        layout.addWidget(self.scroll)    # type: ignore
+        layout.addWidget(self.scroll)  # type: ignore
 
         self.img_view.setLayout(layout)
 
@@ -446,16 +475,15 @@ class MainWindow(QMainWindow):
         self.create_menubar()
 
     def show_scrollbars(self) -> None:
-        self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)    # type: ignore
-        self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)    # type: ignore
+        self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)  # type: ignore
+        self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)  # type: ignore
 
     def hide_scrollbars(self) -> None:
-        self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)    # type: ignore
-        self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)    # type: ignore
+        self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)  # type: ignore
+        self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)  # type: ignore
 
     def make_scrollbars_disappear(self) -> None:
-        self.resize(self.geometry().width(),
-                    self.geometry().height())
+        self.resize(self.geometry().width(), self.geometry().height())
 
     def center(self) -> None:
         # geometry of the main window
@@ -471,18 +499,18 @@ class MainWindow(QMainWindow):
         self.move(qr.topLeft())
 
     def menu_open_subreddit(self) -> None:
-        text, okPressed = QInputDialog.getText(self,
-                                               "Open subreddit",
-                                               "Subreddit's name or its URL:" + " " * 50,
-                                               QLineEdit.Normal,
-                                               "")
+        text, okPressed = QInputDialog.getText(
+            self, "Open subreddit", "Subreddit's name or its URL:" + " " * 50, QLineEdit.Normal, ""
+        )
         text = text.strip()
         if okPressed and text:
             what = autodetect.detect(text)
             kind = what[0] if what else None
-            if kind in (autodetect.AutoDetectEnum.subreddit_url,
-                        autodetect.AutoDetectEnum.subreddit_name,
-                        autodetect.AutoDetectEnum.subreddit_r_name):
+            if kind in (
+                autodetect.AutoDetectEnum.subreddit_url,
+                autodetect.AutoDetectEnum.subreddit_name,
+                autodetect.AutoDetectEnum.subreddit_r_name,
+            ):
                 self.open_subreddit(text)
             else:
                 log.warning("that's not a subreddit")
@@ -490,11 +518,9 @@ class MainWindow(QMainWindow):
                 self.play_error_sound()
 
     def menu_open_imgur_album(self) -> None:
-        text, okPressed = QInputDialog.getText(self,
-                                               "Open Imgur album",
-                                               "Complete URL:" + " " * 80,
-                                               QLineEdit.Normal,
-                                               "")
+        text, okPressed = QInputDialog.getText(
+            self, "Open Imgur album", "Complete URL:" + " " * 80, QLineEdit.Normal, ""
+        )
         text = text.strip()
         if okPressed and text:
             what = autodetect.detect(text)
@@ -504,9 +530,9 @@ class MainWindow(QMainWindow):
                     self.open_imgur_album(text)
                     self.redraw()
                 if kind == autodetect.AutoDetectEnum.imgur_html_page_with_embedded_image:
-                    img = what[1]    # type: ignore
+                    img = what[1]  # type: ignore
                     log.info("it seems to be an imgur HTML page with an embedded image")
-                    self.open_remote_url_file(img)    # type: ignore
+                    self.open_remote_url_file(img)  # type: ignore
                     self.redraw()
             else:
                 log.warning("that's not an imgur album / gallery / HTML")
@@ -514,11 +540,13 @@ class MainWindow(QMainWindow):
                 self.play_error_sound()
 
     def menu_open_url_auto_detect(self) -> None:
-        text, okPressed = QInputDialog.getText(self,
-                                               "Auto detect URL",
-                                               "URL / subreddit / etc.:" + " " * 80,
-                                               QLineEdit.Normal,
-                                               self.settings.get_last_open_url_auto_detect())
+        text, okPressed = QInputDialog.getText(
+            self,
+            "Auto detect URL",
+            "URL / subreddit / etc.:" + " " * 80,
+            QLineEdit.Normal,
+            self.settings.get_last_open_url_auto_detect(),
+        )
         text = text.strip()
         if okPressed and text:
             self.auto_detect_and_open(text)
@@ -533,22 +561,24 @@ class MainWindow(QMainWindow):
             return
 
         # else, if it was detected
-        kind = what[0]    # since "type" is a keyword
+        kind = what[0]  # since "type" is a keyword
         if kind == autodetect.AutoDetectEnum.image_url:
             log.info("it seems to be a remote image")
             self.open_remote_url_file(text)
             self.redraw()
             return
-        if kind in (autodetect.AutoDetectEnum.subreddit_url,
-                    autodetect.AutoDetectEnum.subreddit_name,
-                    autodetect.AutoDetectEnum.subreddit_r_name):
+        if kind in (
+            autodetect.AutoDetectEnum.subreddit_url,
+            autodetect.AutoDetectEnum.subreddit_name,
+            autodetect.AutoDetectEnum.subreddit_r_name,
+        ):
             log.info("it seems to be a subreddit")
             self.open_subreddit(text)
             return
         if kind == autodetect.AutoDetectEnum.tumblr_blog:
             log.info("it seems to be a tumblr blog")
             blog_name = what[1]
-            self.open_tumblr_blog(blog_name)    # type: ignore
+            self.open_tumblr_blog(blog_name)  # type: ignore
             return
         if kind == autodetect.AutoDetectEnum.imgur_album:
             log.info("it seems to be an Imgur album")
@@ -567,7 +597,7 @@ class MainWindow(QMainWindow):
         if kind == autodetect.AutoDetectEnum.imgur_html_page_with_embedded_image:
             img = what[1]
             log.info("it seems to be an imgur HTML page with an embedded image")
-            self.open_remote_url_file(img)    # type: ignore
+            self.open_remote_url_file(img)  # type: ignore
             self.redraw()
             return
         if kind == autodetect.AutoDetectEnum.imagefap_photo:
@@ -582,7 +612,7 @@ class MainWindow(QMainWindow):
         log.info("it was detected but it was not handled...")
 
     def dragEnterEvent(self, event) -> None:
-        if event.mimeData().hasFormat('text/plain'):
+        if event.mimeData().hasFormat("text/plain"):
             event.accept()
         else:
             event.ignore()
@@ -590,7 +620,7 @@ class MainWindow(QMainWindow):
     def dropEvent(self, event) -> None:
         text = event.mimeData().text().strip()
         if text.startswith("file://"):
-            text = text[len("file://"):]
+            text = text[len("file://") :]
         self.open_local_file_or_dir(text)
         log.debug("dropEvent: {}".format(event.mimeData().text()))
 
@@ -608,7 +638,9 @@ class MainWindow(QMainWindow):
         #
         key = "Ctrl+U"
         self.open_url_auto_detect_act = QAction("Auto detect &URL", self)
-        self.shortcuts.register_menubar_action(key, self.open_url_auto_detect_act, self.menu_open_url_auto_detect)
+        self.shortcuts.register_menubar_action(
+            key, self.open_url_auto_detect_act, self.menu_open_url_auto_detect
+        )
         #
         self.open_url_open_subreddit_act = QAction("Open sub&reddit", self)
         self.open_url_open_subreddit_act.triggered.connect(self.menu_open_subreddit)
@@ -621,17 +653,23 @@ class MainWindow(QMainWindow):
         #
         key = "Ctrl+R"
         self.open_random_subreddit_act = QAction("Open random subreddit", self)
-        self.shortcuts.register_menubar_action(key, self.open_random_subreddit_act, self.open_random_subreddit)
+        self.shortcuts.register_menubar_action(
+            key, self.open_random_subreddit_act, self.open_random_subreddit
+        )
         #
         self.save_image_list_act = QAction("Save image list as...", self)
         self.save_image_list_act.triggered.connect(self.save_image_list)
         #
         self.export_image_list_to_clipboard_act = QAction("E&xport image list to clipboard", self)
-        self.export_image_list_to_clipboard_act.triggered.connect(self.export_image_list_to_clipboard)
+        self.export_image_list_to_clipboard_act.triggered.connect(
+            self.export_image_list_to_clipboard
+        )
         #
         key = "F5"
         self.reload_current_image_act = QAction("&Reload current image", self)
-        self.shortcuts.register_menubar_action(key, self.reload_current_image_act, self.reload_current_image)
+        self.shortcuts.register_menubar_action(
+            key, self.reload_current_image_act, self.reload_current_image
+        )
         #
         key = "I"
         self.image_info_act = QAction("Image &info", self)
@@ -671,8 +709,12 @@ class MainWindow(QMainWindow):
         self.shortcuts.register_menubar_action(key, self.hide_menubar_act, self.toggle_menubar)
         #
         key = "Ctrl+M"
-        self.show_mouse_pointer_act = QAction("Show &mouse pointer", self, checkable=True, checked=True)    # type: ignore
-        self.shortcuts.register_menubar_action(key, self.show_mouse_pointer_act, self.toggle_mouse_pointer)
+        self.show_mouse_pointer_act = QAction(
+            "Show &mouse pointer", self, checkable=True, checked=True
+        )  # type: ignore
+        self.shortcuts.register_menubar_action(
+            key, self.show_mouse_pointer_act, self.toggle_mouse_pointer
+        )
         #
         self.shuffle_images_act = QAction("&Shuffle images", self)
         self.shuffle_images_act.triggered.connect(self.imgList.shuffle_images)
@@ -697,7 +739,9 @@ class MainWindow(QMainWindow):
         #
         key = "Ctrl+Shift+U"
         self.extract_images_from_webpage_act = QAction("E&xtract images from a webpage", self)
-        self.shortcuts.register_menubar_action(key, self.extract_images_from_webpage_act, self.extract_images_from_webpage)
+        self.shortcuts.register_menubar_action(
+            key, self.extract_images_from_webpage_act, self.extract_images_from_webpage
+        )
         #
         self.open_custom_url_list_act = QAction("Open &list of image URLs", self)
         self.open_custom_url_list_act.triggered.connect(self.open_custom_url_list)
@@ -706,7 +750,9 @@ class MainWindow(QMainWindow):
         self.url_folding_act.triggered.connect(self.url_folding)
         #
         self.open_bookmarks_file_act = QAction("Edit bookmarks", self)
-        self.open_bookmarks_file_act.triggered.connect(partial(opener.open_file_with_editor, self, cfg.bookmarks_file()))
+        self.open_bookmarks_file_act.triggered.connect(
+            partial(opener.open_file_with_editor, self, cfg.bookmarks_file())
+        )
 
     def create_menubar(self) -> None:
         self.menubar = self.menuBar()
@@ -714,13 +760,15 @@ class MainWindow(QMainWindow):
         self.shortcuts.disable_conflicting_window_shortcuts()
         # self.menubar.setStyleSheet(cfg.TOP_AND_BOTTOM_BAR_STYLESHEET)
 
-        open_url_acts = [self.open_url_auto_detect_act,
-                         cfg.SEPARATOR,
-                         self.image_url_act,
-                         self.open_url_open_subreddit_act,
-                         self.open_url_open_imgur_album_act,
-                         self.open_url_open_tumblr_post_act,
-                         self.sequence_urls_act]
+        open_url_acts = [
+            self.open_url_auto_detect_act,
+            cfg.SEPARATOR,
+            self.image_url_act,
+            self.open_url_open_subreddit_act,
+            self.open_url_open_imgur_album_act,
+            self.open_url_open_tumblr_post_act,
+            self.sequence_urls_act,
+        ]
 
         fileMenu = self.menubar.addMenu("&File")
         viewMenu = self.menubar.addMenu("&View")
@@ -739,7 +787,7 @@ class MainWindow(QMainWindow):
             if isinstance(entry, str):
                 open_url_menu.addSeparator()
             else:
-                open_url_menu.addAction(entry)    # type: ignore
+                open_url_menu.addAction(entry)  # type: ignore
         fileMenu.addAction(self.open_custom_url_list_act)
         fileMenu.addAction(self.open_random_subreddit_act)
         fileMenu.addSeparator()
@@ -778,6 +826,7 @@ class MainWindow(QMainWindow):
         helpMenu.addAction(self.help_act)
         helpMenu.addAction(self.about_act)
         helpMenu.addAction(self.about_qt_act)
+
     #
     #######################
     ## END: top menu bar ##
@@ -789,13 +838,15 @@ class MainWindow(QMainWindow):
     def create_contextmenu(self) -> None:
         self.menu = QMenu(self)
 
-        open_url_acts = [self.open_url_auto_detect_act,
-                         cfg.SEPARATOR,
-                         self.image_url_act,
-                         self.open_url_open_subreddit_act,
-                         self.open_url_open_imgur_album_act,
-                         self.open_url_open_tumblr_post_act,
-                         self.sequence_urls_act]
+        open_url_acts = [
+            self.open_url_auto_detect_act,
+            cfg.SEPARATOR,
+            self.image_url_act,
+            self.open_url_open_subreddit_act,
+            self.open_url_open_imgur_album_act,
+            self.open_url_open_tumblr_post_act,
+            self.sequence_urls_act,
+        ]
 
         open_with_acts = [self.open_with_gimp_act, self.open_with_browser_act]
 
@@ -814,7 +865,7 @@ class MainWindow(QMainWindow):
             if isinstance(entry, str):
                 open_url_menu.addSeparator()
             else:
-                open_url_menu.addAction(entry)    # type: ignore
+                open_url_menu.addAction(entry)  # type: ignore
         # self.menu.addAction(self.open_url_act)
         if self.show_subreddits:
             open_subreddit_categories = QMenu(self.menu)
@@ -844,6 +895,7 @@ class MainWindow(QMainWindow):
 
     def show_contextmenu(self, pos) -> None:
         self.menu.popup(self.mapToGlobal(pos))
+
     #
     ###############################
     ## END: popup (context) menu ##
@@ -851,11 +903,13 @@ class MainWindow(QMainWindow):
 
     def open_dir(self) -> None:
         options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog    # type: ignore
-        folder = QFileDialog.getExistingDirectory(self,
-                                                  caption="Open Image Directory",
-                                                  directory=self.settings.get_last_dir_opened(),
-                                                  options=options)
+        options |= QFileDialog.DontUseNativeDialog  # type: ignore
+        folder = QFileDialog.getExistingDirectory(
+            self,
+            caption="Open Image Directory",
+            directory=self.settings.get_last_dir_opened(),
+            options=options,
+        )
         if os.path.isdir(folder):
             self.open_local_dir(folder)
             self.settings.set_last_dir_opened(folder)
@@ -863,14 +917,16 @@ class MainWindow(QMainWindow):
 
     def open_file(self) -> None:
         options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog    # type: ignore
+        options |= QFileDialog.DontUseNativeDialog  # type: ignore
         filter = "Images (*.bmp *.jpg *.jpe *.jpeg *.png *.pbm *.pgm *.ppm *.xbm *.xpm)"
-        file_obj = QFileDialog.getOpenFileName(self,
-                                               caption="Open Image File",
-                                               directory=str(Path(self.settings.get_last_file_opened()).parent),
-                                               filter=filter,
-                                               initialFilter=filter,
-                                               options=options)
+        file_obj = QFileDialog.getOpenFileName(
+            self,
+            caption="Open Image File",
+            directory=str(Path(self.settings.get_last_file_opened()).parent),
+            filter=filter,
+            initialFilter=filter,
+            options=options,
+        )
         fname = file_obj[0]
         if os.path.isfile(fname):
             self.open_local_file(fname)
@@ -896,19 +952,27 @@ class MainWindow(QMainWindow):
 
         key = "Ctrl+U"
         self.shortcutAutoDetect = QShortcut(QKeySequence(key), self)
-        self.shortcuts.register_window_shortcut(key, self.shortcutAutoDetect, self.menu_open_url_auto_detect)
+        self.shortcuts.register_window_shortcut(
+            key, self.shortcutAutoDetect, self.menu_open_url_auto_detect
+        )
 
         key = "Z"
         self.shortcutFitWindowToImage = QShortcut(QKeySequence(key), self)
-        self.shortcuts.register_window_shortcut(key, self.shortcutFitWindowToImage, self.toggle_fit_window_to_image)
+        self.shortcuts.register_window_shortcut(
+            key, self.shortcutFitWindowToImage, self.toggle_fit_window_to_image
+        )
 
         key = "F11"
         self.shortcutFullscreen = QShortcut(QKeySequence(key), self)
-        self.shortcuts.register_window_shortcut(key, self.shortcutFullscreen, self.toggle_fullscreen)
+        self.shortcuts.register_window_shortcut(
+            key, self.shortcutFullscreen, self.toggle_fullscreen
+        )
 
         key = "Esc"
         self.shortcutFromFullscreenToNormal = QShortcut(QKeySequence(key), self)
-        self.shortcuts.register_window_shortcut(key, self.shortcutFromFullscreenToNormal, self.from_fullscreen_to_normal)
+        self.shortcuts.register_window_shortcut(
+            key, self.shortcutFromFullscreenToNormal, self.from_fullscreen_to_normal
+        )
 
         key = "+"
         self.shortcutZoomIn = QShortcut(QKeySequence(key), self)
@@ -928,15 +992,21 @@ class MainWindow(QMainWindow):
 
         key = "F"
         self.shortcutFitImageToWindow = QShortcut(QKeySequence(key), self)
-        self.shortcuts.register_window_shortcut(key, self.shortcutFitImageToWindow, self.fit_image_to_window)
+        self.shortcuts.register_window_shortcut(
+            key, self.shortcutFitImageToWindow, self.fit_image_to_window
+        )
 
         key = "Left"
         self.shortcutPrevImage = QShortcut(QKeySequence(key), self)
-        self.shortcuts.register_window_shortcut(key, self.shortcutPrevImage, self.imgList.jump_to_prev_image)
+        self.shortcuts.register_window_shortcut(
+            key, self.shortcutPrevImage, self.imgList.jump_to_prev_image
+        )
         #
-        key ="PgUp"
+        key = "PgUp"
         self.shortcutNextImagePgUp = QShortcut(QKeySequence(key), self)
-        self.shortcuts.register_window_shortcut(key, self.shortcutNextImagePgUp, self.imgList.jump_five_percent_backward)
+        self.shortcuts.register_window_shortcut(
+            key, self.shortcutNextImagePgUp, self.imgList.jump_five_percent_backward
+        )
 
         #####################
         ## BEGIN scrolling ##
@@ -951,7 +1021,7 @@ class MainWindow(QMainWindow):
         self.shortcutScrollDownArrow = QShortcut(QKeySequence(key), self)
         self.shortcuts.register_window_shortcut(key, self.shortcutScrollDownArrow, self.scroll_down)
         #
-        key ="Shift+Up"
+        key = "Shift+Up"
         self.shortcutScrollUp = QShortcut(QKeySequence(key), self)
         self.shortcuts.register_window_shortcut(key, self.shortcutScrollUp, self.scroll_up)
         key = "8"
@@ -980,19 +1050,27 @@ class MainWindow(QMainWindow):
 
         key = "Right"
         self.shortcutNextImage = QShortcut(QKeySequence(key), self)
-        self.shortcuts.register_window_shortcut(key, self.shortcutNextImage, self.imgList.jump_to_next_image)
+        self.shortcuts.register_window_shortcut(
+            key, self.shortcutNextImage, self.imgList.jump_to_next_image
+        )
         #
         key = "PgDown"
         self.shortcutNextImagePgDn = QShortcut(QKeySequence(key), self)
-        self.shortcuts.register_window_shortcut(key, self.shortcutNextImagePgDn, self.imgList.jump_five_percent_forward)
+        self.shortcuts.register_window_shortcut(
+            key, self.shortcutNextImagePgDn, self.imgList.jump_five_percent_forward
+        )
 
         key = "Home"
         self.shortcutFirstImage = QShortcut(QKeySequence(key), self)
-        self.shortcuts.register_window_shortcut(key, self.shortcutFirstImage, self.imgList.jump_to_first_image)
+        self.shortcuts.register_window_shortcut(
+            key, self.shortcutFirstImage, self.imgList.jump_to_first_image
+        )
 
         key = "End"
         self.shortcutLastImage = QShortcut(QKeySequence(key), self)
-        self.shortcuts.register_window_shortcut(key, self.shortcutLastImage, self.imgList.jump_to_last_image)
+        self.shortcuts.register_window_shortcut(
+            key, self.shortcutLastImage, self.imgList.jump_to_last_image
+        )
 
         key = "Ctrl+F"
         self.shortcutAutoFit = QShortcut(QKeySequence(key), self)
@@ -1004,35 +1082,51 @@ class MainWindow(QMainWindow):
 
         key = "Ctrl+M"
         self.shortcutHideMouse = QShortcut(QKeySequence(key), self)
-        self.shortcuts.register_window_shortcut(key, self.shortcutHideMouse, self.toggle_mouse_pointer)
+        self.shortcuts.register_window_shortcut(
+            key, self.shortcutHideMouse, self.toggle_mouse_pointer
+        )
 
         key = "R"
         self.shortcutJumpToRandomImg = QShortcut(QKeySequence(key), self)
-        self.shortcuts.register_window_shortcut(key, self.shortcutJumpToRandomImg, self.imgList.jump_to_random_image)
+        self.shortcuts.register_window_shortcut(
+            key, self.shortcutJumpToRandomImg, self.imgList.jump_to_random_image
+        )
         #
         key = "Shift+R"
         self.shortcutJumpToPrevRandomImg = QShortcut(QKeySequence(key), self)
-        self.shortcuts.register_window_shortcut(key, self.shortcutJumpToPrevRandomImg, self.imgList.jump_to_prev_random_image)
+        self.shortcuts.register_window_shortcut(
+            key, self.shortcutJumpToPrevRandomImg, self.imgList.jump_to_prev_random_image
+        )
 
         key = "P"
         self.shortcutToggleShowImagePath = QShortcut(QKeySequence(key), self)
-        self.shortcuts.register_window_shortcut(key, self.shortcutToggleShowImagePath, self.toggle_show_image_path)
+        self.shortcuts.register_window_shortcut(
+            key, self.shortcutToggleShowImagePath, self.toggle_show_image_path
+        )
 
         key = "Shift+P"
         self.shortcutCopyPathToClipboard = QShortcut(QKeySequence(key), self)
-        self.shortcuts.register_window_shortcut(key, self.shortcutCopyPathToClipboard, self.copy_path_to_clipboard)
+        self.shortcuts.register_window_shortcut(
+            key, self.shortcutCopyPathToClipboard, self.copy_path_to_clipboard
+        )
 
         key = "G"
         self.shortcutGoToImage = QShortcut(QKeySequence(key), self)
-        self.shortcuts.register_window_shortcut(key, self.shortcutGoToImage, self.dialog_go_to_image)
+        self.shortcuts.register_window_shortcut(
+            key, self.shortcutGoToImage, self.dialog_go_to_image
+        )
 
         key = "Ctrl+Alt+R"
         self.shortcutReset = QShortcut(QKeySequence(key), self)
-        self.shortcuts.register_window_shortcut(key, self.shortcutReset, partial(self.reset, "reset"))
+        self.shortcuts.register_window_shortcut(
+            key, self.shortcutReset, partial(self.reset, "reset")
+        )
 
         key = "Alt+M"
         self.shortcutToggleMenubar = QShortcut(QKeySequence(key), self)
-        self.shortcuts.register_window_shortcut(key, self.shortcutToggleMenubar, self.toggle_menubar)
+        self.shortcuts.register_window_shortcut(
+            key, self.shortcutToggleMenubar, self.toggle_menubar
+        )
 
         key = "Menu"
         self.shortcutContextMenu = QShortcut(QKeySequence(key), self)
@@ -1048,11 +1142,15 @@ class MainWindow(QMainWindow):
 
         key = "D"
         self.shortcutMarkToDelete = QShortcut(QKeySequence(key), self)
-        self.shortcuts.register_window_shortcut(key, self.shortcutMarkToDelete, self.toggle_img_delete)
+        self.shortcuts.register_window_shortcut(
+            key, self.shortcutMarkToDelete, self.toggle_img_delete
+        )
 
         key = "W"
         self.shortcutMarkToWallpaper = QShortcut(QKeySequence(key), self)
-        self.shortcuts.register_window_shortcut(key, self.shortcutMarkToWallpaper, self.toggle_img_wallpaper)
+        self.shortcuts.register_window_shortcut(
+            key, self.shortcutMarkToWallpaper, self.toggle_img_wallpaper
+        )
 
         key = "C"
         self.shortcutCommit = QShortcut(QKeySequence(key), self)
@@ -1060,7 +1158,9 @@ class MainWindow(QMainWindow):
 
         key = "Ctrl+A"
         self.shortcutMarkAllToSave = QShortcut(QKeySequence(key), self)
-        self.shortcuts.register_window_shortcut(key, self.shortcutMarkAllToSave, self.mark_all_images_to_save)
+        self.shortcuts.register_window_shortcut(
+            key, self.shortcutMarkAllToSave, self.mark_all_images_to_save
+        )
 
     def mark_all_images_to_save(self) -> None:
         self.imgList.mark_all_images_to_save()
@@ -1082,35 +1182,37 @@ Save as wallpaper: {self.commit.to_wallpaper()}
 Delete: {to_del} (remain {remain})
 """.strip()
 
-        reply = QMessageBox.question(self,
-                                     'Question',
-                                     msg,
-                                     QMessageBox.Yes | QMessageBox.No,
-                                     QMessageBox.Yes)
+        reply = QMessageBox.question(
+            self, "Question", msg, QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes
+        )
 
         if reply == QMessageBox.No:
             return
 
         # else, if the user wants to commit the changes
 
-        marked_to_wallpaper = self.commit.to_wallpaper()                # How many were marked?
-        marked_to_wallpaper_success = self.commit.save_wallpapers()     # How many were saved successfully?
-        w_ok = (marked_to_wallpaper == marked_to_wallpaper_success)     # OK, if the two values are identical
+        marked_to_wallpaper = self.commit.to_wallpaper()  # How many were marked?
+        marked_to_wallpaper_success = (
+            self.commit.save_wallpapers()
+        )  # How many were saved successfully?
+        w_ok = (
+            marked_to_wallpaper == marked_to_wallpaper_success
+        )  # OK, if the two values are identical
 
         marked_to_save = self.commit.to_save()
         marked_to_save_success = self.commit.save_others()
-        s_ok = (marked_to_save == marked_to_save_success)
+        s_ok = marked_to_save == marked_to_save_success
 
         marked_to_delete = self.commit.to_delete()
         marked_to_delete_success = self.commit.delete_files()
-        d_ok = (marked_to_delete == marked_to_delete_success)
+        d_ok = marked_to_delete == marked_to_delete_success
 
-        ok = all([w_ok, s_ok, d_ok])            # OK, if everything was processed successfully
-        popup = QMessageBox.information         # if OK, show an information popup
-        if not ok:                              # otherwise show a warning popup
+        ok = all([w_ok, s_ok, d_ok])  # OK, if everything was processed successfully
+        popup = QMessageBox.information  # if OK, show an information popup
+        if not ok:  # otherwise show a warning popup
             popup = QMessageBox.warning
 
-        self.redraw()    # hide flags on the screen if the flags were removed
+        self.redraw()  # hide flags on the screen if the flags were removed
 
         text = f"""
 {marked_to_save_success} (of {marked_to_save}) images were saved
@@ -1120,34 +1222,34 @@ Delete: {to_del} (remain {remain})
         popup(self, "Commit summary", text)
 
     def toggle_img_save(self) -> None:
-        if self.imgList.get_curr_img().image_state == ImageProperty.IMAGE_STATE_PROBLEM:    # type: ignore
+        if self.imgList.get_curr_img().image_state == ImageProperty.IMAGE_STATE_PROBLEM:  # type: ignore
             self.statusbar.flash_message(red("no"))
             return
         # else
-#         if self.imgList.get_curr_img().local_file:    # type: ignore
-#             msg = """
-# This is a <strong>local</strong> file.<br>
-# <br>
-# It makes no sense to mark it to be saved.
-# """.strip()
-#             QMessageBox.warning(self, "Warning", msg)
-#             return
+        #         if self.imgList.get_curr_img().local_file:    # type: ignore
+        #             msg = """
+        # This is a <strong>local</strong> file.<br>
+        # <br>
+        # It makes no sense to mark it to be saved.
+        # """.strip()
+        #             QMessageBox.warning(self, "Warning", msg)
+        #             return
         # else
-        self.imgList.get_curr_img().toggle_save()    # type: ignore
-        if self.imgList.get_curr_img().to_save:    # type: ignore
+        self.imgList.get_curr_img().toggle_save()  # type: ignore
+        if self.imgList.get_curr_img().to_save:  # type: ignore
             self.statusbar.flash_message("+ save", cfg.MESSAGE_FLASH_TIME_1)
         else:
             self.statusbar.flash_message("- save", cfg.MESSAGE_FLASH_TIME_1)
         self.redraw()
-        if self.imgList.get_curr_img().to_save:    # type: ignore
+        if self.imgList.get_curr_img().to_save:  # type: ignore
             self.imgList.jump_to_next_image()
 
     def toggle_img_delete(self) -> None:
-        if self.imgList.get_curr_img().image_state == ImageProperty.IMAGE_STATE_PROBLEM:    # type: ignore
+        if self.imgList.get_curr_img().image_state == ImageProperty.IMAGE_STATE_PROBLEM:  # type: ignore
             self.statusbar.flash_message(red("no"))
             return
         # else
-        if not self.imgList.get_curr_img().local_file:    # type: ignore
+        if not self.imgList.get_curr_img().local_file:  # type: ignore
             msg = """
 This is a <strong>remote</strong> file with a URL.<br>
 <br>
@@ -1156,27 +1258,27 @@ You cannot delete it.
             QMessageBox.warning(self, "Warning", msg)
             return
         # else
-        self.imgList.get_curr_img().toggle_delete()    # type: ignore
-        if self.imgList.get_curr_img().to_delete:    # type: ignore
+        self.imgList.get_curr_img().toggle_delete()  # type: ignore
+        if self.imgList.get_curr_img().to_delete:  # type: ignore
             self.statusbar.flash_message("+ delete", cfg.MESSAGE_FLASH_TIME_1)
         else:
             self.statusbar.flash_message("- delete", cfg.MESSAGE_FLASH_TIME_1)
         self.redraw()
-        if self.imgList.get_curr_img().to_delete:    # type: ignore
+        if self.imgList.get_curr_img().to_delete:  # type: ignore
             self.imgList.jump_to_next_image()
 
     def toggle_img_wallpaper(self) -> None:
-        if self.imgList.get_curr_img().image_state == ImageProperty.IMAGE_STATE_PROBLEM:    # type: ignore
+        if self.imgList.get_curr_img().image_state == ImageProperty.IMAGE_STATE_PROBLEM:  # type: ignore
             self.statusbar.flash_message(red("no"))
             return
         # else
-        self.imgList.get_curr_img().toggle_wallpaper()    # type: ignore
-        if self.imgList.get_curr_img().to_wallpaper:    # type: ignore
+        self.imgList.get_curr_img().toggle_wallpaper()  # type: ignore
+        if self.imgList.get_curr_img().to_wallpaper:  # type: ignore
             self.statusbar.flash_message("+ wallpaper", cfg.MESSAGE_FLASH_TIME_1)
         else:
             self.statusbar.flash_message("- wallpaper", cfg.MESSAGE_FLASH_TIME_1)
         self.redraw()
-        if self.imgList.get_curr_img().to_wallpaper:    # type: ignore
+        if self.imgList.get_curr_img().to_wallpaper:  # type: ignore
             self.imgList.jump_to_next_image()
 
     def image_info(self) -> None:
@@ -1185,18 +1287,18 @@ You cannot delete it.
             self.play_error_sound()
             return
         # else
-        if self.imgList.get_curr_img().image_state == ImageProperty.IMAGE_STATE_PROBLEM:    # type: ignore
+        if self.imgList.get_curr_img().image_state == ImageProperty.IMAGE_STATE_PROBLEM:  # type: ignore
             self.statusbar.flash_message(red("no"))
             return
         # else
         if self.image_info_dialog:
-            self.image_info_dialog.close()    # allow just 1 instance; not needed if that window is modal
-        self.image_info_dialog = ImageInfo(self, self.imgList.get_curr_img())    # type: ignore
+            self.image_info_dialog.close()  # allow just 1 instance; not needed if that window is modal
+        self.image_info_dialog = ImageInfo(self, self.imgList.get_curr_img())  # type: ignore
 
     def important_files_and_folders(self) -> None:
         if self.important_files_and_folders_dialog:
-            self.important_files_and_folders_dialog.close()    # allow just 1 instance; not needed if that window is modal
-        self.important_files_and_folders_dialog = ImportantFilesAndFolders(self)    # type: ignore
+            self.important_files_and_folders_dialog.close()  # allow just 1 instance; not needed if that window is modal
+        self.important_files_and_folders_dialog = ImportantFilesAndFolders(self)  # type: ignore
 
     def slideshow(self) -> None:
         self.not_yet_implemented()
@@ -1211,28 +1313,38 @@ You cannot delete it.
             return
         # else
         self.statusbar.flash_message(blue("reload"))
-        self.imgList.get_curr_img().read(force=True)    # type: ignore
+        self.imgList.get_curr_img().read(force=True)  # type: ignore
         self.redraw()
 
     def save_image(self) -> None:
-        if not self.imgList.get_curr_img() or self.imgList.get_curr_img().image_state == ImageProperty.IMAGE_STATE_PROBLEM:    # type: ignore
+        if (
+            not self.imgList.get_curr_img()
+            or self.imgList.get_curr_img().image_state == ImageProperty.IMAGE_STATE_PROBLEM
+        ):  # type: ignore
             self.statusbar.flash_message(red("no"))
             self.play_error_sound()
             return
         # else
         options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog    # type: ignore
+        options |= QFileDialog.DontUseNativeDialog  # type: ignore
         filter = "Images (*.bmp *.jpg *.jpe *.jpeg *.png *.pbm *.pgm *.ppm *.xbm *.xpm)"
-        offer_fname = str(Path(self.settings.get_last_dir_save_as(), self.imgList.get_curr_img().get_file_name_only()))    # type: ignore
+        offer_fname = str(
+            Path(
+                self.settings.get_last_dir_save_as(),
+                self.imgList.get_curr_img().get_file_name_only(),
+            )
+        )  # type: ignore
         # print(offer_fname)
-        file_obj = QFileDialog.getSaveFileName(self,
-                                               caption="Save current image",
-                                               directory=offer_fname,
-                                               filter=filter,
-                                               options=options)
+        file_obj = QFileDialog.getSaveFileName(
+            self,
+            caption="Save current image",
+            directory=offer_fname,
+            filter=filter,
+            options=options,
+        )
         fname = file_obj[0]
         if fname:
-            res = self.imgList.get_curr_img().save_as(fname)    # type: ignore
+            res = self.imgList.get_curr_img().save_as(fname)  # type: ignore
             if res:
                 log.info(f"the file was saved as {fname}")
                 self.statusbar.flash_message(blue("saved"))
@@ -1266,12 +1378,11 @@ You cannot delete it.
             return
         # else
         options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog    # type: ignore
+        options |= QFileDialog.DontUseNativeDialog  # type: ignore
         offer_fname = "image_list.txt"
-        file_obj = QFileDialog.getSaveFileName(self,
-                                               caption="Save image list",
-                                               directory=offer_fname,
-                                               options=options)
+        file_obj = QFileDialog.getSaveFileName(
+            self, caption="Save image list", directory=offer_fname, options=options
+        )
         fname = file_obj[0]
         if fname:
             content = "\n".join(lst)
@@ -1286,7 +1397,7 @@ You cannot delete it.
             self.statusbar.flash_message(red("no image"))
             return
         # else
-        name = self.imgList.get_curr_img().get_absolute_path_or_url()    # type: ignore
+        name = self.imgList.get_curr_img().get_absolute_path_or_url()  # type: ignore
         opener.open_file_with_gimp(self, name)
 
     def open_with_browser(self) -> None:
@@ -1294,7 +1405,7 @@ You cannot delete it.
             self.statusbar.flash_message(red("no image"))
             return
         # else
-        name = self.imgList.get_curr_img().get_absolute_path_or_url()    # type: ignore
+        name = self.imgList.get_curr_img().get_absolute_path_or_url()  # type: ignore
         opener.open_file_with_browser(self, name)
 
     def find_duplicates(self) -> None:
@@ -1302,8 +1413,10 @@ You cannot delete it.
             QMessageBox.information(self, "Info", "There are no duplicates.")
             return
         # else, there is at least 1 image
-        if not self.imgList.get_curr_img().local_file:    # type: ignore
-            QMessageBox.information(self, "Info", "Finding duplicates works with <strong>local</strong> files only!")
+        if not self.imgList.get_curr_img().local_file:  # type: ignore
+            QMessageBox.information(
+                self, "Info", "Finding duplicates works with <strong>local</strong> files only!"
+            )
             return
         # else, we only have local file(s)
         # find and mark duplicates
@@ -1320,11 +1433,9 @@ file system, then <strong>commit</strong> your changes.
         QMessageBox.information(self, "Info", msg)
 
     def sequence_urls(self) -> None:
-        text, okPressed = QInputDialog.getText(self,
-                                               "Sequence URL",
-                                               "Sequence URL:" + " " * 80,
-                                               QLineEdit.Normal,
-                                               "")
+        text, okPressed = QInputDialog.getText(
+            self, "Sequence URL", "Sequence URL:" + " " * 80, QLineEdit.Normal, ""
+        )
         text = text.strip()
         if okPressed and text:
             what = autodetect.detect(text)
@@ -1337,11 +1448,9 @@ file system, then <strong>commit</strong> your changes.
                 self.play_error_sound()
 
     def image_url(self) -> None:
-        text, okPressed = QInputDialog.getText(self,
-                                               "Image URL",
-                                               "Image URL:" + " " * 80,
-                                               QLineEdit.Normal,
-                                               "")
+        text, okPressed = QInputDialog.getText(
+            self, "Image URL", "Image URL:" + " " * 80, QLineEdit.Normal, ""
+        )
         text = text.strip()
         if okPressed and text:
             what = autodetect.detect(text)
@@ -1369,15 +1478,13 @@ file system, then <strong>commit</strong> your changes.
     def url_folding(self) -> None:
         self.url_folding_window = UrlFolding()
         self.url_folding_window.show()
-        self.url_folding_window.setFixedSize(self.url_folding_window.size())    # disable resize
+        self.url_folding_window.setFixedSize(self.url_folding_window.size())  # disable resize
         self.url_folding_window.urlList.connect(self.open_urls)
 
     def menu_open_tumblr_post(self) -> None:
-        text, okPressed = QInputDialog.getText(self,
-                                               "Open Tumblr post",
-                                               "Complete URL:" + " " * 80,
-                                               QLineEdit.Normal,
-                                               "")
+        text, okPressed = QInputDialog.getText(
+            self, "Open Tumblr post", "Complete URL:" + " " * 80, QLineEdit.Normal, ""
+        )
         text = text.strip()
         if okPressed and text:
             what = autodetect.detect(text)
@@ -1399,7 +1506,9 @@ file system, then <strong>commit</strong> your changes.
         qr = self.frameGeometry()
         top_left = qr.topLeft()
         x_offset, y_offset = top_left.x(), top_left.y()
-        self.menu.popup(self.mapToGlobal(QPoint(x - x_offset, y - y_offset - self.menuBar().height())))
+        self.menu.popup(
+            self.mapToGlobal(QPoint(x - x_offset, y - y_offset - self.menuBar().height()))
+        )
 
     def toggle_menubar(self) -> None:
         if self.menubar.isVisible():
@@ -1424,7 +1533,9 @@ file system, then <strong>commit</strong> your changes.
             self.statusbar.flash_message(red("Where to? It's empty."))
             return
         # else
-        text, okPressed = QInputDialog.getText(self, "Go To Image", f"Enter a value between 1 and {total}:", QLineEdit.Normal, "")
+        text, okPressed = QInputDialog.getText(
+            self, "Go To Image", f"Enter a value between 1 and {total}:", QLineEdit.Normal, ""
+        )
         if okPressed and text:
             try:
                 value = int(text)
@@ -1437,28 +1548,30 @@ file system, then <strong>commit</strong> your changes.
                 self.statusbar.flash_message(red("invalid value"))
 
     def scroll_to_top(self) -> None:
-        self.scroll.verticalScrollBar().setValue(0)    # type: ignore
+        self.scroll.verticalScrollBar().setValue(0)  # type: ignore
 
     def scroll_down(self, offset: int = 100) -> None:
-        val = self.scroll.verticalScrollBar().value()    # type: ignore
-        self.scroll.verticalScrollBar().setValue(val + offset)    # type: ignore
+        val = self.scroll.verticalScrollBar().value()  # type: ignore
+        self.scroll.verticalScrollBar().setValue(val + offset)  # type: ignore
 
     def scroll_right(self) -> None:
-        val = self.scroll.horizontalScrollBar().value()    # type: ignore
-        self.scroll.horizontalScrollBar().setValue(val + 100)    # type: ignore
+        val = self.scroll.horizontalScrollBar().value()  # type: ignore
+        self.scroll.horizontalScrollBar().setValue(val + 100)  # type: ignore
 
     def scroll_up(self, offset: int = 100) -> None:
-        val = self.scroll.verticalScrollBar().value()    # type: ignore
-        self.scroll.verticalScrollBar().setValue(val - offset)    # type: ignore
+        val = self.scroll.verticalScrollBar().value()  # type: ignore
+        self.scroll.verticalScrollBar().setValue(val - offset)  # type: ignore
 
     def scroll_left(self) -> None:
-        val = self.scroll.horizontalScrollBar().value()    # type: ignore
-        self.scroll.horizontalScrollBar().setValue(val - 100)    # type: ignore
+        val = self.scroll.horizontalScrollBar().value()  # type: ignore
+        self.scroll.horizontalScrollBar().setValue(val - 100)  # type: ignore
 
     def copy_path_to_clipboard(self) -> None:
-        text = self.imgList.get_curr_img().get_absolute_path_or_url()    # type: ignore
+        text = self.imgList.get_curr_img().get_absolute_path_or_url()  # type: ignore
         helper.copy_text_to_clipboard(text)
-        msg = "{0} copied to clipboard".format("path" if self.imgList.get_curr_img().local_file else "URL")    # type: ignore
+        msg = "{0} copied to clipboard".format(
+            "path" if self.imgList.get_curr_img().local_file else "URL"
+        )  # type: ignore
         self.statusbar.flash_message(msg, wait=cfg.MESSAGE_FLASH_TIME_3)
 
     def toggle_show_image_path(self) -> None:
@@ -1486,7 +1599,7 @@ file system, then <strong>commit</strong> your changes.
     def toggle_auto_fit(self) -> None:
         self.auto_fit = not self.auto_fit
         if self.auto_fit:
-            self.auto_width = False    # disable the other
+            self.auto_width = False  # disable the other
             self.statusbar.mode_label.setText(bold("AUTO FIT ON"))
             self.hide_scrollbars()
         else:
@@ -1497,8 +1610,10 @@ file system, then <strong>commit</strong> your changes.
     def toggle_auto_width(self) -> None:
         self.auto_width = not self.auto_width
         if self.auto_width:
-            self.auto_fit = False    # disable the other
-            self.statusbar.mode_label.setText(bold("AUTO WIDTH {0}%".format(cfg.IMG_WIDTH_TO_WINDOW_WIDTH_IN_PERCENT)))
+            self.auto_fit = False  # disable the other
+            self.statusbar.mode_label.setText(
+                bold("AUTO WIDTH {0}%".format(cfg.IMG_WIDTH_TO_WINDOW_WIDTH_IN_PERCENT))
+            )
             self.hide_scrollbars()
         else:
             self.statusbar.mode_label.setText(gray("AUTO WIDTH OFF"))
@@ -1511,7 +1626,7 @@ file system, then <strong>commit</strong> your changes.
             return
         # else
         self.statusbar.flash_message("zoom in")
-        self.imgList.get_curr_img().zoom_in()    # type: ignore
+        self.imgList.get_curr_img().zoom_in()  # type: ignore
         self.redraw()
 
     def zoom_out(self) -> None:
@@ -1520,7 +1635,7 @@ file system, then <strong>commit</strong> your changes.
             return
         # else
         self.statusbar.flash_message("zoom out")
-        self.imgList.get_curr_img().zoom_out()    # type: ignore
+        self.imgList.get_curr_img().zoom_out()  # type: ignore
         self.redraw()
 
     def zoom_reset(self) -> None:
@@ -1529,7 +1644,7 @@ file system, then <strong>commit</strong> your changes.
             return
         # else
         self.statusbar.flash_message("reset zoom")
-        self.imgList.get_curr_img().zoom_reset()    # type: ignore
+        self.imgList.get_curr_img().zoom_reset()  # type: ignore
         self.redraw()
 
     def toggle_fullscreen(self) -> None:
@@ -1548,15 +1663,19 @@ file system, then <strong>commit</strong> your changes.
 
     def toggle_fit_window_to_image(self) -> None:
         if self._fit_window_to_image_status == OFF:
-            self._fit_window_to_image_width = self.geometry().width()    # type: ignore
-            self._fit_window_to_image_height = self.geometry().height()    # type: ignore
+            self._fit_window_to_image_width = self.geometry().width()  # type: ignore
+            self._fit_window_to_image_height = self.geometry().height()  # type: ignore
             #
-            self.resize(self.imgList.get_curr_img().zoomed_img.width(),    # type: ignore
-                        self.imgList.get_curr_img().zoomed_img.height())    # type: ignore
+            self.resize(
+                self.imgList.get_curr_img().zoomed_img.width(),  # type: ignore
+                self.imgList.get_curr_img().zoomed_img.height(),
+            )  # type: ignore
             self._fit_window_to_image_status = ON
         else:
-            self.resize(self._fit_window_to_image_width,    # type: ignore
-                        self._fit_window_to_image_height)
+            self.resize(
+                self._fit_window_to_image_width,  # type: ignore
+                self._fit_window_to_image_height,
+            )
             self._fit_window_to_image_status = OFF
 
     def fit_image_to_window(self) -> None:
@@ -1565,7 +1684,7 @@ file system, then <strong>commit</strong> your changes.
             return
         # else
         self.statusbar.flash_message("fit to window")
-        self.imgList.get_curr_img().fit_img_to_window()    # type: ignore
+        self.imgList.get_curr_img().fit_img_to_window()  # type: ignore
         self.redraw()
 
     def fit_image_to_window_width(self) -> None:
@@ -1574,14 +1693,14 @@ file system, then <strong>commit</strong> your changes.
             return
         # else
         self.statusbar.flash_message("fit width")
-        self.imgList.get_curr_img().fit_img_to_window_width()    # type: ignore
+        self.imgList.get_curr_img().fit_img_to_window_width()  # type: ignore
         self.redraw()
 
     def toggle_maximized(self) -> None:
         if self.isFullScreen():
-            self.toggle_fullscreen()    # back to normal
-            self.toggle_maximized()     # maximize it
-            return    # stop recursion, keep it maximized
+            self.toggle_fullscreen()  # back to normal
+            self.toggle_maximized()  # maximize it
+            return  # stop recursion, keep it maximized
         #
         if not self.isMaximized():
             self.showMaximized()
@@ -1596,10 +1715,12 @@ file system, then <strong>commit</strong> your changes.
     def show_logo(self) -> None:
         scale = 0.3
         pm = ImageProperty.to_pixmap(cfg.LOGO, self.cache)[0]
-        pm = pm.scaled(int(self.geometry().width() * scale),
-                       int(self.geometry().height() * scale),
-                       Qt.KeepAspectRatio,
-                       Qt.SmoothTransformation)
+        pm = pm.scaled(
+            int(self.geometry().width() * scale),
+            int(self.geometry().height() * scale),
+            Qt.KeepAspectRatio,
+            Qt.SmoothTransformation,
+        )
         self.image_label.setPixmap(pm)
         self.image_label.resize(pm.width(), pm.height())
 
@@ -1620,14 +1741,19 @@ file system, then <strong>commit</strong> your changes.
         if self.imgList.get_curr_img() is None:
             return
         #
-        pm = self.imgList.get_curr_img().original_img.scaled(self.imgList.get_curr_img().zoom_ratio * self.geometry().width(),    # type: ignore
-                                               self.imgList.get_curr_img().zoom_ratio * self.geometry().height(),    # type: ignore
-                                               Qt.KeepAspectRatio,
-                                               Qt.SmoothTransformation)
+        pm = self.imgList.get_curr_img().original_img.scaled(
+            self.imgList.get_curr_img().zoom_ratio * self.geometry().width(),  # type: ignore
+            self.imgList.get_curr_img().zoom_ratio * self.geometry().height(),  # type: ignore
+            Qt.KeepAspectRatio,
+            Qt.SmoothTransformation,
+        )
         # avoid upscale
-        if pm.width() > self.imgList.get_curr_img().original_img.width() or pm.height() > self.imgList.get_curr_img().original_img.height():    # type: ignore
-            pm = self.imgList.get_curr_img().original_img    # type: ignore
-        self.imgList.get_curr_img().set_zoomed_img(pm)    # type: ignore
+        if (
+            pm.width() > self.imgList.get_curr_img().original_img.width()
+            or pm.height() > self.imgList.get_curr_img().original_img.height()
+        ):  # type: ignore
+            pm = self.imgList.get_curr_img().original_img  # type: ignore
+        self.imgList.get_curr_img().set_zoomed_img(pm)  # type: ignore
         self.redraw()
 
     def redraw(self) -> None:
@@ -1637,33 +1763,51 @@ file system, then <strong>commit</strong> your changes.
             return
         #
         if self.auto_fit:
-            self.imgList.get_curr_img().fit_img_to_window()    # type: ignore
+            self.imgList.get_curr_img().fit_img_to_window()  # type: ignore
         if self.auto_width:
-            self.imgList.get_curr_img().fit_img_to_window_width()    # type: ignore
-        pm = self.imgList.get_curr_img().zoomed_img    # type: ignore
-        self.image_label.setPixmap(pm)    # type: ignore
-        self.image_label.resize(pm.width(), pm.height())    # type: ignore
+            self.imgList.get_curr_img().fit_img_to_window_width()  # type: ignore
+        pm = self.imgList.get_curr_img().zoomed_img  # type: ignore
+        self.image_label.setPixmap(pm)  # type: ignore
+        self.image_label.resize(pm.width(), pm.height())  # type: ignore
         #
-        resolution = "{w} x {h}".format(w=self.imgList.get_curr_img().original_img.width(), h=self.imgList.get_curr_img().original_img.height())    # type: ignore
+        resolution = "{w} x {h}".format(
+            w=self.imgList.get_curr_img().original_img.width(),
+            h=self.imgList.get_curr_img().original_img.height(),
+        )  # type: ignore
         # file_size = helper.file_size_fmt(self.imgList.curr_img.file_size) if self.imgList.curr_img.file_size > -1 else ""
-        file_size_hr = self.imgList.get_curr_img().get_file_size(human_readable=True)    # type: ignore
-        zoom = int(self.imgList.get_curr_img().zoom_ratio * 100)    # type: ignore
+        file_size_hr = self.imgList.get_curr_img().get_file_size(human_readable=True)  # type: ignore
+        zoom = int(self.imgList.get_curr_img().zoom_ratio * 100)  # type: ignore
         #
-        self.info_line.setText(green("{0} of {1}".format(pretty_num(self.imgList.get_curr_img_idx() + 1), pretty_num(len(self.imgList.get_list_of_images())))))
+        self.info_line.setText(
+            green(
+                "{0} of {1}".format(
+                    pretty_num(self.imgList.get_curr_img_idx() + 1),
+                    pretty_num(len(self.imgList.get_list_of_images())),
+                )
+            )
+        )
         #
-        self.path_line.setText(green(self.imgList.get_curr_img().get_file_name_or_url()))    # type: ignore
+        self.path_line.setText(green(self.imgList.get_curr_img().get_file_name_or_url()))  # type: ignore
         #
-        text = green(self.imgList.get_curr_img().get_short_flags())    # type: ignore
+        text = green(self.imgList.get_curr_img().get_short_flags())  # type: ignore
         self.flags_line.setText(text)
         #
-        self.statusbar.curr_pos_label.setText("{0} of {1}".format(pretty_num(self.imgList.get_curr_img_idx() + 1),
-                                                                  pretty_num(len(self.imgList.get_list_of_images()))))
-        self.statusbar.file_name_label.setText("{0}    {1}".format(helper.shorten(self.imgList.get_curr_img().get_file_name_or_url()),    # type: ignore
-                                                                   file_size_hr))
+        self.statusbar.curr_pos_label.setText(
+            "{0} of {1}".format(
+                pretty_num(self.imgList.get_curr_img_idx() + 1),
+                pretty_num(len(self.imgList.get_list_of_images())),
+            )
+        )
+        self.statusbar.file_name_label.setText(
+            "{0}    {1}".format(
+                helper.shorten(self.imgList.get_curr_img().get_file_name_or_url()),  # type: ignore
+                file_size_hr,
+            )
+        )
         self.statusbar.resolution_label.setText(f"{resolution} @ {zoom}%")
         # self.statusbar.memory_label.setText(helper.get_memory_usage())
-        self.set_title(self.imgList.get_curr_img().get_file_name_only())    # type: ignore
-        if self.imgList.get_curr_img().image_state == ImageProperty.IMAGE_STATE_PROBLEM:    # type: ignore
+        self.set_title(self.imgList.get_curr_img().get_file_name_only())  # type: ignore
+        if self.imgList.get_curr_img().image_state == ImageProperty.IMAGE_STATE_PROBLEM:  # type: ignore
             self.statusbar.flash_message(red("problem"))
 
         p = self.img_view.geometry().topRight()
@@ -1707,16 +1851,16 @@ Do you really want to quit?
 
 Tip: hit No and commit your changes.
 """.strip()
-            reply = QMessageBox.question(self,
-                                         'Quit Message',
-                                         msg,
-                                         QMessageBox.Yes | QMessageBox.No,
-                                         QMessageBox.No)
+            reply = QMessageBox.question(
+                self, "Quit Message", msg, QMessageBox.Yes | QMessageBox.No, QMessageBox.No
+            )
 
             if reply == QMessageBox.Yes:
                 event.accept()
             else:
                 event.ignore()
+
+
 # endclass MainWindow(QMainWindow)
 
 
@@ -1738,13 +1882,17 @@ def check_api_keys() -> None:
         log.info("imgur API keys were found")
 
 
-def main(argv) -> None:
+def main(argv=None) -> None:
+    if not argv:
+        argv = sys.argv
+    #
     check_api_keys()
     #
     App = QApplication(argv)
     window = MainWindow(argv)
     window.show()
     sys.exit(App.exec())
+
 
 ##############################################################################
 
