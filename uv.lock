@@ -122,6 +122,7 @@ dependencies = [
     { name = "imgurpython" },
     { name = "psutil" },
     { name = "pyqt5" },
+    { name = "pyqt5-qt5" },
     { name = "pytumblr" },
     { name = "pyyaml" },
 ]
@@ -139,6 +140,7 @@ requires-dist = [
     { name = "imgurpython", specifier = ">=1.1.7" },
     { name = "psutil", specifier = ">=6.0.0" },
     { name = "pyqt5", specifier = ">=5.15.11" },
+    { name = "pyqt5-qt5", specifier = "==5.15.14" },
     { name = "pytumblr", specifier = ">=0.1.2" },
     { name = "pyyaml", specifier = ">=6.0.2" },
 ]
@@ -239,12 +241,12 @@ wheels = [
 
 [[package]]
 name = "pyqt5-qt5"
-version = "5.15.15"
+version = "5.15.14"
 source = { registry = "https://pypi.org/simple" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/4a/6e/a5789bac6310208756fc6a36fd7e01caa86ea6ae7abbb5922dcea003a215/PyQt5_Qt5-5.15.15-py3-none-macosx_10_13_x86_64.whl", hash = "sha256:eb74072935958a830887115b1de1ff26341fc2d5881b28129de39612b10a260e", size = 39147807 },
-    { url = "https://files.pythonhosted.org/packages/92/4c/c9026ca280f2cd4bef562cfb0a5050eb23f1e7fe1b85aa8455eb6ea437bf/PyQt5_Qt5-5.15.15-py3-none-macosx_11_0_arm64.whl", hash = "sha256:f8b174725fbe29c1a22f8acce5798933a65c8a083f1d9833ff212479ec2b3c14", size = 36953104 },
-    { url = "https://files.pythonhosted.org/packages/95/70/1ba9b828387f42e0812b496ed637a950bf57a5d59b844d034841e8f9fb4f/PyQt5_Qt5-5.15.15-py3-none-manylinux2014_x86_64.whl", hash = "sha256:611505d04ffb06a5e5bcf98f5ff0e4e15ba7785565ccbe7bd3b2e40642ea3bdd", size = 59827278 },
+    { url = "https://files.pythonhosted.org/packages/41/6c/fb7bfdf7345ef3ce8b1ed8ae67374cae177b0ea89928490de063932ae284/PyQt5_Qt5-5.15.14-py3-none-macosx_10_13_x86_64.whl", hash = "sha256:c89b35b2aaf24d2805cc76fe31880c77b7f7557db8aafb26f1015f1bba7031d6", size = 38789477 },
+    { url = "https://files.pythonhosted.org/packages/bf/b4/99c33cfe20b58426302783096a882a3defef0bc594c7891ff58c6122132c/PyQt5_Qt5-5.15.14-py3-none-macosx_11_0_arm64.whl", hash = "sha256:730da7e6a97f6bad1b6df21082fe625647730418bc83e20cbc2ff6401ed0a8be", size = 36675720 },
+    { url = "https://files.pythonhosted.org/packages/2d/4c/5c9824e9844d03e2a32e7e89b28f7fd55765515dfabd4e4f2bb1f16a6d75/PyQt5_Qt5-5.15.14-py3-none-manylinux2014_x86_64.whl", hash = "sha256:aa3911276b1a1aa9b5b9cba687ef905faddd706980d34e234312591c3d3cbef8", size = 60457508 },
 ]
 
 [[package]]
