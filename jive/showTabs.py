@@ -242,9 +242,9 @@ class Ui_Dialog(object):
 
         self.retranslateUi(Dialog)
         self.tabs.setCurrentIndex(4)
-        self.buttonBox.accepted.connect(Dialog.accept) # type: ignore
-        self.buttonBox.rejected.connect(Dialog.reject) # type: ignore
-        self.clearButton_2.clicked.connect(self.miniLogTextEdit.clear) # type: ignore
+        self.buttonBox.accepted.connect(Dialog.accept)
+        self.buttonBox.rejected.connect(Dialog.reject)
+        self.clearButton_2.clicked.connect(self.miniLogTextEdit.clear)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
         Dialog.setTabOrder(self.urlLineEdit, self.distanceSpinBox)
         Dialog.setTabOrder(self.distanceSpinBox, self.getLinksCheckBox)

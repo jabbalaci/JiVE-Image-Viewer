@@ -7,6 +7,7 @@ run:
 _fn-process-ui in out:
     pyuic5 {{in}} -o {{out}}
     sed -i "s/import icons_rc/from jive import icons_rc/g" {{out}}
+    sed -i "s/ # type: ignore$//" {{out}}
 
 compile_ui:
     just _fn-process-ui "jive/tabs.ui" "jive/showTabs.py"

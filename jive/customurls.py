@@ -42,14 +42,16 @@ class CustomUrls(QDialog, showUrlList.Ui_Dialog):
 
     def read_from_file(self) -> None:
         options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog    # type: ignore
+        options |= QFileDialog.DontUseNativeDialog
         filter = "Text files (*.txt)"
-        file_obj = QFileDialog.getOpenFileName(self,
-                                               caption="Open Text File",
-                                               # directory=str(Path(self.settings.get_last_file_opened()).parent),
-                                               filter=filter,
-                                               initialFilter=filter,
-                                               options=options)
+        file_obj = QFileDialog.getOpenFileName(
+            self,
+            caption="Open Text File",
+            # directory=str(Path(self.settings.get_last_file_opened()).parent),
+            filter=filter,
+            initialFilter=filter,
+            options=options,
+        )
         fname = file_obj[0]
         if os.path.isfile(fname):
             with open(fname) as f:
@@ -60,7 +62,9 @@ class CustomUrls(QDialog, showUrlList.Ui_Dialog):
                 line = line.rstrip("\n")
                 self.textEdit.appendPlainText(line)
             for _ in range(cnt):
-                self.textEdit.moveCursor(QtGui.QTextCursor.Up, QtGui.QTextCursor.MoveAnchor)  # go back to top
+                self.textEdit.moveCursor(
+                    QtGui.QTextCursor.Up, QtGui.QTextCursor.MoveAnchor
+                )  # go back to top
 
     def ok_was_clicked(self) -> None:
         lst = self.textEdit.toPlainText().strip().splitlines()

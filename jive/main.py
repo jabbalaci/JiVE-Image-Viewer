@@ -903,7 +903,7 @@ class MainWindow(QMainWindow):
 
     def open_dir(self) -> None:
         options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog  # type: ignore
+        options |= QFileDialog.DontUseNativeDialog
         folder = QFileDialog.getExistingDirectory(
             self,
             caption="Open Image Directory",
@@ -917,7 +917,7 @@ class MainWindow(QMainWindow):
 
     def open_file(self) -> None:
         options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog  # type: ignore
+        options |= QFileDialog.DontUseNativeDialog
         filter = "Images (*.bmp *.jpg *.jpe *.jpeg *.png *.pbm *.pgm *.ppm *.xbm *.xpm)"
         file_obj = QFileDialog.getOpenFileName(
             self,
@@ -1320,20 +1320,20 @@ You cannot delete it.
         if (
             not self.imgList.get_curr_img()
             or self.imgList.get_curr_img().image_state == ImageProperty.IMAGE_STATE_PROBLEM
-        ):  # type: ignore
+        ):
             self.statusbar.flash_message(red("no"))
             self.play_error_sound()
             return
         # else
         options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog  # type: ignore
+        options |= QFileDialog.DontUseNativeDialog
         filter = "Images (*.bmp *.jpg *.jpe *.jpeg *.png *.pbm *.pgm *.ppm *.xbm *.xpm)"
         offer_fname = str(
             Path(
                 self.settings.get_last_dir_save_as(),
                 self.imgList.get_curr_img().get_file_name_only(),
             )
-        )  # type: ignore
+        )
         # print(offer_fname)
         file_obj = QFileDialog.getSaveFileName(
             self,
@@ -1378,7 +1378,7 @@ You cannot delete it.
             return
         # else
         options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog  # type: ignore
+        options |= QFileDialog.DontUseNativeDialog
         offer_fname = "image_list.txt"
         file_obj = QFileDialog.getSaveFileName(
             self, caption="Save image list", directory=offer_fname, options=options
@@ -1571,7 +1571,7 @@ file system, then <strong>commit</strong> your changes.
         helper.copy_text_to_clipboard(text)
         msg = "{0} copied to clipboard".format(
             "path" if self.imgList.get_curr_img().local_file else "URL"
-        )  # type: ignore
+        )
         self.statusbar.flash_message(msg, wait=cfg.MESSAGE_FLASH_TIME_3)
 
     def toggle_show_image_path(self) -> None:
@@ -1669,7 +1669,7 @@ file system, then <strong>commit</strong> your changes.
             self.resize(
                 self.imgList.get_curr_img().zoomed_img.width(),  # type: ignore
                 self.imgList.get_curr_img().zoomed_img.height(),
-            )  # type: ignore
+            )
             self._fit_window_to_image_status = ON
         else:
             self.resize(
@@ -1751,7 +1751,7 @@ file system, then <strong>commit</strong> your changes.
         if (
             pm.width() > self.imgList.get_curr_img().original_img.width()
             or pm.height() > self.imgList.get_curr_img().original_img.height()
-        ):  # type: ignore
+        ):
             pm = self.imgList.get_curr_img().original_img  # type: ignore
         self.imgList.get_curr_img().set_zoomed_img(pm)  # type: ignore
         self.redraw()
@@ -1773,7 +1773,7 @@ file system, then <strong>commit</strong> your changes.
         resolution = "{w} x {h}".format(
             w=self.imgList.get_curr_img().original_img.width(),
             h=self.imgList.get_curr_img().original_img.height(),
-        )  # type: ignore
+        )
         # file_size = helper.file_size_fmt(self.imgList.curr_img.file_size) if self.imgList.curr_img.file_size > -1 else ""
         file_size_hr = self.imgList.get_curr_img().get_file_size(human_readable=True)  # type: ignore
         zoom = int(self.imgList.get_curr_img().zoom_ratio * 100)  # type: ignore

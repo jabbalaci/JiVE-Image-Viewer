@@ -21,7 +21,10 @@ jive = "jive.main:main"
 [tool.uv]
 dev-dependencies = [
     "mypy>=1.11.2",
+    "pyqt5-stubs>=5.15.6.0",
     "pytest>=8.3.3",
+    "types-pyyaml>=6.0.12.20240917",
+    "types-requests>=2.32.0.20240914",
 ]
 
 [build-system]

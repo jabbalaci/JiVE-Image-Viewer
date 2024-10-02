@@ -164,7 +164,7 @@ class Ui_Dialog(object):
         self.label_14.setObjectName("label_14")
 
         self.retranslateUi(Dialog)
-        self.cancelButton.clicked.connect(Dialog.close) # type: ignore
+        self.cancelButton.clicked.connect(Dialog.close)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
         Dialog.setTabOrder(self.sequenceUrlEdit, self.unpackButton)
         Dialog.setTabOrder(self.unpackButton, self.packButton)
