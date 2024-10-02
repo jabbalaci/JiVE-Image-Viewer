@@ -4,15 +4,14 @@ cat:
 run:
     uv run start.py
 
+_fn-process-ui in out:
+    pyuic5 {{in}} -o {{out}}
+    sed -i "s/import icons_rc/from jive import icons_rc/g" {{out}}
+
 compile_ui:
-    pyuic5 "jive/tabs.ui" -o "jive/showTabs.py"
-    sed -i "s/import icons_rc/from jive import icons_rc/g" "jive/showTabs.py"
-
-    pyuic5 "jive/urllist.ui" -o "jive/showUrlList.py"
-    sed -i "s/import icons_rc/from jive import icons_rc/g" "jive/showUrlList.py"
-
-    pyuic5 "jive/folding.ui" -o "jive/showFolding.py"
-    sed -i "s/import icons_rc/from jive import icons_rc/g" "jive/showFolding.py"
+    just _fn-process-ui "jive/tabs.ui" "jive/showTabs.py"
+    just _fn-process-ui "jive/urllist.ui" "jive/showUrlList.py"
+    just _fn-process-ui "jive/folding.ui" "jive/showFolding.py"
 
 compile_rc:
     pyrcc5 "jive/icons.qrc" -o "jive/icons_rc.py"
