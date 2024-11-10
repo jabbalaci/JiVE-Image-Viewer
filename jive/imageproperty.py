@@ -20,6 +20,7 @@ class ImageProperty:
     """
     Properties of the current (previous / next) image(s).
     """
+
     IMAGE_STATE_OK = 1
     IMAGE_STATE_PROBLEM = 2
 
@@ -33,10 +34,10 @@ class ImageProperty:
         self.local_file = self._is_local_file(self.name)
         self.parent = parent
         self.zoom_ratio = 1.0
-        self.original_img: Optional[QPixmap] = None     # will be set in read()
-        self.image_state: Optional[int] = None          # will be set in read()
-        self.zoomed_img: Optional[QPixmap] = None       # will be set in read()
-        self.file_size = -1                             # will be set in read()
+        self.original_img: Optional[QPixmap] = None  # will be set in read()
+        self.image_state: Optional[int] = None  # will be set in read()
+        self.zoomed_img: Optional[QPixmap] = None  # will be set in read()
+        self.file_size = -1  # will be set in read()
         self.to_save = False
         self.to_delete = False
         self.to_wallpaper = False
@@ -59,21 +60,20 @@ class ImageProperty:
                         pm = QPixmap(fname)
                         file_size = os.path.getsize(fname)
                     else:
-
                         r = requests.get(url, headers=cfg.headers, timeout=cfg.REQUESTS_TIMEOUT)
-                        if r.status_code == 403:    # forbidden
+                        if r.status_code == 403:  # forbidden
                             # log.debug("status code: 403")
                             referer = helper.get_referer(url)
                             copy = cfg.headers.copy()
-                            copy.update({'referer': referer})
+                            copy.update({"referer": referer})
                             r = requests.get(url, headers=copy, timeout=cfg.REQUESTS_TIMEOUT)
                         data = r.content
                         pm = QPixmap()
                         pm.loadFromData(data)
                         try:
-                            file_size = int(r.headers['Content-Length'])
+                            file_size = int(r.headers["Content-Length"])
                         except KeyError:
-                            pass    # file_size remains -1
+                            pass  # file_size remains -1
                         if cache.enabled():
                             cache.save(url, data)
             #
@@ -83,9 +83,13 @@ class ImageProperty:
             return (pm, cls.IMAGE_STATE_OK, file_size)
         except:
             log.warning(f"cannot read the image {name}")
-            return (QPixmap(str(Path(cfg.ASSETS_DIR, "not_found.png"))), cls.IMAGE_STATE_PROBLEM, -1)
+            return (
+                QPixmap(str(Path(cfg.ASSETS_DIR, "not_found.png"))),
+                cls.IMAGE_STATE_PROBLEM,
+                -1,
+            )
 
-    def read(self, force: bool = False, preload: bool = False) -> 'ImageProperty':
+    def read(self, force: bool = False, preload: bool = False) -> "ImageProperty":
         """
         Construct the pixmap for the current image.
 
@@ -102,7 +106,9 @@ class ImageProperty:
             self.free()
 
         if self.original_img is None:
-            self.original_img, self.image_state, self.file_size = self.to_pixmap(self.name, self.parent.cache)
+            self.original_img, self.image_state, self.file_size = self.to_pixmap(
+                self.name, self.parent.cache
+            )
 
         if preload == False:
             self.zoomed_img = self.calculate_zoomed_image()
@@ -133,11 +139,13 @@ class ImageProperty:
 
     def calculate_zoomed_image(self) -> QPixmap:
         if self.original_img:
-            self.zoomed_img = self.original_img.scaled(int(self.zoom_ratio * self.original_img.width()),
-                                                       int(self.zoom_ratio * self.original_img.height()),
-                                                       Qt.KeepAspectRatio,
-                                                       Qt.SmoothTransformation)
-        return self.zoomed_img    # type: ignore
+            self.zoomed_img = self.original_img.scaled(
+                int(self.zoom_ratio * self.original_img.width()),
+                int(self.zoom_ratio * self.original_img.height()),
+                Qt.KeepAspectRatio,
+                Qt.SmoothTransformation,
+            )
+        return self.zoomed_img  # type: ignore
 
     def set_zoomed_img(self, pm: QPixmap) -> None:
         self.zoomed_img = pm
@@ -153,21 +161,19 @@ class ImageProperty:
     def fit_img_to_window(self) -> None:
         width, height = self.parent.available_width_and_height()
         if self.original_img:
-            pm = self.original_img.scaled(width,
-                                          height,
-                                          Qt.KeepAspectRatio,
-                                          Qt.SmoothTransformation)
+            pm = self.original_img.scaled(
+                width, height, Qt.KeepAspectRatio, Qt.SmoothTransformation
+            )
             self.set_zoomed_img(pm)
 
     def fit_img_to_window_width(self) -> None:
         window_width = self.parent.geometry().width()
-        new_width = window_width * (cfg.IMG_WIDTH_TO_WINDOW_WIDTH_IN_PERCENT / 100)
-        new_height = new_width / self.get_aspect_ratio()
+        new_width = int(window_width * (cfg.IMG_WIDTH_TO_WINDOW_WIDTH_IN_PERCENT / 100))
+        new_height = int(new_width / self.get_aspect_ratio())
         if self.original_img:
-            pm = self.original_img.scaled(new_width,
-                                          new_height,
-                                          Qt.KeepAspectRatio,
-                                          Qt.SmoothTransformation)
+            pm = self.original_img.scaled(
+                new_width, new_height, Qt.KeepAspectRatio, Qt.SmoothTransformation
+            )
             self.set_zoomed_img(pm)
 
     def get_file_name_only(self) -> str:
@@ -186,7 +192,7 @@ class ImageProperty:
             return self.name
 
     def get_aspect_ratio(self) -> float:
-        return self.original_img.width() / self.original_img.height()    # type: ignore
+        return self.original_img.width() / self.original_img.height()  # type: ignore
 
     def get_file_size(self, human_readable: bool = False) -> Union[int, str]:
         if not human_readable:
@@ -287,7 +293,9 @@ class ImageProperty:
         except FileNotSaved:
             log.warning(f"couldn't save {self.get_absolute_path_or_url()} to {folder}")
         except:
-            log.warning(f"unknown exception happened while saving {self.get_absolute_path_or_url()} to {folder}")
+            log.warning(
+                f"unknown exception happened while saving {self.get_absolute_path_or_url()} to {folder}"
+            )
         #
         return False
 
@@ -309,6 +317,8 @@ class ImageProperty:
         except FileNotSaved:
             log.warning(f"couldn't save {self.get_absolute_path_or_url()} as {dest}")
         except:
-            log.warning(f"unknown exception happened while saving {self.get_absolute_path_or_url()} as {dest}")
+            log.warning(
+                f"unknown exception happened while saving {self.get_absolute_path_or_url()} as {dest}"
+            )
         #
         return False
