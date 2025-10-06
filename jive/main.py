@@ -330,7 +330,7 @@ class MainWindow(QMainWindow):
         urls: List[ImageWithExtraInfo] = subreddit.read_subreddit(
             subreddit_name, after_id, statusbar=self.statusbar, mainWindow=self
         )
-        self.open_urls(urls)
+        self.open_urls(urls, subreddit=subreddit_name)
 
     def open_tumblr_blog(self, blog_name: str) -> None:
         urls: List[ImageWithExtraInfo] = tumblr_blog.get_photo_urls(
@@ -338,10 +338,14 @@ class MainWindow(QMainWindow):
         )
         self.open_urls(urls)
 
-    def open_urls(self, urls: Union[List[str], List[ImageWithExtraInfo]]) -> None:
+    def open_urls(self, urls: Union[List[str], List[ImageWithExtraInfo]], subreddit=None) -> None:
         if len(urls) == 0:
             log.warning("no images could be extracted")
-            self.statusbar.flash_message(red("no images found"))
+            msg = red("no images found")
+            if subreddit:
+                msg += f" [/r/{subreddit}]"
+            #
+            self.statusbar.flash_message(msg)
             return
         # else
         self.imgList.set_list_of_images([ImageProperty(url, self) for url in urls])
