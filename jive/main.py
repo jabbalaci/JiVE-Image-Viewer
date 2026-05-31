@@ -19,7 +19,7 @@ if __name__ == "__main__":
     import os
     import sys
 
-    # This is a trick. This way I can launch jive.py (this file) during
+    # This is a trick. This way I can launch main.py (this file) during
     # the development and I don't need to start ../start.py every time.
     folder = os.path.join(os.path.dirname(__file__), "..")
     if folder not in sys.path:
@@ -73,7 +73,15 @@ from jive import shortcuts as scuts
 from jive import statusbar as sbar
 from jive.commit import Commit
 from jive.customurls import CustomUrls
-from jive.extractors import fuskator, imagefap, imgur, sequence, subreddit, tumblr, tumblr_blog
+from jive.extractors import (
+    fuskator,
+    imagefap,
+    imgur,
+    sequence,
+    subreddit,
+    tumblr,
+    tumblr_blog,
+)
 from jive.helper import blue, bold, gray, green, pretty_num, red
 from jive.imageinfo import ImageInfo
 from jive.imagelist import ImageList
@@ -147,23 +155,33 @@ class MainWindow(QMainWindow):
 
         # it must be here, before calling init_ui()
         self.show_subreddits = (
-            True if cfg.PREFERENCES_OPTIONS.get("enable_subreddits", "") == "yes" else False
+            True
+            if cfg.PREFERENCES_OPTIONS.get("enable_subreddits", "") == "yes"
+            else False
         )
 
         # it must be here, before calling init_ui()
         self.show_bookmarks = (
-            True if cfg.PREFERENCES_OPTIONS.get("enable_bookmarks", "") == "yes" else False
+            True
+            if cfg.PREFERENCES_OPTIONS.get("enable_bookmarks", "") == "yes"
+            else False
         )
 
         self.init_ui()
 
         self.commit = Commit(self)  # it must come after the init_ui()
 
-        self.cache = cache.Cache(cfg.PREFERENCES_OPTIONS, cfg.PLATFORM_SETTINGS["cache_dir"])
+        self.cache = cache.Cache(
+            cfg.PREFERENCES_OPTIONS, cfg.PLATFORM_SETTINGS["cache_dir"]
+        )
 
-        self.preload = True if cfg.PREFERENCES_OPTIONS.get("preload", "") == "yes" else False
+        self.preload = (
+            True if cfg.PREFERENCES_OPTIONS.get("preload", "") == "yes" else False
+        )
 
-        self.use_audio = True if cfg.PREFERENCES_OPTIONS.get("use_audio", "") == "yes" else False
+        self.use_audio = (
+            True if cfg.PREFERENCES_OPTIONS.get("use_audio", "") == "yes" else False
+        )
         if self.use_audio:
             self.error_sound = QSound(cfg.ERROR_SOUND, self)
 
@@ -279,7 +297,9 @@ class MainWindow(QMainWindow):
             self.redraw()
 
     def open_local_file(self, local_file: str, redraw: bool = False) -> None:
-        self.imgList.set_list_of_images(self.read_local_dir(str(Path(local_file).parent)))
+        self.imgList.set_list_of_images(
+            self.read_local_dir(str(Path(local_file).parent))
+        )
         if len(self.imgList.get_list_of_images()) == 0:
             log.warning("no images were found")
             return
@@ -338,7 +358,9 @@ class MainWindow(QMainWindow):
         )
         self.open_urls(urls)
 
-    def open_urls(self, urls: Union[List[str], List[ImageWithExtraInfo]], subreddit=None) -> None:
+    def open_urls(
+        self, urls: Union[List[str], List[ImageWithExtraInfo]], subreddit=None
+    ) -> None:
         if len(urls) == 0:
             log.warning("no images could be extracted")
             msg = red("no images found")
@@ -504,7 +526,11 @@ class MainWindow(QMainWindow):
 
     def menu_open_subreddit(self) -> None:
         text, okPressed = QInputDialog.getText(
-            self, "Open subreddit", "Subreddit's name or its URL:" + " " * 50, QLineEdit.Normal, ""
+            self,
+            "Open subreddit",
+            "Subreddit's name or its URL:" + " " * 50,
+            QLineEdit.Normal,
+            "",
         )
         text = text.strip()
         if okPressed and text:
@@ -533,7 +559,10 @@ class MainWindow(QMainWindow):
                 if kind == autodetect.AutoDetectEnum.imgur_album:
                     self.open_imgur_album(text)
                     self.redraw()
-                if kind == autodetect.AutoDetectEnum.imgur_html_page_with_embedded_image:
+                if (
+                    kind
+                    == autodetect.AutoDetectEnum.imgur_html_page_with_embedded_image
+                ):
                     img = what[1]  # type: ignore
                     log.info("it seems to be an imgur HTML page with an embedded image")
                     self.open_remote_url_file(img)  # type: ignore
@@ -648,12 +677,16 @@ class MainWindow(QMainWindow):
         #
         self.open_url_open_subreddit_act = QAction("Open sub&reddit", self)
         self.open_url_open_subreddit_act.triggered.connect(self.menu_open_subreddit)
-        self.open_url_open_imgur_album_act = QAction("Open &Imgur album / gallery / HTML", self)
+        self.open_url_open_imgur_album_act = QAction(
+            "Open &Imgur album / gallery / HTML", self
+        )
         self.open_url_open_imgur_album_act.triggered.connect(self.menu_open_imgur_album)
         #
         key = "Ctrl+S"
         self.save_image_act = QAction("&Save current image as...", self)
-        self.shortcuts.register_menubar_action(key, self.save_image_act, self.save_image)
+        self.shortcuts.register_menubar_action(
+            key, self.save_image_act, self.save_image
+        )
         #
         key = "Ctrl+R"
         self.open_random_subreddit_act = QAction("Open random subreddit", self)
@@ -664,7 +697,9 @@ class MainWindow(QMainWindow):
         self.save_image_list_act = QAction("Save image list as...", self)
         self.save_image_list_act.triggered.connect(self.save_image_list)
         #
-        self.export_image_list_to_clipboard_act = QAction("E&xport image list to clipboard", self)
+        self.export_image_list_to_clipboard_act = QAction(
+            "E&xport image list to clipboard", self
+        )
         self.export_image_list_to_clipboard_act.triggered.connect(
             self.export_image_list_to_clipboard
         )
@@ -677,15 +712,21 @@ class MainWindow(QMainWindow):
         #
         key = "I"
         self.image_info_act = QAction("Image &info", self)
-        self.shortcuts.register_menubar_action(key, self.image_info_act, self.image_info)
+        self.shortcuts.register_menubar_action(
+            key, self.image_info_act, self.image_info
+        )
         # self.image_info_act = QAction("Image info", self)
         # self.image_info_act.triggered.connect(self.image_info)
         #
         self.slideshow_act = QAction("Slideshow", self)
         self.slideshow_act.triggered.connect(self.slideshow)
         #
-        self.important_files_and_folders_act = QAction("Important &files and folders", self)
-        self.important_files_and_folders_act.triggered.connect(self.important_files_and_folders)
+        self.important_files_and_folders_act = QAction(
+            "Important &files and folders", self
+        )
+        self.important_files_and_folders_act.triggered.connect(
+            self.important_files_and_folders
+        )
         #
         self.help_act = QAction("&Help", self)
         self.help_act.triggered.connect(help_dialogs.open_help)
@@ -698,7 +739,9 @@ class MainWindow(QMainWindow):
         #
         key = "Ctrl+Alt+R"
         self.reset_act = QAction("Reset", self)
-        self.shortcuts.register_menubar_action(key, self.reset_act, partial(self.reset, "reset"))
+        self.shortcuts.register_menubar_action(
+            key, self.reset_act, partial(self.reset, "reset")
+        )
         #
         key = "Q"
         self.quit_act = QAction("&Quit", self)
@@ -706,11 +749,15 @@ class MainWindow(QMainWindow):
         #
         key = "I"
         self.image_info_act = QAction("Image &info", self)
-        self.shortcuts.register_menubar_action(key, self.image_info_act, self.image_info)
+        self.shortcuts.register_menubar_action(
+            key, self.image_info_act, self.image_info
+        )
         #
         key = "Alt+M"
         self.hide_menubar_act = QAction("&Hide menu bar", self)
-        self.shortcuts.register_menubar_action(key, self.hide_menubar_act, self.toggle_menubar)
+        self.shortcuts.register_menubar_action(
+            key, self.hide_menubar_act, self.toggle_menubar
+        )
         #
         key = "Ctrl+M"
         self.show_mouse_pointer_act = QAction(
@@ -742,7 +789,9 @@ class MainWindow(QMainWindow):
         self.open_url_open_tumblr_post_act.triggered.connect(self.menu_open_tumblr_post)
         #
         key = "Ctrl+Shift+U"
-        self.extract_images_from_webpage_act = QAction("E&xtract images from a webpage", self)
+        self.extract_images_from_webpage_act = QAction(
+            "E&xtract images from a webpage", self
+        )
         self.shortcuts.register_menubar_action(
             key, self.extract_images_from_webpage_act, self.extract_images_from_webpage
         )
@@ -815,7 +864,9 @@ class MainWindow(QMainWindow):
             my_bookmarks_menu = QMenu(self.menubar)
             my_bookmarks_menu.setTitle("My &bookmarks...")
             bookmarksMenu.addMenu(my_bookmarks_menu)
-            bookmarks.Bookmarks(self, my_bookmarks_menu, helper.open_new_browser_tab).populate()
+            bookmarks.Bookmarks(
+                self, my_bookmarks_menu, helper.open_new_browser_tab
+            ).populate()
             bookmarksMenu.addSeparator()
             bookmarksMenu.addAction(self.open_bookmarks_file_act)
         # endif
@@ -875,7 +926,9 @@ class MainWindow(QMainWindow):
             open_subreddit_categories = QMenu(self.menu)
             open_subreddit_categories.setTitle("Select subreddit...")
             self.menu.addMenu(open_subreddit_categories)
-            categories.Categories(self, open_subreddit_categories, self.open_subreddit).populate()
+            categories.Categories(
+                self, open_subreddit_categories, self.open_subreddit
+            ).populate()
         # endif
         self.menu.addSeparator()
         open_with_menu = QMenu(self.menu)
@@ -940,11 +993,15 @@ class MainWindow(QMainWindow):
     def add_shortcuts(self) -> None:
         key = "Ctrl+O"
         self.shortcutOpenFile = QShortcut(QKeySequence(key), self)
-        self.shortcuts.register_window_shortcut(key, self.shortcutOpenFile, self.open_file)
+        self.shortcuts.register_window_shortcut(
+            key, self.shortcutOpenFile, self.open_file
+        )
 
         key = "Ctrl+D"
         self.shortcutOpenDir = QShortcut(QKeySequence(key), self)
-        self.shortcuts.register_window_shortcut(key, self.shortcutOpenDir, self.open_dir)
+        self.shortcuts.register_window_shortcut(
+            key, self.shortcutOpenDir, self.open_dir
+        )
 
         key = "Q"
         self.shortcutQuit = QShortcut(QKeySequence(key), self)
@@ -984,15 +1041,21 @@ class MainWindow(QMainWindow):
 
         key = "-"
         self.shortcutZoomOut = QShortcut(QKeySequence(key), self)
-        self.shortcuts.register_window_shortcut(key, self.shortcutZoomOut, self.zoom_out)
+        self.shortcuts.register_window_shortcut(
+            key, self.shortcutZoomOut, self.zoom_out
+        )
 
         key = "="
         self.shortcutZoomReset = QShortcut(QKeySequence(key), self)
-        self.shortcuts.register_window_shortcut(key, self.shortcutZoomReset, self.zoom_reset)
+        self.shortcuts.register_window_shortcut(
+            key, self.shortcutZoomReset, self.zoom_reset
+        )
 
         key = "M"
         self.shortcutMaximized = QShortcut(QKeySequence(key), self)
-        self.shortcuts.register_window_shortcut(key, self.shortcutMaximized, self.toggle_maximized)
+        self.shortcuts.register_window_shortcut(
+            key, self.shortcutMaximized, self.toggle_maximized
+        )
 
         key = "F"
         self.shortcutFitImageToWindow = QShortcut(QKeySequence(key), self)
@@ -1017,37 +1080,57 @@ class MainWindow(QMainWindow):
         #####################
         key = "Shift+Down"
         self.shortcutScrollDown = QShortcut(QKeySequence(key), self)
-        self.shortcuts.register_window_shortcut(key, self.shortcutScrollDown, self.scroll_down)
+        self.shortcuts.register_window_shortcut(
+            key, self.shortcutScrollDown, self.scroll_down
+        )
         key = "2"
         self.shortcutScrollDownNum = QShortcut(QKeySequence(key), self)
-        self.shortcuts.register_window_shortcut(key, self.shortcutScrollDownNum, self.scroll_down)
+        self.shortcuts.register_window_shortcut(
+            key, self.shortcutScrollDownNum, self.scroll_down
+        )
         key = "Down"
         self.shortcutScrollDownArrow = QShortcut(QKeySequence(key), self)
-        self.shortcuts.register_window_shortcut(key, self.shortcutScrollDownArrow, self.scroll_down)
+        self.shortcuts.register_window_shortcut(
+            key, self.shortcutScrollDownArrow, self.scroll_down
+        )
         #
         key = "Shift+Up"
         self.shortcutScrollUp = QShortcut(QKeySequence(key), self)
-        self.shortcuts.register_window_shortcut(key, self.shortcutScrollUp, self.scroll_up)
+        self.shortcuts.register_window_shortcut(
+            key, self.shortcutScrollUp, self.scroll_up
+        )
         key = "8"
         self.shortcutScrollUpNum = QShortcut(QKeySequence(key), self)
-        self.shortcuts.register_window_shortcut(key, self.shortcutScrollUpNum, self.scroll_up)
+        self.shortcuts.register_window_shortcut(
+            key, self.shortcutScrollUpNum, self.scroll_up
+        )
         key = "Up"
         self.shortcutScrollUpArrow = QShortcut(QKeySequence(key), self)
-        self.shortcuts.register_window_shortcut(key, self.shortcutScrollUpArrow, self.scroll_up)
+        self.shortcuts.register_window_shortcut(
+            key, self.shortcutScrollUpArrow, self.scroll_up
+        )
         #
         key = "Shift+Right"
         self.shortcutScrollRight = QShortcut(QKeySequence(key), self)
-        self.shortcuts.register_window_shortcut(key, self.shortcutScrollRight, self.scroll_right)
+        self.shortcuts.register_window_shortcut(
+            key, self.shortcutScrollRight, self.scroll_right
+        )
         key = "6"
         self.shortcutScrollRightNum = QShortcut(QKeySequence(key), self)
-        self.shortcuts.register_window_shortcut(key, self.shortcutScrollRightNum, self.scroll_right)
+        self.shortcuts.register_window_shortcut(
+            key, self.shortcutScrollRightNum, self.scroll_right
+        )
         #
         key = "Shift+Left"
         self.shortcutScrollLeft = QShortcut(QKeySequence(key), self)
-        self.shortcuts.register_window_shortcut(key, self.shortcutScrollLeft, self.scroll_left)
+        self.shortcuts.register_window_shortcut(
+            key, self.shortcutScrollLeft, self.scroll_left
+        )
         key = "4"
         self.shortcutScrollLeftNum = QShortcut(QKeySequence("4"), self)
-        self.shortcuts.register_window_shortcut(key, self.shortcutScrollLeftNum, self.scroll_left)
+        self.shortcuts.register_window_shortcut(
+            key, self.shortcutScrollLeftNum, self.scroll_left
+        )
         ###################
         ## END scrolling ##
         ###################
@@ -1078,11 +1161,15 @@ class MainWindow(QMainWindow):
 
         key = "Ctrl+F"
         self.shortcutAutoFit = QShortcut(QKeySequence(key), self)
-        self.shortcuts.register_window_shortcut(key, self.shortcutAutoFit, self.toggle_auto_fit)
+        self.shortcuts.register_window_shortcut(
+            key, self.shortcutAutoFit, self.toggle_auto_fit
+        )
         #
         key = "Ctrl+w"
         self.shortcutAutoWidth = QShortcut(QKeySequence(key), self)
-        self.shortcuts.register_window_shortcut(key, self.shortcutAutoWidth, self.toggle_auto_width)
+        self.shortcuts.register_window_shortcut(
+            key, self.shortcutAutoWidth, self.toggle_auto_width
+        )
 
         key = "Ctrl+M"
         self.shortcutHideMouse = QShortcut(QKeySequence(key), self)
@@ -1099,7 +1186,9 @@ class MainWindow(QMainWindow):
         key = "Shift+R"
         self.shortcutJumpToPrevRandomImg = QShortcut(QKeySequence(key), self)
         self.shortcuts.register_window_shortcut(
-            key, self.shortcutJumpToPrevRandomImg, self.imgList.jump_to_prev_random_image
+            key,
+            self.shortcutJumpToPrevRandomImg,
+            self.imgList.jump_to_prev_random_image,
         )
 
         key = "P"
@@ -1134,15 +1223,21 @@ class MainWindow(QMainWindow):
 
         key = "Menu"
         self.shortcutContextMenu = QShortcut(QKeySequence(key), self)
-        self.shortcuts.register_window_shortcut(key, self.shortcutContextMenu, self.show_popup)
+        self.shortcuts.register_window_shortcut(
+            key, self.shortcutContextMenu, self.show_popup
+        )
 
         key = "I"
         self.shortcutImageInfo = QShortcut(QKeySequence(key), self)
-        self.shortcuts.register_window_shortcut(key, self.shortcutImageInfo, self.image_info)
+        self.shortcuts.register_window_shortcut(
+            key, self.shortcutImageInfo, self.image_info
+        )
 
         key = "S"
         self.shortcutMarkToSave = QShortcut(QKeySequence(key), self)
-        self.shortcuts.register_window_shortcut(key, self.shortcutMarkToSave, self.toggle_img_save)
+        self.shortcuts.register_window_shortcut(
+            key, self.shortcutMarkToSave, self.toggle_img_save
+        )
 
         key = "D"
         self.shortcutMarkToDelete = QShortcut(QKeySequence(key), self)
@@ -1158,7 +1253,9 @@ class MainWindow(QMainWindow):
 
         key = "C"
         self.shortcutCommit = QShortcut(QKeySequence(key), self)
-        self.shortcuts.register_window_shortcut(key, self.shortcutCommit, self.commit_changes)
+        self.shortcuts.register_window_shortcut(
+            key, self.shortcutCommit, self.commit_changes
+        )
 
         key = "Ctrl+A"
         self.shortcutMarkAllToSave = QShortcut(QKeySequence(key), self)
@@ -1323,7 +1420,8 @@ You cannot delete it.
     def save_image(self) -> None:
         if (
             not self.imgList.get_curr_img()
-            or self.imgList.get_curr_img().image_state == ImageProperty.IMAGE_STATE_PROBLEM
+            or self.imgList.get_curr_img().image_state
+            == ImageProperty.IMAGE_STATE_PROBLEM
         ):
             self.statusbar.flash_message(red("no"))
             self.play_error_sound()
@@ -1419,7 +1517,9 @@ You cannot delete it.
         # else, there is at least 1 image
         if not self.imgList.get_curr_img().local_file:  # type: ignore
             QMessageBox.information(
-                self, "Info", "Finding duplicates works with <strong>local</strong> files only!"
+                self,
+                "Info",
+                "Finding duplicates works with <strong>local</strong> files only!",
             )
             return
         # else, we only have local file(s)
@@ -1482,7 +1582,9 @@ file system, then <strong>commit</strong> your changes.
     def url_folding(self) -> None:
         self.url_folding_window = UrlFolding()
         self.url_folding_window.show()
-        self.url_folding_window.setFixedSize(self.url_folding_window.size())  # disable resize
+        self.url_folding_window.setFixedSize(
+            self.url_folding_window.size()
+        )  # disable resize
         self.url_folding_window.urlList.connect(self.open_urls)
 
     def menu_open_tumblr_post(self) -> None:
@@ -1511,7 +1613,9 @@ file system, then <strong>commit</strong> your changes.
         top_left = qr.topLeft()
         x_offset, y_offset = top_left.x(), top_left.y()
         self.menu.popup(
-            self.mapToGlobal(QPoint(x - x_offset, y - y_offset - self.menuBar().height()))
+            self.mapToGlobal(
+                QPoint(x - x_offset, y - y_offset - self.menuBar().height())
+            )
         )
 
     def toggle_menubar(self) -> None:
@@ -1538,7 +1642,11 @@ file system, then <strong>commit</strong> your changes.
             return
         # else
         text, okPressed = QInputDialog.getText(
-            self, "Go To Image", f"Enter a value between 1 and {total}:", QLineEdit.Normal, ""
+            self,
+            "Go To Image",
+            f"Enter a value between 1 and {total}:",
+            QLineEdit.Normal,
+            "",
         )
         if okPressed and text:
             try:
@@ -1791,7 +1899,9 @@ file system, then <strong>commit</strong> your changes.
             )
         )
         #
-        self.path_line.setText(green(self.imgList.get_curr_img().get_file_name_or_url()))  # type: ignore
+        self.path_line.setText(
+            green(self.imgList.get_curr_img().get_file_name_or_url())
+        )  # type: ignore
         #
         text = green(self.imgList.get_curr_img().get_short_flags())  # type: ignore
         self.flags_line.setText(text)
@@ -1856,7 +1966,11 @@ Do you really want to quit?
 Tip: hit No and commit your changes.
 """.strip()
             reply = QMessageBox.question(
-                self, "Quit Message", msg, QMessageBox.Yes | QMessageBox.No, QMessageBox.No
+                self,
+                "Quit Message",
+                msg,
+                QMessageBox.Yes | QMessageBox.No,
+                QMessageBox.No,
             )
 
             if reply == QMessageBox.Yes:
@@ -1878,7 +1992,9 @@ def check_api_keys() -> None:
         log.info("tumblr API key was found")
 
     if not cfg.IMGUR_CLIENT_ID or not cfg.IMGUR_CLIENT_SECRET:
-        log.warning("missing environment variables: IMGUR_CLIENT_ID and/or IMGUR_CLIENT_SECRET")
+        log.warning(
+            "missing environment variables: IMGUR_CLIENT_ID and/or IMGUR_CLIENT_SECRET"
+        )
         log.warning("without them we cannot process imgur albums / galleries")
         log.warning("acquire an imgur API key (free) and set them as env. variables")
         log.info(cfg.SEPARATOR)
