@@ -18,8 +18,8 @@ dependencies = [
 [project.scripts]
 jive = "jive.main:main"
 
-[tool.uv]
-dev-dependencies = [
+[dependency-groups]
+dev = [
     "mypy>=1.11.2",
     "pyqt5-stubs>=5.15.6.0",
     "pytest>=8.3.3",
