@@ -5,9 +5,11 @@ from pathlib import Path
 from time import sleep
 from typing import List, Optional
 
-import requests
+import requests  # normal requests, unchanged
+from curl_cffi import requests as cffi_requests
+from curl_cffi.requests import Response as CffiResponse
+from curl_cffi.requests.exceptions import RequestException as CffiRequestException
 from PyQt5.QtWidgets import QApplication
-from requests import Response
 
 from jive import config as cfg
 from jive.extractors import imgur, tumblr
@@ -41,26 +43,38 @@ def get_subreddit_name(text: str) -> Optional[str]:
     return None
 
 
-def get_connection(url: str, retries=10, delay=0.2) -> Response:
-    COOKIES_TXT = str(Path(cfg.BASE_DIR, "cookies.txt"))
-    context = {"headers": cfg.headers, "timeout": cfg.REQUESTS_TIMEOUT}
-    if os.path.isfile(COOKIES_TXT):
+# We use curl_cffi instead of requests. reddit.com blocked connections via requests.
+def get_connection(url: str, retries: int = 10, delay: float = 0.2) -> CffiResponse:
+    cookies_txt = str(Path(cfg.BASE_DIR, "cookies.txt"))
+
+    context = {
+        "timeout": cfg.REQUESTS_TIMEOUT,
+        "impersonate": "firefox",
+    }
+
+    if os.path.isfile(cookies_txt):
         log.info("cookies.txt was found")
-        jar = MozillaCookieJar(COOKIES_TXT)
+        jar = MozillaCookieJar(cookies_txt)
         jar.load(ignore_expires=True, ignore_discard=True)
         context["cookies"] = jar
     else:
         log.info("cookies.txt is missing")
-    #
+
+    r = None
     for attempt in range(retries):
         try:
-            r = requests.get(url, **context)
+            r = cffi_requests.get(url, **context)
             if r.status_code == 200:
                 return r
-        except requests.exceptions.RequestException as e:
+            log.info(f"Attempt {attempt + 1}: status {r.status_code}")
+        except CffiRequestException as e:
             log.info(f"Attempt {attempt + 1} failed: {e}")
         sleep(delay)
 
+    if r is None:
+        raise ConnectionError(f"All {retries} attempts failed for {url}")
+
+    # log.info(f"Connection status code: {r.status_code}")
     return r
 
 

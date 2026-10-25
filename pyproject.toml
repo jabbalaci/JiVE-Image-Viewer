@@ -7,6 +7,7 @@ requires-python = ">=3.12"
 dependencies = [
     "appdirs>=1.4.4",
     "bs4>=0.0.2",
+    "curl-cffi>=0.16.3",
     "imgurpython>=1.1.7",
     "psutil>=6.0.0",
     "pyqt5>=5.15.11",
